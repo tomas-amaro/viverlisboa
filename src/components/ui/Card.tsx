@@ -1,0 +1,151 @@
+import styled, { css } from 'styled-components'
+import { theme } from '@/styles/theme'
+
+interface CardProps {
+  padding?: 'sm' | 'md' | 'lg'
+  shadow?: 'sm' | 'md' | 'lg' | 'xl'
+  hover?: boolean
+  clickable?: boolean
+  children: React.ReactNode
+  className?: string
+  onClick?: () => void
+}
+
+const getPadding = (padding: CardProps['padding']) => {
+  switch (padding) {
+    case 'sm':
+      return theme.spacing[4]
+    case 'md':
+      return theme.spacing[6]
+    case 'lg':
+      return theme.spacing[8]
+    default:
+      return theme.spacing[6]
+  }
+}
+
+const getShadow = (shadow: CardProps['shadow']) => {
+  switch (shadow) {
+    case 'sm':
+      return theme.shadows.sm
+    case 'md':
+      return theme.shadows.md
+    case 'lg':
+      return theme.shadows.lg
+    case 'xl':
+      return theme.shadows.xl
+    default:
+      return theme.shadows.base
+  }
+}
+
+const StyledCard = styled.div<CardProps>`
+  background-color: ${theme.colors.background.primary};
+  border-radius: ${theme.borderRadius.lg};
+  box-shadow: ${({ shadow = 'base' }) => getShadow(shadow)};
+  padding: ${({ padding = 'md' }) => getPadding(padding)};
+  transition: ${theme.transitions.base};
+  border: 1px solid ${theme.colors.gray[200]};
+  
+  ${({ hover }) =>
+    hover &&
+    css`
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: ${theme.shadows.lg};
+      }
+    `}
+  
+  ${({ clickable }) =>
+    clickable &&
+    css`
+      cursor: pointer;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: ${theme.shadows.lg};
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    `}
+  
+  ${({ onClick }) =>
+    onClick &&
+    css`
+      cursor: pointer;
+    `}
+`
+
+const CardHeader = styled.div`
+  margin-bottom: ${theme.spacing[4]};
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+const CardTitle = styled.h3`
+  font-size: ${theme.fontSizes.xl};
+  font-weight: ${theme.fontWeights.bold};
+  color: ${theme.colors.text.primary};
+  margin-bottom: ${theme.spacing[2]};
+  line-height: 1.3;
+`
+
+const CardSubtitle = styled.p`
+  font-size: ${theme.fontSizes.sm};
+  color: ${theme.colors.text.secondary};
+  margin: 0;
+`
+
+const CardContent = styled.div`
+  color: ${theme.colors.text.primary};
+  line-height: 1.6;
+  
+  p {
+    margin-bottom: ${theme.spacing[3]};
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+`
+
+const CardFooter = styled.div`
+  margin-top: ${theme.spacing[4]};
+  padding-top: ${theme.spacing[4]};
+  border-top: 1px solid ${theme.colors.gray[200]};
+  
+  &:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+`
+
+const CardImage = styled.div`
+  margin: -${({ padding = 'md' }: { padding?: CardProps['padding'] }) => getPadding(padding)};
+  margin-bottom: ${theme.spacing[4]};
+  
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: ${theme.borderRadius.lg} ${theme.borderRadius.lg} 0 0;
+    display: block;
+  }
+`
+
+export const Card: React.FC<CardProps> = ({ children, ...props }) => {
+  return <StyledCard {...props}>{children}</StyledCard>
+}
+
+Card.Header = CardHeader
+Card.Title = CardTitle
+Card.Subtitle = CardSubtitle
+Card.Content = CardContent
+Card.Footer = CardFooter
+Card.Image = CardImage
+
+export default Card
