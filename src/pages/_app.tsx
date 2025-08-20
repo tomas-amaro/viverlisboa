@@ -15,14 +15,7 @@ const mockCampaign: Campaign = {
   location: 'Lisboa',
   mainColor: '#48B9CA',
   secondaryColor: '#FF394C',
-  logo: {
-    _type: 'image',
-    asset: {
-      _ref: 'image-logo',
-      _type: 'reference',
-    },
-    alt: 'Logo Viver Lisboa',
-  },
+  // logo: removed - components will show title as fallback
   socialMedia: {
     facebook: 'https://facebook.com/viverlisboa',
     instagram: 'https://instagram.com/viverlisboa',

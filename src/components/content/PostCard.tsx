@@ -14,16 +14,16 @@ interface PostCardProps {
   showCategories?: boolean
 }
 
-const StyledCard = styled(Card)<{ featured?: boolean; layout: string }>`
+const StyledCard = styled(Card)<{ $featured?: boolean; $layout: string }>`
   height: 100%;
   display: flex;
-  flex-direction: ${({ layout }) => layout === 'horizontal' ? 'row' : 'column'};
+  flex-direction: ${({ $layout }) => $layout === 'horizontal' ? 'row' : 'column'};
   transition: all ${theme.transitions.base};
   position: relative;
   overflow: hidden;
   
-  ${({ featured }) =>
-    featured &&
+  ${({ $featured }) =>
+    $featured &&
     css`
       border: 2px solid ${theme.colors.primary.blue};
       box-shadow: ${theme.shadows.lg};
@@ -54,10 +54,10 @@ const StyledCard = styled(Card)<{ featured?: boolean; layout: string }>`
   }
 `
 
-const ImageContainer = styled.div<{ layout: string }>`
+const ImageContainer = styled.div<{ $layout: string }>`
   position: relative;
-  ${({ layout }) =>
-    layout === 'horizontal'
+  ${({ $layout }) =>
+    $layout === 'horizontal'
       ? css`
           width: 250px;
           min-height: 180px;
@@ -78,9 +78,9 @@ const ImageContainer = styled.div<{ layout: string }>`
   }
 `
 
-const PostContent = styled.div<{ layout: string }>`
-  ${({ layout }) =>
-    layout === 'horizontal'
+const PostContent = styled.div<{ $layout: string }>`
+  ${({ $layout }) =>
+    $layout === 'horizontal'
       ? css`
           flex: 1;
           padding: ${theme.spacing[4]};
@@ -122,7 +122,7 @@ const CategoriesList = styled.div`
   margin-bottom: ${theme.spacing[3]};
 `
 
-const CategoryBadge = styled.span<{ category: string }>`
+const CategoryBadge = styled.span<{ $category: string }>`
   display: inline-block;
   padding: ${theme.spacing[1]} ${theme.spacing[2]};
   border-radius: ${theme.borderRadius.full};
@@ -131,8 +131,8 @@ const CategoryBadge = styled.span<{ category: string }>`
   text-transform: uppercase;
   letter-spacing: 0.05em;
   
-  ${({ category }) => {
-    switch (category) {
+  ${({ $category }) => {
+    switch ($category) {
       case 'propostas':
         return css`
           background-color: rgba(72, 185, 202, 0.1);
@@ -286,14 +286,14 @@ export const PostCard: React.FC<PostCardProps> = ({
       viewport={{ once: true, margin: '-50px' }}
     >
       <StyledCard
-        featured={featured}
-        layout={layout}
+        $featured={featured}
+        $layout={layout}
         hover
         clickable
         onClick={() => window.location.href = `/noticias/${post.slug.current}`}
       >
         {post.featuredImage && (
-          <ImageContainer layout={layout}>
+          <ImageContainer $layout={layout}>
             <Image
               src={urlFor(post.featuredImage).width(500).height(300).quality(85).url()}
               alt={post.featuredImage.alt || post.title}
@@ -303,11 +303,11 @@ export const PostCard: React.FC<PostCardProps> = ({
           </ImageContainer>
         )}
         
-        <PostContent layout={layout}>
+        <PostContent $layout={layout}>
           {showCategories && post.categories && post.categories.length > 0 && (
             <CategoriesList>
               {post.categories.slice(0, 2).map((category, index) => (
-                <CategoryBadge key={index} category={category}>
+                <CategoryBadge key={index} $category={category}>
                   {getCategoryLabel(category)}
                 </CategoryBadge>
               ))}

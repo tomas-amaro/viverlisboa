@@ -37,15 +37,15 @@ const getHeight = (height: HeroSectionProps['height']) => {
   }
 }
 
-const HeroContainer = styled.section<{ height: HeroSectionProps['height']; hasImage: boolean }>`
+const HeroContainer = styled.section<{ $height: HeroSectionProps['height']; $hasImage: boolean }>`
   position: relative;
-  min-height: ${({ height = 'lg' }) => getHeight(height)};
+  min-height: ${({ $height = 'lg' }) => getHeight($height)};
   display: flex;
   align-items: center;
   overflow: hidden;
   
-  ${({ hasImage }) =>
-    hasImage
+  ${({ $hasImage }) =>
+    $hasImage
       ? css`
           background: linear-gradient(
             135deg,
@@ -63,10 +63,10 @@ const HeroContainer = styled.section<{ height: HeroSectionProps['height']; hasIm
         `}
   
   @media (max-width: ${theme.breakpoints.md}) {
-    min-height: ${({ height = 'lg' }) => 
-      height === 'xl' ? '600px' : 
-      height === 'lg' ? '500px' : 
-      height === 'md' ? '400px' : '350px'};
+    min-height: ${({ $height = 'lg' }) => 
+      $height === 'xl' ? '600px' : 
+      $height === 'lg' ? '500px' : 
+      $height === 'md' ? '400px' : '350px'};
   }
 `
 
@@ -85,7 +85,7 @@ const BackgroundImage = styled.div`
   }
 `
 
-const Overlay = styled.div<{ show: boolean }>`
+const Overlay = styled.div<{ $show: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -98,16 +98,16 @@ const Overlay = styled.div<{ show: boolean }>`
   );
   z-index: 2;
   
-  ${({ show }) => !show && css`
+  ${({ $show }) => !$show && css`
     display: none;
   `}
 `
 
-const HeroContent = styled(Container)<{ textAlign: HeroSectionProps['textAlign'] }>`
+const HeroContent = styled(Container)<{ $textAlign: HeroSectionProps['textAlign'] }>`
   position: relative;
   z-index: 3;
   color: ${theme.colors.text.white};
-  text-align: ${({ textAlign = 'left' }) => textAlign};
+  text-align: ${({ $textAlign = 'left' }) => $textAlign};
   
   @media (max-width: ${theme.breakpoints.md}) {
     text-align: center;
@@ -254,7 +254,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   }
 
   return (
-    <HeroContainer height={height} hasImage={!!backgroundImage}>
+    <HeroContainer $height={height} $hasImage={!!backgroundImage}>
       {backgroundImage && (
         <BackgroundImage>
           <Image
@@ -267,7 +267,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </BackgroundImage>
       )}
       
-      <Overlay show={overlay || !!backgroundImage} />
+      <Overlay $show={overlay || !!backgroundImage} />
       
       <DecorativeElement
         variants={decorativeVariants}
@@ -282,7 +282,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         transition={{ delay: 1.2 }}
       />
 
-      <HeroContent textAlign={textAlign}>
+      <HeroContent $textAlign={textAlign}>
         <motion.div
           variants={containerVariants}
           initial="hidden"

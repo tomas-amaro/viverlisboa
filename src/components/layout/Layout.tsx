@@ -50,7 +50,7 @@ const SkipLink = styled.a`
   }
 `
 
-const BackToTop = styled.button<{ visible: boolean }>`
+const BackToTop = styled.button<{ $visible: boolean }>`
   position: fixed;
   bottom: ${theme.spacing[6]};
   right: ${theme.spacing[6]};
@@ -68,14 +68,14 @@ const BackToTop = styled.button<{ visible: boolean }>`
   align-items: center;
   justify-content: center;
   
-  opacity: ${({ visible }) => (visible ? 1 : 0)};
-  visibility: ${({ visible }) => (visible ? 'visible' : 'hidden')};
-  transform: ${({ visible }) => (visible ? 'translateY(0)' : 'translateY(100%)')};
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
+  transform: ${({ $visible }) => ($visible ? 'translateY(0)' : 'translateY(100%)')};
   
   &:hover {
     background-color: ${theme.colors.primary.teal};
-    transform: ${({ visible }) => 
-      visible ? 'translateY(-2px)' : 'translateY(100%)'};
+    transform: ${({ $visible }) => 
+      $visible ? 'translateY(-2px)' : 'translateY(100%)'};
   }
   
   &:focus {
@@ -218,7 +218,7 @@ export const Layout: React.FC<LayoutProps> = ({
         <Footer campaign={campaign} />
         
         <BackToTop
-          visible={showBackToTop}
+          $visible={showBackToTop}
           onClick={scrollToTop}
           aria-label="Voltar ao topo"
           title="Voltar ao topo"

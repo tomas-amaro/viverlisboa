@@ -7,6 +7,7 @@ interface TypographyProps {
   align?: 'left' | 'center' | 'right'
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' | 'black'
   margin?: boolean
+  opacity?: number
   children: React.ReactNode
   className?: string
   as?: keyof JSX.IntrinsicElements
@@ -157,17 +158,18 @@ const getDefaultElement = (variant: TypographyProps['variant']) => {
   }
 }
 
-const StyledTypography = styled.div<TypographyProps>`
+const StyledTypography = styled.div<{ $variant: TypographyProps['variant']; $color: TypographyProps['color']; $align: TypographyProps['align']; $weight?: TypographyProps['weight']; $margin: boolean; $opacity?: number }>`
   font-family: ${theme.fonts.primary};
-  color: ${({ color = 'primary' }) => getColor(color)};
-  text-align: ${({ align = 'left' }) => align};
-  font-weight: ${({ weight }) => weight && getWeight(weight)};
+  color: ${({ $color }) => getColor($color)};
+  text-align: ${({ $align }) => $align};
+  font-weight: ${({ $weight }) => $weight && getWeight($weight)};
+  opacity: ${({ $opacity }) => $opacity};
   
-  ${({ variant = 'body1' }) => getVariantStyles(variant)}
+  ${({ $variant }) => getVariantStyles($variant)}
   
-  ${({ margin = true, variant = 'body1' }) =>
-    margin &&
-    (variant.startsWith('h') || variant === 'body1' || variant === 'body2') &&
+  ${({ $margin, $variant }) =>
+    $margin &&
+    ($variant?.startsWith('h') || $variant === 'body1' || $variant === 'body2') &&
     css`
       margin-bottom: ${theme.spacing[4]};
       
@@ -179,6 +181,11 @@ const StyledTypography = styled.div<TypographyProps>`
 
 export const Typography: React.FC<TypographyProps> = ({
   variant = 'body1',
+  color = 'primary',
+  align = 'left',
+  weight,
+  margin = true,
+  opacity,
   as,
   children,
   ...props
@@ -186,7 +193,7 @@ export const Typography: React.FC<TypographyProps> = ({
   const element = as || getDefaultElement(variant)
   
   return (
-    <StyledTypography as={element} variant={variant} {...props}>
+    <StyledTypography as={element} $variant={variant} $color={color} $align={align} $weight={weight} $margin={margin} $opacity={opacity} {...props}>
       {children}
     </StyledTypography>
   )

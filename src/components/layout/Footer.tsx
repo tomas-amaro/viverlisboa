@@ -211,7 +211,7 @@ export const Footer: React.FC<FooterProps> = ({ campaign }) => {
       <Container>
         <FooterContent>
           <LogoSection>
-            {campaign.logo && (
+            {campaign.logo && campaign.logo.asset ? (
               <FooterLogo>
                 <Image
                   src={urlFor(campaign.logo).width(200).height(120).url()}
@@ -220,6 +220,18 @@ export const Footer: React.FC<FooterProps> = ({ campaign }) => {
                   height={120}
                 />
               </FooterLogo>
+            ) : (
+              <div style={{ 
+                height: '60px', 
+                display: 'flex', 
+                alignItems: 'center',
+                fontSize: '2rem',
+                fontWeight: 'bold',
+                color: 'white',
+                marginBottom: theme.spacing[4]
+              }}>
+                {campaign.title}
+              </div>
             )}
             
             <Typography variant="body2" color="white" margin={false}>

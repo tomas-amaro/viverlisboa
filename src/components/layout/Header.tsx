@@ -16,7 +16,7 @@ interface NavigationItem {
   href: string
 }
 
-const StyledHeader = styled.header<{ scrolled: boolean }>`
+const StyledHeader = styled.header<{ $scrolled: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -24,8 +24,8 @@ const StyledHeader = styled.header<{ scrolled: boolean }>`
   z-index: 50;
   transition: ${theme.transitions.base};
   
-  ${({ scrolled }) =>
-    scrolled
+  ${({ $scrolled }) =>
+    $scrolled
       ? css`
           background-color: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(10px);
@@ -72,7 +72,7 @@ const Logo = styled.div`
   }
 `
 
-const Navigation = styled.nav<{ isOpen: boolean }>`
+const Navigation = styled.nav<{ $isOpen: boolean }>`
   display: flex;
   align-items: center;
   gap: ${theme.spacing[6]};
@@ -86,9 +86,9 @@ const Navigation = styled.nav<{ isOpen: boolean }>`
     flex-direction: column;
     padding: ${theme.spacing[6]};
     box-shadow: ${theme.shadows.lg};
-    transform: ${({ isOpen }) => (isOpen ? 'translateY(0)' : 'translateY(-100%)')};
-    opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-    visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
+    transform: ${({ $isOpen }) => ($isOpen ? 'translateY(0)' : 'translateY(-100%)')};
+    opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
+    visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
     transition: all ${theme.transitions.base};
     gap: ${theme.spacing[4]};
   }
@@ -143,7 +143,7 @@ const MobileMenuButton = styled.button`
   }
 `
 
-const MenuLine = styled.span<{ isOpen: boolean; lineNumber: number }>`
+const MenuLine = styled.span<{ $isOpen: boolean; $lineNumber: number }>`
   display: block;
   width: 24px;
   height: 2px;
@@ -156,20 +156,20 @@ const MenuLine = styled.span<{ isOpen: boolean; lineNumber: number }>`
     margin-bottom: 4px;
   }
   
-  ${({ isOpen, lineNumber }) =>
-    isOpen &&
+  ${({ $isOpen, $lineNumber }) =>
+    $isOpen &&
     css`
-      ${lineNumber === 1 &&
+      ${$lineNumber === 1 &&
       css`
         transform: rotate(45deg) translate(5px, 5px);
       `}
       
-      ${lineNumber === 2 &&
+      ${$lineNumber === 2 &&
       css`
         opacity: 0;
       `}
       
-      ${lineNumber === 3 &&
+      ${$lineNumber === 3 &&
       css`
         transform: rotate(-45deg) translate(7px, -6px);
       `}
@@ -235,11 +235,11 @@ export const Header: React.FC<HeaderProps> = ({ campaign }) => {
   }
 
   return (
-    <StyledHeader scrolled={isScrolled}>
+    <StyledHeader $scrolled={isScrolled}>
       <HeaderContainer>
         <LogoContainer href="/">
           <Logo>
-            {campaign.logo && (
+            {campaign.logo && campaign.logo.asset ? (
               <Image
                 src={urlFor(campaign.logo).width(200).height(96).url()}
                 alt={campaign.logo.alt || `Logo ${campaign.title}`}
@@ -247,11 +247,22 @@ export const Header: React.FC<HeaderProps> = ({ campaign }) => {
                 height={96}
                 priority
               />
+            ) : (
+              <div style={{ 
+                height: '48px', 
+                display: 'flex', 
+                alignItems: 'center',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: theme.colors.primary.blue 
+              }}>
+                {campaign.title}
+              </div>
             )}
           </Logo>
         </LogoContainer>
 
-        <Navigation isOpen={isMenuOpen}>
+        <Navigation $isOpen={isMenuOpen}>
           {navigationItems.map((item) => (
             <NavLink key={item.href} href={item.href}>
               {item.label}
@@ -303,9 +314,9 @@ export const Header: React.FC<HeaderProps> = ({ campaign }) => {
         </Navigation>
 
         <MobileMenuButton onClick={toggleMenu} aria-label="Toggle menu">
-          <MenuLine isOpen={isMenuOpen} lineNumber={1} />
-          <MenuLine isOpen={isMenuOpen} lineNumber={2} />
-          <MenuLine isOpen={isMenuOpen} lineNumber={3} />
+          <MenuLine $isOpen={isMenuOpen} $lineNumber={1} />
+          <MenuLine $isOpen={isMenuOpen} $lineNumber={2} />
+          <MenuLine $isOpen={isMenuOpen} $lineNumber={3} />
         </MobileMenuButton>
       </HeaderContainer>
     </StyledHeader>

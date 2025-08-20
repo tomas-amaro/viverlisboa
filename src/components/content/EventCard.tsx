@@ -13,16 +13,16 @@ interface EventCardProps {
   layout?: 'vertical' | 'horizontal'
 }
 
-const StyledCard = styled(Card)<{ featured?: boolean; layout: string }>`
+const StyledCard = styled(Card)<{ $featured?: boolean; $layout: string }>`
   height: 100%;
   display: flex;
-  flex-direction: ${({ layout }) => layout === 'horizontal' ? 'row' : 'column'};
+  flex-direction: ${({ $layout }) => $layout === 'horizontal' ? 'row' : 'column'};
   transition: all ${theme.transitions.base};
   position: relative;
   overflow: hidden;
   
-  ${({ featured }) =>
-    featured &&
+  ${({ $featured }) =>
+    $featured &&
     css`
       border: 2px solid ${theme.colors.primary.red};
       box-shadow: ${theme.shadows.lg};
@@ -53,10 +53,10 @@ const StyledCard = styled(Card)<{ featured?: boolean; layout: string }>`
   }
 `
 
-const ImageContainer = styled.div<{ layout: string }>`
+const ImageContainer = styled.div<{ $layout: string }>`
   position: relative;
-  ${({ layout }) =>
-    layout === 'horizontal'
+  ${({ $layout }) =>
+    $layout === 'horizontal'
       ? css`
           width: 200px;
           min-height: 150px;
@@ -77,9 +77,9 @@ const ImageContainer = styled.div<{ layout: string }>`
   }
 `
 
-const EventContent = styled.div<{ layout: string }>`
-  ${({ layout }) =>
-    layout === 'horizontal'
+const EventContent = styled.div<{ $layout: string }>`
+  ${({ $layout }) =>
+    $layout === 'horizontal'
       ? css`
           flex: 1;
           padding: ${theme.spacing[4]};
@@ -120,7 +120,7 @@ const DateIcon = styled.div`
   }
 `
 
-const EventTypeBadge = styled.span<{ eventType: string }>`
+const EventTypeBadge = styled.span<{ $eventType: string }>`
   display: inline-block;
   padding: ${theme.spacing[1]} ${theme.spacing[3]};
   border-radius: ${theme.borderRadius.full};
@@ -130,8 +130,8 @@ const EventTypeBadge = styled.span<{ eventType: string }>`
   letter-spacing: 0.05em;
   margin-bottom: ${theme.spacing[3]};
   
-  ${({ eventType }) => {
-    switch (eventType) {
+  ${({ $eventType }) => {
+    switch ($eventType) {
       case 'comicio':
         return css`
           background-color: rgba(255, 57, 76, 0.1);
@@ -265,14 +265,14 @@ export const EventCard: React.FC<EventCardProps> = ({
       viewport={{ once: true, margin: '-50px' }}
     >
       <StyledCard
-        featured={featured}
-        layout={layout}
+        $featured={featured}
+        $layout={layout}
         hover
         clickable
         onClick={() => window.location.href = `/eventos/${event.slug.current}`}
       >
         {event.image && (
-          <ImageContainer layout={layout}>
+          <ImageContainer $layout={layout}>
             <Image
               src={urlFor(event.image).width(400).height(300).quality(85).url()}
               alt={event.image.alt || event.title}
@@ -282,8 +282,8 @@ export const EventCard: React.FC<EventCardProps> = ({
           </ImageContainer>
         )}
         
-        <EventContent layout={layout}>
-          <EventTypeBadge eventType={event.eventType}>
+        <EventContent $layout={layout}>
+          <EventTypeBadge $eventType={event.eventType}>
             {getEventTypeLabel(event.eventType)}
           </EventTypeBadge>
           

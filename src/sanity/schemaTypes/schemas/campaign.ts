@@ -69,7 +69,8 @@ export default defineType({
           title: "Texto Alternativo",
         },
       ],
-      validation: (Rule) => Rule.required(),
+      description:
+        "Logotipo da campanha (opcional - será mostrado título se não fornecido)",
     }),
     defineField({
       name: "heroImage",

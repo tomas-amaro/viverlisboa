@@ -13,7 +13,7 @@ interface ProposalCardProps {
   compact?: boolean
 }
 
-const StyledCard = styled(Card)<{ featured?: boolean; priority: string }>`
+const StyledCard = styled(Card)<{ $featured?: boolean; $priority: string }>`
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -21,8 +21,8 @@ const StyledCard = styled(Card)<{ featured?: boolean; priority: string }>`
   position: relative;
   overflow: hidden;
   
-  ${({ featured }) =>
-    featured &&
+  ${({ $featured }) =>
+    $featured &&
     css`
       border: 2px solid ${theme.colors.primary.blue};
       box-shadow: ${theme.shadows.lg};
@@ -43,20 +43,20 @@ const StyledCard = styled(Card)<{ featured?: boolean; priority: string }>`
       }
     `}
   
-  ${({ priority }) =>
-    priority === 'high' &&
+  ${({ $priority }) =>
+    $priority === 'high' &&
     css`
       border-left: 4px solid ${theme.colors.primary.red};
     `}
   
-  ${({ priority }) =>
-    priority === 'medium' &&
+  ${({ $priority }) =>
+    $priority === 'medium' &&
     css`
       border-left: 4px solid ${theme.colors.primary.blue};
     `}
   
-  ${({ priority }) =>
-    priority === 'low' &&
+  ${({ $priority }) =>
+    $priority === 'low' &&
     css`
       border-left: 4px solid ${theme.colors.gray[400]};
     `}
@@ -91,7 +91,7 @@ const IconContainer = styled.div`
   }
 `
 
-const CategoryBadge = styled.span<{ category: string }>`
+const CategoryBadge = styled.span<{ $category: string }>`
   display: inline-block;
   padding: ${theme.spacing[1]} ${theme.spacing[3]};
   border-radius: ${theme.borderRadius.full};
@@ -101,8 +101,8 @@ const CategoryBadge = styled.span<{ category: string }>`
   letter-spacing: 0.05em;
   margin-bottom: ${theme.spacing[3]};
   
-  ${({ category }) => {
-    switch (category) {
+  ${({ $category }) => {
+    switch ($category) {
       case 'habitacao':
         return css`
           background-color: rgba(255, 57, 76, 0.1);
@@ -152,7 +152,7 @@ const ProposalSummary = styled(Typography)`
   line-height: 1.5;
 `
 
-const CardFooter = styled(Card.Footer)`
+const CardFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -274,14 +274,14 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
       viewport={{ once: true, margin: '-50px' }}
     >
       <StyledCard
-        featured={featured}
-        priority={proposal.priority}
+        $featured={featured}
+        $priority={proposal.priority}
         hover
         clickable
         onClick={() => window.location.href = `/propostas/${proposal.slug.current}`}
       >
         <div>
-          <CategoryBadge category={proposal.category}>
+          <CategoryBadge $category={proposal.category}>
             {getCategoryLabel(proposal.category)}
           </CategoryBadge>
           

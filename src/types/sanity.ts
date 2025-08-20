@@ -39,7 +39,7 @@ export interface Campaign {
   location: string;
   mainColor: string;
   secondaryColor: string;
-  logo: SanityImage;
+  logo?: SanityImage;
   heroImage?: SanityImage;
   socialMedia?: {
     facebook?: string;
@@ -93,6 +93,7 @@ export interface Post {
 }
 
 export interface Event {
+  eventType: string;
   _id: string;
   _type: "event";
   title: string;
@@ -109,9 +110,11 @@ export interface Event {
   description?: PortableTextBlock[];
   image?: SanityImage;
   registrationUrl?: string;
+  featured?: boolean;
 }
 
 export interface Proposal {
+  tags: Array<string>;
   _id: string;
   _type: "proposal";
   title: string;
@@ -127,4 +130,5 @@ export interface Proposal {
   content: PortableTextBlock[];
   priority: "high" | "medium" | "low";
   icon?: SanityImage;
+  featured?: boolean;
 }

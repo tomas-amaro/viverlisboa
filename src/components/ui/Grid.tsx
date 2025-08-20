@@ -104,22 +104,22 @@ const getSpanCSS = (span: GridItemProps['span']) => {
   return ''
 }
 
-const StyledGrid = styled.div<GridProps>`
+const StyledGrid = styled.div<{ $columns: GridProps['columns']; $gap: number }>`
   display: grid;
-  gap: ${({ gap = 4 }) => theme.spacing[gap as keyof typeof theme.spacing]};
-  ${({ columns = 1 }) => getColumnsCSS(columns)}
+  gap: ${({ $gap }) => theme.spacing[$gap as keyof typeof theme.spacing]};
+  ${({ $columns }) => getColumnsCSS($columns)}
 `
 
-const StyledGridItem = styled.div<GridItemProps>`
-  ${({ span }) => span && getSpanCSS(span)}
+const StyledGridItem = styled.div<{ $span?: GridItemProps['span'] }>`
+  ${({ $span }) => $span && getSpanCSS($span)}
 `
 
-export const Grid: React.FC<GridProps> = ({ children, ...props }) => {
-  return <StyledGrid {...props}>{children}</StyledGrid>
+export const Grid: React.FC<GridProps> = ({ children, columns = 1, gap = 4, ...props }) => {
+  return <StyledGrid $columns={columns} $gap={gap} {...props}>{children}</StyledGrid>
 }
 
-export const GridItem: React.FC<GridItemProps> = ({ children, ...props }) => {
-  return <StyledGridItem {...props}>{children}</StyledGridItem>
+export const GridItem: React.FC<GridItemProps> = ({ children, span, ...props }) => {
+  return <StyledGridItem $span={span} {...props}>{children}</StyledGridItem>
 }
 
 export default Grid

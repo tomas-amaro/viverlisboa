@@ -2,8 +2,7 @@ import { createGlobalStyle } from "styled-components";
 import { theme } from "./theme";
 
 export const GlobalStyles = createGlobalStyle`
-  /* Gotham Font Imports */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+  /* Note: Google Fonts imported via Next.js _document.tsx for better performance */
   
   /* CSS Reset */
   *, *::before, *::after {

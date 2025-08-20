@@ -278,7 +278,7 @@ const HomePage: React.FC<HomePageProps> = ({
           <Typography variant="h2" color="white" align="center">
             Juntos podemos fazer a diferença
           </Typography>
-          <Typography variant="body1" color="white" align="center" style={{ opacity: 0.9 }}>
+          <Typography variant="body1" color="white" align="center" opacity={0.9}>
             A sua participação é fundamental para construirmos uma Lisboa mais justa, 
             sustentável e democrática. Descubra como pode apoiar a nossa campanha.
           </Typography>
@@ -383,11 +383,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
           location: 'Lisboa',
           mainColor: '#48B9CA',
           secondaryColor: '#FF394C',
-          logo: {
-            _type: 'image',
-            asset: { _ref: 'image-logo', _type: 'reference' },
-            alt: 'Logo Viver Lisboa',
-          },
+          // logo: removed - components will show title as fallback
         },
         featuredProposals: mockProposals,
         upcomingEvents: mockEvents,
@@ -410,11 +406,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
           location: 'Lisboa',
           mainColor: '#48B9CA',
           secondaryColor: '#FF394C',
-          logo: {
-            _type: 'image',
-            asset: { _ref: 'image-logo', _type: 'reference' },
-            alt: 'Logo Viver Lisboa',
-          },
+          // logo: removed - components will show title as fallback
         },
         featuredProposals: [],
         upcomingEvents: [],

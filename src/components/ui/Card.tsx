@@ -39,16 +39,15 @@ const getShadow = (shadow: CardProps['shadow']) => {
   }
 }
 
-const StyledCard = styled.div<CardProps>`
+const StyledCard = styled.div<{ $padding: CardProps['padding']; $shadow: CardProps['shadow']; $hover?: boolean; $clickable?: boolean; onClick?: () => void }>`
   background-color: ${theme.colors.background.primary};
   border-radius: ${theme.borderRadius.lg};
-  box-shadow: ${({ shadow = 'base' }) => getShadow(shadow)};
-  padding: ${({ padding = 'md' }) => getPadding(padding)};
+  box-shadow: ${({ $shadow }) => getShadow($shadow)};
+  padding: ${({ $padding }) => getPadding($padding)};
   transition: ${theme.transitions.base};
   border: 1px solid ${theme.colors.gray[200]};
-  
-  ${({ hover }) =>
-    hover &&
+  ${({ $hover }) =>
+    $hover &&
     css`
       &:hover {
         transform: translateY(-2px);
@@ -56,8 +55,8 @@ const StyledCard = styled.div<CardProps>`
       }
     `}
   
-  ${({ clickable }) =>
-    clickable &&
+  ${({ $clickable }) =>
+    $clickable &&
     css`
       cursor: pointer;
       
@@ -125,8 +124,8 @@ const CardFooter = styled.div`
   }
 `
 
-const CardImage = styled.div`
-  margin: -${({ padding = 'md' }: { padding?: CardProps['padding'] }) => getPadding(padding)};
+const CardImage = styled.div<{ $padding?: CardProps['padding'] }>`
+  margin: -${({ $padding = 'md' }) => getPadding($padding)};
   margin-bottom: ${theme.spacing[4]};
   
   img {
@@ -136,13 +135,21 @@ const CardImage = styled.div`
     display: block;
   }
 `
-
-export const Card: React.FC<CardProps> = ({ children, ...props }) => {
-  return <StyledCard {...props}>{children}</StyledCard>
+export const Card = ({ children, padding = 'md', shadow = 'sm', hover, clickable, onClick, ...props }: CardProps) => {
+  return <StyledCard $padding={padding} $shadow={shadow} $hover={hover} $clickable={clickable} onClick={onClick} {...props}>{children}</StyledCard>
 }
 
-Card.Header = CardHeader
-Card.Title = CardTitle
+const CardComponent = Card as typeof Card & {
+  Header: typeof CardHeader;
+  Title: typeof CardTitle;
+  Subtitle: typeof CardSubtitle;
+  Content: typeof CardContent;
+  Footer: typeof CardFooter;
+  Image: typeof CardImage;
+}
+
+CardComponent.Header = CardHeader;
+CardComponent.Title = CardTitle;
 Card.Subtitle = CardSubtitle
 Card.Content = CardContent
 Card.Footer = CardFooter
