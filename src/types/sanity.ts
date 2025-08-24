@@ -48,6 +48,55 @@ export interface Campaign {
   };
 }
 
+// Content block types for dynamic pages
+export interface HeroBlock {
+  _type: "hero";
+  _key: string;
+  title?: string;
+  subtitle?: string;
+  image?: SanityImage;
+  ctaText?: string;
+  ctaUrl?: string;
+}
+
+export interface ProposalsBlock {
+  _type: "proposals";
+  _key: string;
+  title?: string;
+  proposals?: {
+    _ref: string;
+    _type: "reference";
+  }[];
+}
+
+export interface EventsBlock {
+  _type: "events";
+  _key: string;
+  title?: string;
+  events?: {
+    _ref: string;
+    _type: "reference";
+  }[];
+}
+
+export interface ImageBlock {
+  _type: "image";
+  _key: string;
+  asset: {
+    _ref: string;
+    _type: "reference";
+  };
+  alt?: string;
+  caption?: string;
+}
+
+export type ContentBlock =
+  | PortableTextBlock
+  | HeroBlock
+  | ProposalsBlock
+  | EventsBlock
+  | ImageBlock;
+
 export interface Page {
   _id: string;
   _type: "page";
@@ -65,7 +114,7 @@ export interface Page {
     keywords?: string[];
     ogImage?: SanityImage;
   };
-  content: any[];
+  content: ContentBlock[];
 }
 
 export interface Post {

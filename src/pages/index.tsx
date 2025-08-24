@@ -6,6 +6,7 @@ import { Container, Grid, GridItem, Typography, Button } from '@/components/ui'
 import { HeroSection, ProposalCard, EventCard, PostCard } from '@/components/content'
 import { Campaign, Proposal, Event, Post } from '@/types/sanity'
 import { client } from '@/lib/sanity'
+import { getBuildConfig } from '@/lib/buildConfig'
 
 interface HomePageProps {
   campaign: Campaign
@@ -299,120 +300,157 @@ const HomePage: React.FC<HomePageProps> = ({
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
-    // Mock data for development - in production would fetch from Sanity
-    const mockProposals: Proposal[] = [
-      {
-        _id: '1',
-        _type: 'proposal',
-        title: 'Habitação Acessível para Todos',
-        slug: { current: 'habitacao-acessivel' },
-        campaign: { _ref: 'campaign-1', _type: 'reference' },
-        category: 'habitacao',
-        summary: 'Programa abrangente para garantir habitação digna e acessível a todas as famílias lisboetas.',
-        content: [],
-        priority: 'high',
-        featured: true,
-        tags: ['habitação', 'social', 'jovens'],
-      },
-      {
-        _id: '2',
-        _type: 'proposal',
-        title: 'Transportes Públicos Gratuitos',
-        slug: { current: 'transportes-gratuitos' },
-        campaign: { _ref: 'campaign-1', _type: 'reference' },
-        category: 'transportes',
-        summary: 'Implementação progressiva da gratuitidade dos transportes públicos em Lisboa.',
-        content: [],
-        priority: 'high',
-        featured: true,
-        tags: ['transportes', 'mobilidade', 'ambiente'],
-      },
-      {
-        _id: '3',
-        _type: 'proposal',
-        title: 'Lisboa Verde e Sustentável',
-        slug: { current: 'lisboa-verde' },
-        campaign: { _ref: 'campaign-1', _type: 'reference' },
-        category: 'ambiente',
-        summary: 'Aumentar significativamente as áreas verdes e promover a sustentabilidade urbana.',
-        content: [],
-        priority: 'medium',
-        featured: false,
-        tags: ['ambiente', 'sustentabilidade', 'parques'],
-      },
-    ]
+    // Get build-time campaign configuration
+    const buildConfig = getBuildConfig()
+    const campaignDomain = buildConfig.campaign.domain
+    
+    // Create campaign object from build config
+    const campaign: Campaign = {
+      _id: `campaign-${buildConfig.campaign.slug}`,
+      _type: 'campaign',
+      title: buildConfig.campaign.title,
+      slug: { current: buildConfig.campaign.slug },
+      description: buildConfig.campaign.description,
+      domain: buildConfig.campaign.domain,
+      location: buildConfig.campaign.location,
+      mainColor: buildConfig.campaign.mainColor,
+      secondaryColor: buildConfig.campaign.secondaryColor,
+      socialMedia: buildConfig.campaign.socialMedia,
+    }
 
-    const mockEvents: Event[] = [
-      {
-        _id: '1',
-        _type: 'event',
-        title: 'Comício de Abertura de Campanha',
-        slug: { current: 'comicio-abertura' },
-        campaign: { _ref: 'campaign-1', _type: 'reference' },
-        date: '2025-02-01',
-        time: '18:00',
-        location: 'Marquês de Pombal, Lisboa',
-        eventType: 'comicio',
-        featured: true,
-      },
-    ]
+    // Fetch campaign-specific data from Sanity
+    const [campaignData, proposalsData, eventsData, postsData] = await Promise.all([
+      // Get full campaign data from Sanity (for logo, heroImage, etc.)
+      client.fetch(
+        `*[_type == "campaign" && domain == $domain][0]{
+          _id,
+          _type,
+          title,
+          slug,
+          description,
+          domain,
+          location,
+          mainColor,
+          secondaryColor,
+          logo{
+            _type,
+            asset,
+            alt
+          },
+          heroImage{
+            _type,
+            asset,
+            alt
+          },
+          socialMedia
+        }`,
+        { domain: campaignDomain }
+      ),
+      
+      // Get featured proposals for this campaign
+      client.fetch(
+        `*[_type == "proposal" && campaign->domain == $domain && featured == true] | order(priority desc, _createdAt desc)[0...6]{
+          _id,
+          _type,
+          title,
+          slug,
+          campaign,
+          category,
+          summary,
+          content,
+          priority,
+          featured,
+          tags,
+          featuredImage{
+            _type,
+            asset,
+            alt
+          }
+        }`,
+        { domain: campaignDomain }
+      ),
+      
+      // Get upcoming events for this campaign
+      client.fetch(
+        `*[_type == "event" && campaign->domain == $domain && date >= now()] | order(date asc)[0...3]{
+          _id,
+          _type,
+          title,
+          slug,
+          campaign,
+          date,
+          time,
+          location,
+          eventType,
+          featured,
+          featuredImage{
+            _type,
+            asset,
+            alt
+          }
+        }`,
+        { domain: campaignDomain }
+      ),
+      
+      // Get recent posts for this campaign
+      client.fetch(
+        `*[_type == "post" && campaign->domain == $domain] | order(publishedAt desc)[0...3]{
+          _id,
+          _type,
+          title,
+          slug,
+          campaign,
+          publishedAt,
+          excerpt,
+          content,
+          categories,
+          featuredImage{
+            _type,
+            asset,
+            alt
+          }
+        }`,
+        { domain: campaignDomain }
+      ),
+    ])
 
-    const mockPosts: Post[] = [
-      {
-        _id: '1',
-        _type: 'post',
-        title: 'Lançamento da Campanha Viver Lisboa',
-        slug: { current: 'lancamento-campanha' },
-        campaign: { _ref: 'campaign-1', _type: 'reference' },
-        publishedAt: '2025-01-15T10:00:00Z',
-        excerpt: 'Hoje marcamos o início oficial da nossa campanha para as eleições autárquicas de Lisboa.',
-        content: [],
-        categories: ['campanha'],
-      },
-    ]
+    // Merge Sanity data with build config (Sanity takes precedence for images, etc.)
+    const finalCampaign = campaignData ? { ...campaign, ...campaignData } : campaign
 
     return {
       props: {
-        campaign: {
-          _id: '1',
-          _type: 'campaign',
-          title: 'Viver Lisboa',
-          slug: { current: 'viver-lisboa' },
-          description: 'Coligação de esquerda para uma Lisboa mais justa, sustentável e democrática.',
-          domain: 'viverlisboa.pt',
-          location: 'Lisboa',
-          mainColor: '#48B9CA',
-          secondaryColor: '#FF394C',
-          // logo: removed - components will show title as fallback
-        },
-        featuredProposals: mockProposals,
-        upcomingEvents: mockEvents,
-        recentPosts: mockPosts,
+        campaign: finalCampaign,
+        featuredProposals: proposalsData || [],
+        upcomingEvents: eventsData || [],
+        recentPosts: postsData || [],
       },
-      revalidate: 60, // Revalidate every minute
+      // Static generation - no revalidation needed since builds are domain-specific
     }
   } catch (error) {
     console.error('Error fetching homepage data:', error)
     
+    // Fallback to build config data
+    const buildConfig = getBuildConfig()
+    const fallbackCampaign: Campaign = {
+      _id: `campaign-${buildConfig.campaign.slug}`,
+      _type: 'campaign',
+      title: buildConfig.campaign.title,
+      slug: { current: buildConfig.campaign.slug },
+      description: buildConfig.campaign.description,
+      domain: buildConfig.campaign.domain,
+      location: buildConfig.campaign.location,
+      mainColor: buildConfig.campaign.mainColor,
+      secondaryColor: buildConfig.campaign.secondaryColor,
+      socialMedia: buildConfig.campaign.socialMedia,
+    }
+    
     return {
       props: {
-        campaign: {
-          _id: '1',
-          _type: 'campaign',
-          title: 'Viver Lisboa',
-          slug: { current: 'viver-lisboa' },
-          description: 'Coligação de esquerda para uma Lisboa mais justa, sustentável e democrática.',
-          domain: 'viverlisboa.pt',
-          location: 'Lisboa',
-          mainColor: '#48B9CA',
-          secondaryColor: '#FF394C',
-          // logo: removed - components will show title as fallback
-        },
+        campaign: fallbackCampaign,
         featuredProposals: [],
         upcomingEvents: [],
         recentPosts: [],
       },
-      revalidate: 60,
     }
   }
 }

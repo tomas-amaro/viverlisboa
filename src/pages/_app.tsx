@@ -3,88 +3,129 @@ import { useState, useEffect } from 'react'
 import { Layout } from '@/components/layout'
 import { Campaign } from '@/types/sanity'
 import { client } from '@/lib/sanity'
-
-// Mock campaign data - in real implementation would be fetched based on domain
-const mockCampaign: Campaign = {
-  _id: '1',
-  _type: 'campaign',
-  title: 'Viver Lisboa',
-  slug: { current: 'viver-lisboa' },
-  description: 'Coligação de esquerda para uma Lisboa mais justa, sustentável e democrática.',
-  domain: 'viverlisboa.pt',
-  location: 'Lisboa',
-  mainColor: '#48B9CA',
-  secondaryColor: '#FF394C',
-  // logo: removed - components will show title as fallback
-  socialMedia: {
-    facebook: 'https://facebook.com/viverlisboa',
-    instagram: 'https://instagram.com/viverlisboa',
-    twitter: 'https://twitter.com/viverlisboa',
-  },
-}
+import { getBuildConfig, isDevelopment, getDevelopmentCampaign } from '@/lib/buildConfig'
 
 interface CustomAppProps extends AppProps {
   campaign?: Campaign
 }
 
 function MyApp({ Component, pageProps }: CustomAppProps) {
-  const [campaign, setCampaign] = useState<Campaign>(mockCampaign)
+  const [campaign, setCampaign] = useState<Campaign | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchCampaignData = async () => {
+    const initializeCampaign = async () => {
       try {
-        // In real implementation, determine campaign based on domain
-        const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
-        
-        // For development, use mock data
-        if (hostname.includes('localhost') || hostname.includes('vercel.app')) {
-          setCampaign(mockCampaign)
+        // In production, use build-time configuration
+        if (!isDevelopment()) {
+          const buildConfig = getBuildConfig()
+          const campaignData: Campaign = {
+            _id: `campaign-${buildConfig.campaign.slug}`,
+            _type: 'campaign',
+            title: buildConfig.campaign.title,
+            slug: { current: buildConfig.campaign.slug },
+            description: buildConfig.campaign.description,
+            domain: buildConfig.campaign.domain,
+            location: buildConfig.campaign.location,
+            mainColor: buildConfig.campaign.mainColor,
+            secondaryColor: buildConfig.campaign.secondaryColor,
+            socialMedia: buildConfig.campaign.socialMedia,
+          }
+          setCampaign(campaignData)
           setLoading(false)
           return
         }
 
-        // Fetch campaign data from Sanity based on domain
-        const query = `*[_type == "campaign" && domain == $domain][0]{
-          _id,
-          _type,
-          title,
-          slug,
-          description,
-          domain,
-          location,
-          mainColor,
-          secondaryColor,
-          logo{
-            _type,
-            asset,
-            alt
-          },
-          heroImage{
-            _type,
-            asset,
-            alt
-          },
-          socialMedia
-        }`
-
-        const campaignData = await client.fetch(query, { domain: hostname })
+        // In development, try to fetch from Sanity or use development config
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
         
-        if (campaignData) {
-          setCampaign(campaignData)
-        } else {
-          // Fallback to default campaign if no specific campaign found
-          setCampaign(mockCampaign)
+        try {
+          // Try to fetch campaign data from Sanity in development
+          const query = `*[_type == "campaign" && domain == $domain][0]{
+            _id,
+            _type,
+            title,
+            slug,
+            description,
+            domain,
+            location,
+            mainColor,
+            secondaryColor,
+            logo{
+              _type,
+              asset,
+              alt
+            },
+            heroImage{
+              _type,
+              asset,
+              alt
+            },
+            socialMedia
+          }`
+
+          const campaignData = await client.fetch(query, { domain: hostname })
+          
+          if (campaignData) {
+            setCampaign(campaignData)
+          } else {
+            // Fallback to development configuration
+            const devConfig = getDevelopmentCampaign(hostname)
+            const fallbackCampaign: Campaign = {
+              _id: `campaign-${devConfig.slug}`,
+              _type: 'campaign',
+              title: devConfig.title,
+              slug: { current: devConfig.slug },
+              description: devConfig.description,
+              domain: devConfig.domain,
+              location: devConfig.location,
+              mainColor: devConfig.mainColor,
+              secondaryColor: devConfig.secondaryColor,
+              socialMedia: devConfig.socialMedia,
+            }
+            setCampaign(fallbackCampaign)
+          }
+        } catch (sanityError) {
+          console.warn('Could not fetch from Sanity in development, using local config:', sanityError)
+          // Use development configuration as fallback
+          const devConfig = getDevelopmentCampaign(hostname)
+          const fallbackCampaign: Campaign = {
+            _id: `campaign-${devConfig.slug}`,
+            _type: 'campaign',
+            title: devConfig.title,
+            slug: { current: devConfig.slug },
+            description: devConfig.description,
+            domain: devConfig.domain,
+            location: devConfig.location,
+            mainColor: devConfig.mainColor,
+            secondaryColor: devConfig.secondaryColor,
+            socialMedia: devConfig.socialMedia,
+          }
+          setCampaign(fallbackCampaign)
         }
       } catch (error) {
-        console.error('Error fetching campaign data:', error)
-        setCampaign(mockCampaign)
+        console.error('Error initializing campaign:', error)
+        // Final fallback
+        const devConfig = getDevelopmentCampaign()
+        const fallbackCampaign: Campaign = {
+          _id: `campaign-${devConfig.slug}`,
+          _type: 'campaign',
+          title: devConfig.title,
+          slug: { current: devConfig.slug },
+          description: devConfig.description,
+          domain: devConfig.domain,
+          location: devConfig.location,
+          mainColor: devConfig.mainColor,
+          secondaryColor: devConfig.secondaryColor,
+          socialMedia: devConfig.socialMedia,
+        }
+        setCampaign(fallbackCampaign)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchCampaignData()
+    initializeCampaign()
   }, [])
 
   if (loading) {
@@ -118,6 +159,10 @@ function MyApp({ Component, pageProps }: CustomAppProps) {
         </div>
       </div>
     )
+  }
+
+  if (!campaign) {
+    return <div>Error loading campaign data</div>
   }
 
   return (
