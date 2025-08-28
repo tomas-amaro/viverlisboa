@@ -219,7 +219,7 @@ const navigationItems: NavigationItem[] = [
 
 export const Header: React.FC<HeaderProps> = ({ campaign }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isScrolled] = useState(false)
 
   // Efeito para detectar scroll (seria implementado com useEffect)
   // useEffect(() => {

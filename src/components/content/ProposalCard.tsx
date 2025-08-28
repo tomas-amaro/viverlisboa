@@ -255,7 +255,6 @@ const getPriorityLabel = (priority: string): string => {
 export const ProposalCard: React.FC<ProposalCardProps> = ({
   proposal,
   featured = false,
-  compact = false,
 }) => {
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },

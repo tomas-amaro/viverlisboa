@@ -22,8 +22,8 @@ export interface SanityImage {
 export interface PortableTextBlock {
   _key: string;
   _type: string;
-  children: any[];
-  markDefs: any[];
+  children: unknown[];
+  markDefs: unknown[];
   style: string;
 }
 

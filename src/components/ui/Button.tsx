@@ -11,7 +11,7 @@ interface ButtonProps {
   children: React.ReactNode
   href?: string
   // Allow all button and anchor attributes
-  [key: string]: any
+  [key: string]: unknown
 }
 
 const getVariantStyles = (variant: ButtonVariant) => {

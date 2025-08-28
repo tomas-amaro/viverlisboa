@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
-import { Container, Grid, GridItem, Typography } from '@/components/ui'
+import { Container, Typography } from '@/components/ui'
 import { Campaign } from '@/types/sanity'
 import { urlFor } from '@/lib/sanity'
 

@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
+import React from 'react'
 import { Layout } from '@/components/layout'
 import { ContentRenderer } from '@/components/content/ContentRenderer'
 import { Page, Campaign, Proposal, Event } from '@/types/sanity'

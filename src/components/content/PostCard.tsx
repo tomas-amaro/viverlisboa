@@ -237,7 +237,7 @@ const formatDate = (dateString: string): string => {
   })
 }
 
-const calculateReadingTime = (content: any[]): number => {
+const calculateReadingTime = (content: unknown[]): number => {
   // Simplified calculation - in real implementation would traverse portable text
   const averageWordsPerMinute = 200
   const estimatedWords = content.length * 50 // rough estimate

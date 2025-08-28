@@ -2,7 +2,7 @@ import Image from 'next/image'
 import styled, { css } from 'styled-components'
 import { motion } from 'framer-motion'
 import { theme } from '@/styles/theme'
-import { Container, Button, Typography } from '@/components/ui'
+import { Container, Button } from '@/components/ui'
 import { urlFor } from '@/lib/sanity'
 import { SanityImage } from '@/types/sanity'
 
@@ -222,7 +222,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   overlay = true,
   height = 'lg',
   textAlign = 'left',
-  campaignColors,
 }) => {
   const containerVariants = {
     hidden: { opacity: 0 },

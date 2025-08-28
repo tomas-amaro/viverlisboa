@@ -118,24 +118,24 @@ const PortableTextContainer = styled.div`
 // Portable Text components
 const portableTextComponents = {
   block: {
-    h1: ({ children }: any) => <Typography variant="h1" margin={false}>{children}</Typography>,
-    h2: ({ children }: any) => <Typography variant="h2" margin={false}>{children}</Typography>,
-    h3: ({ children }: any) => <Typography variant="h3" margin={false}>{children}</Typography>,
-    h4: ({ children }: any) => <Typography variant="h4" margin={false}>{children}</Typography>,
-    normal: ({ children }: any) => <p>{children}</p>,
-    blockquote: ({ children }: any) => <blockquote>{children}</blockquote>,
+    h1: ({ children }: { children?: React.ReactNode }) => <Typography variant="h1" margin={false}>{children}</Typography>,
+    h2: ({ children }: { children?: React.ReactNode }) => <Typography variant="h2" margin={false}>{children}</Typography>,
+    h3: ({ children }: { children?: React.ReactNode }) => <Typography variant="h3" margin={false}>{children}</Typography>,
+    h4: ({ children }: { children?: React.ReactNode }) => <Typography variant="h4" margin={false}>{children}</Typography>,
+    normal: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
+    blockquote: ({ children }: { children?: React.ReactNode }) => <blockquote>{children}</blockquote>,
   },
   marks: {
-    strong: ({ children }: any) => <strong>{children}</strong>,
-    em: ({ children }: any) => <em>{children}</em>,
-    link: ({ children, value }: any) => (
-      <a href={value.href} target="_blank" rel="noopener noreferrer">
+    strong: ({ children }: { children?: React.ReactNode }) => <strong>{children}</strong>,
+    em: ({ children }: { children?: React.ReactNode }) => <em>{children}</em>,
+    link: ({ children, value }: { children?: React.ReactNode; value?: { href?: string } }) => (
+      <a href={value?.href} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     ),
   },
   types: {
-    image: ({ value }: any) => (
+    image: ({ value }: { value: { alt?: string; caption?: string; asset: { _ref: string } } }) => (
       <ImageContainer>
         <Image
           src={urlFor(value).width(800).height(600).quality(90).url()}
@@ -261,8 +261,7 @@ const PortableTextBlockComponent: React.FC<{
 const ContentBlockComponent: React.FC<ContentBlockProps & { 
   proposals: Proposal[];
   events: Event[];
-  textBlocks: PortableTextBlock[];
-}> = ({ block, campaign, proposals, events, textBlocks }) => {
+}> = ({ block, campaign, proposals, events }) => {
   switch (block._type) {
     case 'hero':
       return <HeroBlockComponent block={block as HeroBlock} campaign={campaign} />
@@ -328,7 +327,6 @@ export const ContentRenderer: React.FC<ContentRendererProps & {
               campaign={campaign}
               proposals={proposals}
               events={events}
-              textBlocks={[]}
             />
           )
         }
