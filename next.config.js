@@ -10,7 +10,8 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
   },
   // Optimize for static builds
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  output: process.env.NEXT_BUILD_TYPE === 'static' ? 'export' : 
+          process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
   
   // Environment variables that will be available to the client
   env: {

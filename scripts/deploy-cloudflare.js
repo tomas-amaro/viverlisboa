@@ -81,15 +81,16 @@ function prepareBuildForCloudflare(domain) {
   fs.writeFileSync(nextConfigPath, staticConfig);
   
   try {
-    // Run static export
+    // Run static build (replaces next export)
     console.log('📦 Generating static export...');
-    execSync('pnpm next export', {
+    execSync('pnpm build', {
       stdio: 'inherit',
       cwd: buildDir,
       env: {
         ...process.env,
         CAMPAIGN_DOMAIN: domain,
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        NEXT_BUILD_TYPE: 'static'
       }
     });
     

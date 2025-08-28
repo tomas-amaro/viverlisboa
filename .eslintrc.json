@@ -3,5 +3,5 @@
     "next/core-web-vitals",
     "next/typescript"
   ],
-  "ignorePatterns": ["scripts/*.js"]
+  "ignorePatterns": ["scripts/*.js", "next.config.js"]
 }
