@@ -114,7 +114,7 @@ function generateDomainConfig(campaigns) {
       domain: campaign.domain,
       title: campaign.title,
       slug: campaign.slug?.current || campaign.domain.replace('.pt', '').replace('.', '-'),
-      description: campaign.description || `Campanha ${campaign.title}`,
+      description: campaign.description || `Campaign ${campaign.title}`,
       location: campaign.location,
       mainColor: campaign.mainColor || '#48B9CA',
       secondaryColor: campaign.secondaryColor || '#FF394C',
@@ -198,8 +198,8 @@ async function main() {
       domains.forEach(domain => console.log(`   • ${domain}`));
       
       console.log('');
-      console.log('🏗️  To build all domains: npm run build:all');
-      console.log('🚀 To deploy all domains: npm run deploy:all');
+      console.log('🏗️  To build all domains: pnpm build:all');
+      console.log('🚀 To deploy all domains: pnpm deploy:all');
       
       domains.forEach(domain => {
         console.log(`   • Build ${domain}: node scripts/build-domain.js ${domain}`);

@@ -16,14 +16,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8.15.1
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        cache: 'npm'
+        node-version: '20.10.0'
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: npm ci
+      run: pnpm install --frozen-lockfile
 
     - name: Discover domains from Sanity
       id: discover
@@ -55,20 +60,25 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8.15.1
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        cache: 'npm'
+        node-version: '20.10.0'
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: npm ci
+      run: pnpm install --frozen-lockfile
 
     - name: Type check
-      run: npm run type-check
+      run: pnpm type-check
 
     - name: Lint
-      run: npm run lint
+      run: pnpm lint
 
     - name: Build domain-specific site
       env:
@@ -137,14 +147,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8.15.1
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
-        cache: 'npm'
+        node-version: '20.10.0'
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: npm ci
+      run: pnpm install --frozen-lockfile
 
     - name: Build all domains
       env:
@@ -153,7 +168,7 @@ jobs:
         NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
         NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
         SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
-      run: npm run build:all
+      run: pnpm build:all
 
     - name: Deploy Lisboa to Cloudflare Pages
       uses: cloudflare/pages-action@v1

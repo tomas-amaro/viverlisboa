@@ -141,7 +141,7 @@ async function main() {
     console.log('');
     console.log('To serve this build:');
     console.log(`  cd builds/${domain}`);
-    console.log('  npm start');
+    console.log('  pnpm start');
     
   } catch (error) {
     console.error('❌ Build failed:', error.message);

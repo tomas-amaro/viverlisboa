@@ -146,7 +146,7 @@ async function deployToCloudflare(domain, environment = 'production') {
     console.error('❌ Deployment failed:', error.message);
     console.log('');
     console.log('Troubleshooting:');
-    console.log('1. Make sure you have wrangler installed: npm install -g wrangler');
+    console.log('1. Make sure you have wrangler installed: pnpm add -g wrangler');
     console.log('2. Make sure you are logged in: wrangler login');
     console.log('3. Check your Cloudflare account and project settings');
     process.exit(1);

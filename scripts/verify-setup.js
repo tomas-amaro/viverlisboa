@@ -99,7 +99,7 @@ check(
   () => fs.existsSync('node_modules') && fs.existsSync('node_modules/next'),
   'Dependencies are installed',
   'Dependencies need to be installed',
-  'Run: npm install'
+  'Run: pnpm install'
 );
 
 // Check 8: TypeScript compilation
@@ -107,7 +107,7 @@ check(
   'TypeScript',
   () => {
     try {
-      execSync('npm run type-check', { stdio: 'pipe' });
+      execSync('pnpm type-check', { stdio: 'pipe' });
       return true;
     } catch {
       return false;
@@ -115,7 +115,7 @@ check(
   },
   'TypeScript compiles without errors',
   'TypeScript has compilation errors',
-  'Run: npm run type-check to see errors'
+  'Run: pnpm type-check to see errors'
 );
 
 console.log('\n' + '='.repeat(50));
@@ -148,6 +148,6 @@ if (!allPassed) {
 }
 
 console.log('\n📚 For detailed setup instructions, see: DEPLOYMENT.md');
-console.log('🔧 For local testing, run: npm run build:all');
+console.log('🔧 For local testing, run: pnpm build:all');
 
 process.exit(allPassed ? 0 : 1);

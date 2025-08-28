@@ -39,7 +39,7 @@ function deployToVercel(domain, buildDir) {
     // Check if vercel CLI is installed
     execSync('vercel --version', { stdio: 'pipe' });
   } catch (error) {
-    throw new Error('Vercel CLI not installed. Run: npm i -g vercel');
+    throw new Error('Vercel CLI not installed. Run: pnpm add -g vercel');
   }
   
   // Deploy with vercel
@@ -57,7 +57,7 @@ function deployToNetlify(domain, buildDir) {
     // Check if netlify CLI is installed
     execSync('netlify --version', { stdio: 'pipe' });
   } catch (error) {
-    throw new Error('Netlify CLI not installed. Run: npm i -g netlify-cli');
+    throw new Error('Netlify CLI not installed. Run: pnpm add -g netlify-cli');
   }
   
   // Deploy with netlify
