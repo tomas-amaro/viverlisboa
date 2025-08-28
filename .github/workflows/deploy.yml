@@ -33,9 +33,9 @@ jobs:
     - name: Discover domains from Sanity
       id: discover
       env:
-        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
-        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
         SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
       run: |
         echo "🔍 Discovering domains from Sanity..."
@@ -84,9 +84,9 @@ jobs:
       env:
         CAMPAIGN_DOMAIN: ${{ matrix.domain }}
         NODE_ENV: production
-        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
-        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
         SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
       run: node scripts/build-domain.js ${{ matrix.domain }}
 
@@ -94,9 +94,9 @@ jobs:
       env:
         CAMPAIGN_DOMAIN: ${{ matrix.domain }}
         NODE_ENV: production
-        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
-        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
       run: |
         cd builds/${{ matrix.domain }}
         # Temporarily modify next.config.js for static export
@@ -130,7 +130,7 @@ jobs:
       uses: cloudflare/pages-action@v1
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         projectName: ${{ steps.cf-project.outputs.project-name }}
         directory: builds/${{ matrix.domain }}/out
         # Deploy to production on main branch, preview on PR
@@ -164,9 +164,9 @@ jobs:
     - name: Build all domains
       env:
         NODE_ENV: production
-        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
-        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
         SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
       run: pnpm build:all
 
@@ -174,7 +174,7 @@ jobs:
       uses: cloudflare/pages-action@v1
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         projectName: 'viver-lisboa'
         directory: builds/viverlisboa.pt
         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -184,7 +184,7 @@ jobs:
       uses: cloudflare/pages-action@v1
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         projectName: 'viver-avenidas'
         directory: builds/viveravenidas.pt
         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -194,7 +194,7 @@ jobs:
       uses: cloudflare/pages-action@v1
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         projectName: 'viver-alvalade'
         directory: builds/viveralvalade.pt
         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
