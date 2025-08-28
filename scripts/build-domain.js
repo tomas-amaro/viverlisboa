@@ -93,7 +93,7 @@ async function main() {
     
     // Run the build
     console.log('📦 Running Next.js build...');
-    execSync('next build', { 
+    execSync('pnpm build', { 
       stdio: 'inherit',
       env: env
     });

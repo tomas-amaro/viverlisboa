@@ -83,7 +83,7 @@ function prepareBuildForCloudflare(domain) {
   try {
     // Run static export
     console.log('📦 Generating static export...');
-    execSync('next export', {
+    execSync('pnpm next export', {
       stdio: 'inherit',
       cwd: buildDir,
       env: {
