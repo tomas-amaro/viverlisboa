@@ -10,38 +10,73 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Available domains
-const AVAILABLE_DOMAINS = [
-  'viverlisboa.pt',
-  'viveravenidas.pt',
-  'viveralvalade.pt'
-];
+// Dynamic domain discovery
+let AVAILABLE_DOMAINS = [];
 
-function printUsage() {
+async function discoverAvailableDomains() {
+  if (AVAILABLE_DOMAINS.length > 0) {
+    return AVAILABLE_DOMAINS; // Already cached
+  }
+  
+  try {
+    console.log('🔍 Discovering domains from Sanity...');
+    const { discoverDomainsFromSanity } = require('./discover-domains');
+    const campaigns = await discoverDomainsFromSanity();
+    AVAILABLE_DOMAINS = campaigns.map(c => c.domain).filter(Boolean);
+    
+    if (AVAILABLE_DOMAINS.length === 0) {
+      console.warn('⚠️  No domains found in Sanity, falling back to hardcoded defaults');
+      AVAILABLE_DOMAINS = [
+        'viverlisboa.pt',
+        'viveravenidas.pt',
+        'viveralvalade.pt'
+      ];
+    }
+    
+    return AVAILABLE_DOMAINS;
+  } catch (error) {
+    console.warn('⚠️  Failed to discover domains from Sanity, using hardcoded defaults:', error.message);
+    AVAILABLE_DOMAINS = [
+      'viverlisboa.pt',
+      'viveravenidas.pt',
+      'viveralvalade.pt'
+    ];
+    return AVAILABLE_DOMAINS;
+  }
+}
+
+async function printUsage() {
   console.log('Usage: node scripts/build-domain.js <domain>');
   console.log('');
   console.log('Available domains:');
-  AVAILABLE_DOMAINS.forEach(domain => {
+  
+  const domains = await discoverAvailableDomains();
+  domains.forEach(domain => {
     console.log(`  - ${domain}`);
   });
+  
   console.log('');
   console.log('Examples:');
-  console.log('  node scripts/build-domain.js viverlisboa.pt');
-  console.log('  node scripts/build-domain.js viveravenidas.pt');
+  console.log(`  node scripts/build-domain.js ${domains[0] || 'viverlisboa.pt'}`);
+  console.log(`  node scripts/build-domain.js ${domains[1] || 'viveravenidas.pt'}`);
+  console.log('');
+  console.log('💡 Domains are discovered dynamically from your Sanity CMS');
 }
 
-function main() {
+async function main() {
   const domain = process.argv[2];
   
   if (!domain) {
     console.error('Error: Domain is required');
-    printUsage();
+    await printUsage();
     process.exit(1);
   }
   
-  if (!AVAILABLE_DOMAINS.includes(domain)) {
+  const availableDomains = await discoverAvailableDomains();
+  
+  if (!availableDomains.includes(domain)) {
     console.error(`Error: Unknown domain "${domain}"`);
-    printUsage();
+    await printUsage();
     process.exit(1);
   }
   
@@ -115,7 +150,13 @@ function main() {
 }
 
 if (require.main === module) {
-  main();
+  main().catch(error => {
+    console.error('❌ Build failed:', error.message);
+    process.exit(1);
+  });
 }
 
-module.exports = { AVAILABLE_DOMAINS };
+module.exports = { 
+  discoverAvailableDomains,
+  AVAILABLE_DOMAINS: () => AVAILABLE_DOMAINS // Function to get current domains
+};

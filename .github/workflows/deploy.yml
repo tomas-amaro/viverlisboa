@@ -1,0 +1,186 @@
+name: Build and Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  discover-domains:
+    runs-on: ubuntu-latest
+    outputs:
+      domains: ${{ steps.discover.outputs.domains }}
+      domain-configs: ${{ steps.discover.outputs.domain-configs }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Discover domains from Sanity
+      id: discover
+      env:
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+        SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+      run: |
+        echo "🔍 Discovering domains from Sanity..."
+        DISCOVERY_OUTPUT=$(node scripts/discover-domains.js --json)
+        DOMAINS=$(echo "$DISCOVERY_OUTPUT" | jq -c '.domains')
+        DOMAIN_CONFIGS=$(echo "$DISCOVERY_OUTPUT" | jq -c '.domainConfigs')
+        
+        echo "domains=$DOMAINS" >> $GITHUB_OUTPUT
+        echo "domain-configs=$DOMAIN_CONFIGS" >> $GITHUB_OUTPUT
+        
+        echo "Found domains: $DOMAINS"
+
+  build-and-deploy:
+    needs: discover-domains
+    runs-on: ubuntu-latest
+    if: ${{ fromJson(needs.discover-domains.outputs.domains)[0] }}
+    strategy:
+      matrix:
+        domain: ${{ fromJson(needs.discover-domains.outputs.domains) }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Type check
+      run: npm run type-check
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Build domain-specific site
+      env:
+        CAMPAIGN_DOMAIN: ${{ matrix.domain }}
+        NODE_ENV: production
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+        SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+      run: node scripts/build-domain.js ${{ matrix.domain }}
+
+    - name: Prepare static build for Cloudflare
+      env:
+        CAMPAIGN_DOMAIN: ${{ matrix.domain }}
+        NODE_ENV: production
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+      run: |
+        cd builds/${{ matrix.domain }}
+        # Temporarily modify next.config.js for static export
+        sed -i 's/output: process.env.NODE_ENV === '\''production'\'' ? '\''standalone'\'' : undefined/output: '\''export'\''/g' next.config.js
+        # Generate static export
+        npx next export
+        # Create _headers file for Cloudflare Pages
+        cat > out/_headers << 'EOF'
+        /*
+          X-Frame-Options: DENY
+          X-Content-Type-Options: nosniff
+          Referrer-Policy: origin-when-cross-origin
+
+        /_next/static/*
+          Cache-Control: public, max-age=31536000, immutable
+
+        /api/*
+          Cache-Control: no-cache, no-store, must-revalidate
+        EOF
+
+    - name: Generate Cloudflare project name
+      id: cf-project
+      run: |
+        DOMAIN="${{ matrix.domain }}"
+        # Convert domain to project name (e.g., viverlisboa.pt -> viver-lisboa)
+        PROJECT_NAME=$(echo "$DOMAIN" | sed 's/\.pt$//' | sed 's/viver/viver-/')
+        echo "project-name=$PROJECT_NAME" >> $GITHUB_OUTPUT
+        echo "Generated project name: $PROJECT_NAME"
+
+    - name: Deploy to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: ${{ steps.cf-project.outputs.project-name }}
+        directory: builds/${{ matrix.domain }}/out
+        # Deploy to production on main branch, preview on PR
+        productionBranch: main
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        wranglerVersion: '3'
+
+  # Optional: Deploy all domains in a single job (alternative approach)
+  build-all:
+    runs-on: ubuntu-latest
+    if: false # Set to true if you prefer building all domains in one job
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build all domains
+      env:
+        NODE_ENV: production
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+        NEXT_PUBLIC_SANITY_API_VERSION: ${{ secrets.NEXT_PUBLIC_SANITY_API_VERSION }}
+        SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+      run: npm run build:all
+
+    - name: Deploy Lisboa to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: 'viver-lisboa'
+        directory: builds/viverlisboa.pt
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        wranglerVersion: '3'
+
+    - name: Deploy Avenidas to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: 'viver-avenidas'
+        directory: builds/viveravenidas.pt
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        wranglerVersion: '3'
+
+    - name: Deploy Alvalade to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: 'viver-alvalade'
+        directory: builds/viveralvalade.pt
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        wranglerVersion: '3'

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Layout } from '@/components/layout'
 import { Campaign } from '@/types/sanity'
 import { client } from '@/lib/sanity'
-import { getBuildConfig, isDevelopment, getDevelopmentCampaign } from '@/lib/buildConfig'
+import { getBuildConfigSync, isDevelopment, getDevelopmentCampaign } from '@/lib/buildConfig'
 
 interface CustomAppProps extends AppProps {
   campaign?: Campaign
@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }: CustomAppProps) {
       try {
         // In production, use build-time configuration
         if (!isDevelopment()) {
-          const buildConfig = getBuildConfig()
+          const buildConfig = getBuildConfigSync()
           const campaignData: Campaign = {
             _id: `campaign-${buildConfig.campaign.slug}`,
             _type: 'campaign',

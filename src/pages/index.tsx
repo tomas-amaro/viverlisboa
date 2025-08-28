@@ -301,7 +301,7 @@ const HomePage: React.FC<HomePageProps> = ({
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
     // Get build-time campaign configuration
-    const buildConfig = getBuildConfig()
+    const buildConfig = await getBuildConfig()
     const campaignDomain = buildConfig.campaign.domain
     
     // Create campaign object from build config
@@ -430,7 +430,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     console.error('Error fetching homepage data:', error)
     
     // Fallback to build config data
-    const buildConfig = getBuildConfig()
+    const buildConfig = await getBuildConfig()
     const fallbackCampaign: Campaign = {
       _id: `campaign-${buildConfig.campaign.slug}`,
       _type: 'campaign',

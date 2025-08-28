@@ -1,25 +1,54 @@
 # Multi-Domain Build System
 
-This project now supports building each domain independently at build time, allowing you to serve different static builds on different domains/URLs.
+This project supports building each domain independently at build time with **automatic domain discovery from Sanity CMS**, allowing you to serve different static builds on different domains/URLs.
 
-## Available Domains
+## 🔍 Dynamic Domain Discovery
 
-- `viverlisboa.pt` - Main Lisboa campaign
-- `viveravenidas.pt` - Avenidas Novas campaign  
-- `viveralvalade.pt` - Alvalade campaign
+Domains are now **automatically discovered from your Sanity CMS**! No more hardcoded configurations.
+
+### Available Commands
+
+```bash
+# Discover all domains from Sanity
+pnpm discover-domains
+
+# Get JSON output for scripts
+pnpm discover-domains:json
+
+# Validate domain configurations
+pnpm validate-domains
+```
+
+### Example Output
+```bash
+✅ Found 3 campaigns in Sanity:
+   • Viver Lisboa (viverlisboa.pt) - Lisboa
+   • Viver Avenidas (viveravenidas.pt) - Avenidas Novas
+   • Viver Alvalade (viveralvalade.pt) - Alvalade
+```
+
+## 🆕 Adding New Domains
+
+To add a new domain:
+1. **Create a new Campaign in Sanity Studio**
+2. **Set the domain field** (e.g., `novocampo.pt`)
+3. **Fill in required fields** (title, colors, location, etc.)
+4. **Push to GitHub** - the new domain will be automatically included in deployments!
+
+**No code changes needed!** 🎉
 
 ## Development
 
 ### Running Development Server
 
 ```bash
-# Default development (uses viverlisboa.pt)
-npm run dev
+# Default development (auto-detects from available domains)
+pnpm dev
 
-# Domain-specific development
-npm run dev:lisboa       # viverlisboa.pt
-npm run dev:avenidas     # viveravenidas.pt
-npm run dev:alvalade     # viveralvalade.pt
+# Domain-specific development (use discovered domains)
+pnpm dev:lisboa       # viverlisboa.pt
+pnpm dev:avenidas     # viveravenidas.pt
+pnpm dev:alvalade     # viveralvalade.pt
 ```
 
 In development, the system will:
@@ -32,29 +61,28 @@ In development, the system will:
 ### Single Domain Build
 
 ```bash
-# Using npm scripts
-npm run build:lisboa     # Build viverlisboa.pt
-npm run build:avenidas   # Build viveravenidas.pt
-npm run build:alvalade   # Build viveralvalade.pt
+# Build specific domain (use actual domains from discovery)
+pnpm build:domain viverlisboa.pt
+pnpm build:domain viveravenidas.pt
 
-# Using build script directly
-npm run build:domain viverlisboa.pt
-npm run build:domain viveravenidas.pt
-npm run build:domain viveralvalade.pt
+# Check available domains first
+pnpm discover-domains
 
-# Alternative direct script usage
-node scripts/build-domain.js viverlisboa.pt
+# Then build discovered domains
+node scripts/build-domain.js [discovered-domain]
 ```
 
 ### Build All Domains
 
 ```bash
-# Build all domains in parallel
-npm run build:all
+# Build all domains in parallel (automatically discovered)
+pnpm build:all
 
 # Alternative
 node scripts/build-all-domains.js
 ```
+
+**💡 The build system automatically discovers all domains from Sanity and builds each one!**
 
 ## Build Output
 
@@ -64,65 +92,84 @@ Each domain build creates a separate directory:
 builds/
 ├── viverlisboa.pt/
 │   ├── .next/              # Next.js build output
+│   ├── out/                # Static export for Cloudflare
 │   ├── public/             # Static assets
 │   ├── package.json        # Dependencies
 │   ├── next.config.js      # Configuration
 │   └── deployment-info.json # Build metadata
 ├── viveravenidas.pt/
 │   └── ...
-└── viveralvalade.pt/
+└── [any-new-domain]/
     └── ...
 ```
 
-## Deployment
+## 🚀 Deployment
 
-### Vercel Deployment
+### Primary: Cloudflare Pages (Automatic)
+
+The main deployment method uses **GitHub Actions** with automatic domain discovery:
 
 ```bash
-# Deploy specific domain to Vercel
-npm run deploy:domain viverlisboa.pt vercel
+# Automatic deployment on git push
+git push origin main
 
-# Alternative
-node scripts/deploy-domain.js viverlisboa.pt vercel
+# The system will:
+# 1. Discover domains from Sanity
+# 2. Build each domain in parallel
+# 3. Deploy to Cloudflare Pages
 ```
 
-### Netlify Deployment
+### Manual Cloudflare Deployment
 
 ```bash
-# Deploy specific domain to Netlify
-npm run deploy:domain viveravenidas.pt netlify
+# Deploy specific domain to Cloudflare Pages
+pnpm deploy:cloudflare viverlisboa.pt production
+pnpm deploy:cloudflare viveravenidas.pt preview
 
-# Alternative
-node scripts/deploy-domain.js viveravenidas.pt netlify
+# Auto-discovery and deployment
+node scripts/deploy-cloudflare.js [discovered-domain] [environment]
 ```
 
-### Manual Deployment
+### Alternative: Vercel/Netlify
 
 ```bash
-# Get manual deployment instructions
-npm run deploy:domain viveralvalade.pt manual
-
-# Alternative
-node scripts/deploy-domain.js viveralvalade.pt manual
+# Legacy deployment methods (if needed)
+pnpm deploy:domain viverlisboa.pt vercel
+pnpm deploy:domain viveravenidas.pt netlify
 ```
 
 ## How It Works
 
+### Dynamic Domain Discovery
+
+The system fetches domains from Sanity CMS at build time:
+
+```javascript
+// scripts/discover-domains.js
+const campaigns = await client.fetch(`
+  *[_type == "campaign" && defined(domain)] | order(title asc) {
+    _id, title, domain, location, mainColor, secondaryColor
+  }
+`);
+```
+
 ### Build-Time Configuration
 
-Each build uses the `CAMPAIGN_DOMAIN` environment variable to determine which campaign configuration to use:
+Each build uses the `CAMPAIGN_DOMAIN` environment variable:
 
 ```javascript
 // src/lib/buildConfig.ts
 export function getBuildConfig(): BuildConfig {
   const campaignDomain = process.env.CAMPAIGN_DOMAIN || 'viverlisboa.pt'
-  // Returns appropriate campaign configuration
+  
+  // Fetch configuration from Sanity or use fallback
+  return await getCampaignConfig(campaignDomain)
 }
 ```
 
 ### Static Data Fetching
 
-Pages use `getStaticProps` to fetch campaign-specific data at build time:
+Pages use `getStaticProps` to fetch campaign-specific data:
 
 ```javascript
 // src/pages/index.tsx
@@ -141,39 +188,23 @@ export const getStaticProps: GetStaticProps = async () => {
 }
 ```
 
-### Client-Side Rendering
-
-The app component uses build-time configuration in production and falls back to runtime detection in development:
-
-```javascript
-// src/pages/_app.tsx
-useEffect(() => {
-  if (!isDevelopment()) {
-    // Production: use build-time configuration
-    const buildConfig = getBuildConfig()
-    setCampaign(buildConfig.campaign)
-  } else {
-    // Development: fetch from Sanity or use dev config
-    // ...
-  }
-}, [])
-```
-
 ## Configuration Management
 
-### Domain Configuration
+### Sanity-Based Configuration
 
-Campaign configurations are defined in `src/lib/buildConfig.ts`:
+Campaign configurations are now stored in **Sanity CMS**:
 
 ```javascript
-const DOMAIN_CONFIGS = {
-  'viverlisboa.pt': {
-    title: 'Viver Lisboa',
-    mainColor: '#48B9CA',
-    secondaryColor: '#FF394C',
-    // ...
-  },
-  // ...
+// Sanity Campaign Schema
+{
+  _type: "campaign",
+  title: "Viver Lisboa",
+  domain: "viverlisboa.pt",
+  mainColor: "#48B9CA",
+  secondaryColor: "#FF394C",
+  location: "Lisboa",
+  description: "Campaign description...",
+  // All configuration in CMS!
 }
 ```
 
@@ -181,11 +212,13 @@ const DOMAIN_CONFIGS = {
 
 - `CAMPAIGN_DOMAIN` - Specifies which domain to build (production)
 - `DEV_CAMPAIGN_DOMAIN` - Specifies which domain to use in development
-- `NODE_ENV` - Environment (development/production)
+- `NEXT_PUBLIC_SANITY_PROJECT_ID` - Sanity project ID
+- `NEXT_PUBLIC_SANITY_DATASET` - Sanity dataset
+- `SANITY_API_TOKEN` - API token for build-time fetching
 
-### Sanity Integration
+### Dynamic Sanity Integration
 
-The system fetches content from Sanity CMS based on the campaign domain:
+The system fetches content based on campaign domain:
 
 ```javascript
 // Queries filter by campaign domain
@@ -194,68 +227,92 @@ const query = `*[_type == "proposal" && campaign->domain == $domain]`
 
 ## Benefits
 
-1. **Static Builds**: Each domain gets a completely static build that can be served from CDN
-2. **Independent Deployment**: Deploy each domain separately without affecting others
-3. **Performance**: No runtime domain detection or API calls needed
-4. **SEO Friendly**: Each domain has its own optimized static content
-5. **Cost Effective**: Static hosting is cheaper than server-side rendering
-6. **Scalability**: Easy to add new domains/campaigns
+1. **🔄 Fully Dynamic**: Add domains by creating campaigns in Sanity Studio
+2. **🚀 Static Builds**: Each domain gets a completely static build for CDN
+3. **⚡ Independent Deployment**: Deploy each domain separately without affecting others
+4. **🎯 Performance**: No runtime domain detection or API calls needed
+5. **📈 SEO Friendly**: Each domain has its own optimized static content
+6. **💰 Cost Effective**: Static hosting is cheaper than server-side rendering
+7. **📊 Scalability**: Easy to add unlimited domains/campaigns
+8. **🛠️ No Code Changes**: Add new domains without touching code
 
 ## Development Workflow
 
-1. **Add New Domain**: Update `DOMAIN_CONFIGS` in `buildConfig.ts`
-2. **Development**: Use `npm run dev:domain` to test specific domains
-3. **Content**: Add campaign-specific content in Sanity CMS
-4. **Build**: Use `npm run build:domain <domain>` to build specific domain
-5. **Deploy**: Use `npm run deploy:domain <domain> <platform>` to deploy
+1. **Add New Domain**: Create campaign in Sanity Studio with domain field
+2. **Discovery**: Use `pnpm discover-domains` to see available domains
+3. **Development**: Use `pnpm dev:domain` or domain-specific scripts
+4. **Content**: Add campaign-specific content in Sanity CMS
+5. **Build**: Use `pnpm build:domain <domain>` or `pnpm build:all`
+6. **Deploy**: Push to GitHub for automatic deployment
 
 ## Troubleshooting
+
+### No Domains Found
+
+```bash
+# Check Sanity connection
+pnpm discover-domains
+
+# Verify environment variables
+echo $NEXT_PUBLIC_SANITY_PROJECT_ID
+echo $NEXT_PUBLIC_SANITY_DATASET
+echo $SANITY_API_TOKEN
+```
 
 ### Build Fails
 
 ```bash
-# Check if domain exists
-node scripts/build-domain.js unknown-domain.pt
-# Error: Unknown domain "unknown-domain.pt"
+# Check if domain exists in Sanity
+pnpm discover-domains
 
-# Check available domains
-node scripts/build-domain.js
-# Shows usage and available domains
+# Build specific discovered domain
+node scripts/build-domain.js [discovered-domain]
+
+# Check build logs for Sanity connection issues
 ```
 
 ### Missing Environment Variables
 
 ```bash
 # Set explicitly for builds
-CAMPAIGN_DOMAIN=viverlisboa.pt npm run build
+CAMPAIGN_DOMAIN=viverlisboa.pt pnpm build
 ```
 
 ### Sanity Connection Issues
 
-The system falls back to local configuration if Sanity is unavailable, but for production builds with full content, ensure:
+For production builds with full content, ensure:
 
 1. `NEXT_PUBLIC_SANITY_PROJECT_ID` is set
 2. `NEXT_PUBLIC_SANITY_DATASET` is set  
 3. `SANITY_API_TOKEN` is set (for build-time fetching)
-4. Sanity project has campaign data for the domain
+4. Sanity project has campaign data with domain fields
+5. Campaigns are published (not drafts)
 
 ### Development Issues
 
 ```bash
 # Force specific campaign in development
-DEV_CAMPAIGN_DOMAIN=viveravenidas.pt npm run dev
+DEV_CAMPAIGN_DOMAIN=viveravenidas.pt pnpm dev
 
 # Or use domain-specific scripts
-npm run dev:avenidas
+pnpm dev:avenidas
+
+# Check available development options
+pnpm discover-domains
 ```
 
-## Migration from Runtime Domain Detection
+## Migration from Hardcoded Configuration
 
-The old system detected domains at runtime and fetched data dynamically. The new system:
+The old system used hardcoded domain configurations. The new system:
 
-1. ✅ Builds static files for each domain
-2. ✅ Fetches all data at build time
-3. ✅ Uses environment variables for configuration
-4. ✅ Supports development fallbacks
-5. ✅ Maintains same component structure
-6. ✅ Works with existing Sanity schemas
+1. ✅ **Dynamic Discovery**: Domains discovered from Sanity CMS
+2. ✅ **No Code Changes**: Add domains via Sanity Studio
+3. ✅ **Automatic Deployment**: GitHub Actions handles everything
+4. ✅ **Builds Static Files**: Each domain gets optimized static build
+5. ✅ **Fetches All Data**: Build-time data fetching from Sanity
+6. ✅ **Environment Variables**: Clean configuration management
+7. ✅ **Development Fallbacks**: Works offline with local config
+8. ✅ **Same Components**: Maintains existing component structure
+9. ✅ **Existing Schemas**: Works with current Sanity schemas
+
+**🎉 The new system is fully backward-compatible but much more flexible!**

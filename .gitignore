@@ -48,6 +48,5 @@ dist
 Thumbs.db
 
 # package managers
-pnpm-lock.yaml
 yarn.lock
 package-lock.json

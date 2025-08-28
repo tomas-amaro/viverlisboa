@@ -118,7 +118,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   
   if (!isDevelopment()) {
     // Production: Generate paths for the current campaign domain only
-    const buildConfig = getBuildConfig()
+    const buildConfig = await getBuildConfig()
     const campaignDomain = buildConfig.campaign.domain
     
     try {
@@ -180,7 +180,7 @@ export const getStaticProps: GetStaticProps<DynamicPageProps> = async ({ params 
     
     if (!isDevelopment()) {
       // Production: Use build-time configuration
-      const buildConfig = getBuildConfig()
+      const buildConfig = await getBuildConfig()
       campaignDomain = buildConfig.campaign.domain
     } else {
       // Development: Try to get from environment or default
@@ -331,7 +331,7 @@ export const getStaticProps: GetStaticProps<DynamicPageProps> = async ({ params 
     let finalCampaign = campaignData
     if (!campaignData) {
       if (!isDevelopment()) {
-        const buildConfig = getBuildConfig()
+        const buildConfig = await getBuildConfig()
         finalCampaign = {
           _id: `campaign-${buildConfig.campaign.slug}`,
           _type: 'campaign' as const,

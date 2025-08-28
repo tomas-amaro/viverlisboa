@@ -7,7 +7,7 @@
 
 const { execSync, spawn } = require('child_process');
 const path = require('path');
-const { AVAILABLE_DOMAINS } = require('./build-domain');
+const { discoverAvailableDomains } = require('./build-domain');
 
 async function buildDomain(domain) {
   return new Promise((resolve, reject) => {
@@ -48,7 +48,16 @@ async function buildDomain(domain) {
 
 async function main() {
   console.log('🏗️  Building all domains...');
-  console.log(`Domains: ${AVAILABLE_DOMAINS.join(', ')}`);
+  
+  // Discover available domains from Sanity
+  const availableDomains = await discoverAvailableDomains();
+  
+  if (availableDomains.length === 0) {
+    console.error('❌ No domains found to build');
+    process.exit(1);
+  }
+  
+  console.log(`Domains: ${availableDomains.join(', ')}`);
   console.log('');
   
   const startTime = Date.now();
@@ -56,7 +65,7 @@ async function main() {
   
   try {
     // Build domains in parallel
-    const promises = AVAILABLE_DOMAINS.map(domain => 
+    const promises = availableDomains.map(domain => 
       buildDomain(domain).catch(error => ({ ...error, failed: true }))
     );
     
@@ -99,5 +108,8 @@ async function main() {
 }
 
 if (require.main === module) {
-  main();
+  main().catch(error => {
+    console.error('❌ Build process failed:', error.message);
+    process.exit(1);
+  });
 }

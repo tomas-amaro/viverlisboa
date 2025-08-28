@@ -1,259 +1,343 @@
-# Viver Lisboa - Site de Campanha Política
+# Viver Lisboa - Political Campaign Website
 
-Um site moderno de campanha política desenvolvido em React/Next.js com gestão de conteúdo através de Sanity CMS. Suporta múltiplas campanhas (Viver Lisboa, Viver Avenidas, Viver Alvalade, etc.) através de configuração por domínio.
+A modern political campaign website built with React/Next.js and content management through Sanity CMS. Supports multiple campaigns (Viver Lisboa, Viver Avenidas, Viver Alvalade, etc.) through dynamic domain discovery.
 
-## 🚀 Características
+## 🚀 Features
 
-- **Design System Completo**: Baseado na identidade visual da campanha com cores e tipografia oficiais
-- **CMS Dinâmico**: Gestão completa de conteúdo através de Sanity
-- **Multi-domínio**: Suporte para diferentes campanhas em domínios específicos
-- **SEO Otimizado**: Meta tags, structured data, sitemaps e otimizações de performance
-- **Responsive**: Design totalmente adaptativo para todos os dispositivos
-- **Acessibilidade**: Componentes acessíveis com navegação por teclado e leitores de ecrã
-- **Performance**: Otimizado para carregamento rápido e boa experiência do utilizador
+- **Complete Design System**: Based on campaign visual identity with official colors and typography
+- **Dynamic CMS**: Complete content management through Sanity with automatic domain discovery
+- **Multi-Domain**: Support for different campaigns on specific domains, automatically discovered from Sanity
+- **SEO Optimized**: Meta tags, structured data, sitemaps and performance optimizations
+- **Responsive**: Fully adaptive design for all devices
+- **Accessibility**: Accessible components with keyboard navigation and screen reader support
+- **Performance**: Optimized for fast loading and great user experience
+- **Dynamic Deployment**: Automatic domain discovery and deployment through GitHub Actions
 
-## 🛠 Tecnologias
+## 🛠 Technologies
 
 - **Frontend**: Next.js 14, React 18, TypeScript
-- **Styling**: Styled Components com design system personalizado
-- **CMS**: Sanity.io para gestão de conteúdo
-- **Animações**: Framer Motion
-- **Deployment**: Vercel (recomendado)
+- **Styling**: Styled Components with custom design system
+- **CMS**: Sanity.io for content management
+- **Animations**: Framer Motion
+- **Deployment**: Cloudflare Pages with GitHub Actions
+- **Domain Discovery**: Dynamic discovery from Sanity CMS
 
-## 📦 Instalação
+## 📦 Installation
 
-1. **Clone o repositório**
+1. **Clone the repository**
 ```bash
-git clone [url-do-repositorio]
-cd viver-lisboa-website
+git clone [repository-url]
+cd viveravenidas
 ```
 
-2. **Instalar dependências**
+2. **Install dependencies**
 ```bash
 pnpm install
 ```
 
-3. **Configurar variáveis de ambiente**
-Crie um arquivo `.env.local` na raiz do projeto:
+3. **Set up environment variables**
+Create a `.env.local` file in the project root:
 
 ```env
 # Sanity Configuration
 NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
 NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2025-08-20
 SANITY_API_TOKEN=your_sanity_api_token
 
-# Site Configuration
-NEXT_PUBLIC_SITE_URL=https://viverlisboa.pt
+# Development Override (optional)
+DEV_CAMPAIGN_DOMAIN=viverlisboa.pt
 
-# Analytics (opcional)
+# Analytics (optional)
 NEXT_PUBLIC_GA_ID=your_google_analytics_id
-
-# Social Media
-NEXT_PUBLIC_FACEBOOK_URL=https://facebook.com/viverlisboa
-NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/viverlisboa
-NEXT_PUBLIC_TWITTER_URL=https://twitter.com/viverlisboa
 ```
 
-4. **Configurar Sanity**
+4. **Set up Sanity**
 ```bash
-
-# Fazer login no Sanity
+# Login to Sanity
 pnpm sanity login
 
-# Inicializar projeto Sanity (se ainda não existir)
+# Initialize Sanity project (if it doesn't exist)
 pnpm sanity init
 
-# Executar Sanity Studio
+# Run Sanity Studio
 pnpm sanity dev
 ```
 
-5. **Executar em desenvolvimento**
+5. **Run in development**
 ```bash
-pnpm run dev
+pnpm dev
 ```
 
-O site estará disponível em `http://localhost:3000` e o Sanity Studio em `http://localhost:3333`.
+The site will be available at `http://localhost:3000` and Sanity Studio at `http://localhost:3333`.
 
-## 🏗 Estrutura do Projeto
+## 🏗 Project Structure
 
 ```
 src/
 ├── components/
-│   ├── ui/               # Componentes base do design system
-│   ├── layout/           # Componentes de layout (Header, Footer)
-│   └── content/          # Componentes de conteúdo específicos
+│   ├── ui/               # Base design system components
+│   ├── layout/           # Layout components (Header, Footer)
+│   └── content/          # Specific content components
 ├── lib/
-│   └── sanity.ts         # Configuração do Sanity
+│   ├── buildConfig.ts    # Dynamic build configuration
+│   └── sanity.ts         # Sanity configuration
 ├── pages/
-│   ├── _app.tsx          # Configuração global da app
-│   ├── _document.tsx     # Documento HTML customizado
-│   ├── index.tsx         # Página inicial
-│   └── 404.tsx           # Página de erro 404
+│   ├── _app.tsx          # Global app configuration
+│   ├── _document.tsx     # Custom HTML document
+│   ├── index.tsx         # Homepage
+│   ├── [slug].tsx        # Dynamic pages
+│   └── 404.tsx           # 404 error page
 ├── styles/
-│   ├── theme.ts          # Design system (cores, tipografia, etc.)
-│   └── GlobalStyles.ts   # Estilos globais
+│   ├── theme.ts          # Design system (colors, typography, etc.)
+│   └── GlobalStyles.ts   # Global styles
 ├── types/
-│   └── sanity.ts         # Tipos TypeScript para Sanity
-schemas/                  # Schemas do Sanity CMS
-├── campaign.ts           # Schema das campanhas
-├── page.ts               # Schema das páginas
-├── post.ts               # Schema das notícias
-├── event.ts              # Schema dos eventos
-├── proposal.ts           # Schema das propostas
-└── blockContent.ts       # Schema do conteúdo rich text
+│   └── sanity.ts         # TypeScript types for Sanity
+└── sanity/               # Sanity CMS configuration
+    ├── schemaTypes/      # Content schemas
+    └── lib/              # Sanity utilities
 ```
 
 ## 🎨 Design System
 
-O projeto inclui um design system completo baseado na identidade visual da campanha:
+The project includes a complete design system based on campaign visual identity:
 
-### Cores
-- **Azul PS**: `#48B9CA` (cor primária)
-- **Azul Teal**: `#23757E` (cor secundária)
-- **Vermelho Vivo**: `#FF394C` (destaque)
-- **Carmin**: `#7D3C4B` (apoio)
-- **Branco**: `#FFFFFF`
+### Colors
+- **PS Blue**: `#48B9CA` (primary color)
+- **Teal Blue**: `#23757E` (secondary color)
+- **Vivid Red**: `#FF394C` (accent)
+- **Carmine**: `#7D3C4B` (support)
+- **White**: `#FFFFFF`
 
-### Tipografia
-- **Fonte Principal**: Gotham (com fallback para Inter/system fonts)
-- **Pesos**: Light (300), Normal (400), Medium (500), Semibold (600), Bold (700), Black (900)
+### Typography
+- **Main Font**: Gotham (with fallback to Inter/system fonts)
+- **Weights**: Light (300), Normal (400), Medium (500), Semibold (600), Bold (700), Black (900)
 
-### Componentes
-- Button (4 variantes, 3 tamanhos)
-- Typography (hierarquia completa H1-H6)
-- Card (com hover effects e shadows)
-- Grid system responsivo
-- Container com breakpoints
+### Components
+- Button (4 variants, 3 sizes)
+- Typography (complete H1-H6 hierarchy)
+- Card (with hover effects and shadows)
+- Responsive grid system
+- Container with breakpoints
 
-## 📝 Gestão de Conteúdo (Sanity)
+## 📝 Content Management (Sanity)
 
-### Schemas Disponíveis
+### Available Schemas
 
-1. **Campaign**: Configuração de cada campanha (logo, cores, domínio)
-2. **Page**: Páginas estáticas com conteúdo flexível
-3. **Post**: Notícias e comunicados
-4. **Event**: Eventos da campanha
-5. **Proposal**: Propostas políticas por categoria
-6. **Block Content**: Rich text editor para conteúdo
+1. **Campaign**: Configuration for each campaign (logo, colors, domain)
+2. **Page**: Static pages with flexible content
+3. **Post**: News and announcements
+4. **Event**: Campaign events
+5. **Proposal**: Political proposals by category
+6. **Block Content**: Rich text editor for content
 
-### Criação de Conteúdo
+### Content Creation
 
-1. Aceda ao Sanity Studio
-2. Crie primeiro uma "Campanha" com as configurações base
-3. Adicione páginas, propostas, eventos e notícias associadas à campanha
-4. O conteúdo será automaticamente sincronizado com o site
+1. Access Sanity Studio at `/studio`
+2. First create a "Campaign" with base configurations and **set the domain field**
+3. Add pages, proposals, events and news associated with the campaign
+4. Content will be automatically synchronized with the website
 
-## 🌐 Multi-domínio
+## 🌐 Multi-Domain System
 
-O sistema suporta múltiplas campanhas através de domínios:
+The system automatically discovers domains from your Sanity CMS! No more hardcoded configurations.
 
-- `viverlisboa.pt` → Campanha principal
-- `viveravenidas.pt` → Campanha Avenidas Novas
-- `viveralvalade.pt` → Campanha Alvalade
+### How It Works
 
-### Configuração
-1. No Sanity, crie diferentes campanhas com os respetivos domínios
-2. Configure DNS dos domínios para apontar para o deployment
-3. A aplicação automaticamente carrega a campanha baseada no domínio
+1. **Automatic Discovery**: Fetches all campaigns with defined domains from Sanity
+2. **Dynamic Project Names**: Generates appropriate Cloudflare Pages project names
+3. **Independent Builds**: Builds and deploys each domain independently
+
+### Adding New Domains
+
+To add a new domain:
+1. **Create a new Campaign in Sanity Studio**
+2. **Set the domain field** (e.g., `novocampo.pt`)
+3. **Fill in required fields** (title, colors, location, etc.)
+4. **Push to GitHub** - the new domain will be automatically included in deployments!
+
+### Domain Discovery Commands
+
+```bash
+# See all available domains
+pnpm discover-domains
+
+# Get JSON output for scripts
+pnpm discover-domains:json
+
+# Validate domain configurations
+pnpm validate-domains
+```
 
 ## 🚀 Deployment
 
-### Vercel (Recomendado)
+### Automatic Deployment (GitHub Actions)
 
-1. **Conectar repositório**
-   - Importe o projeto no Vercel
-   - Configure as variáveis de ambiente
+The project uses a fully automated deployment system:
 
-2. **Configurar domínios**
-   - Adicione todos os domínios no Vercel
-   - Configure DNS para apontar para Vercel
+- **Pull Requests**: Creates preview deployments for all domains
+- **Main Branch**: Creates production deployments with custom domains
+- **Matrix Strategy**: Builds and deploys each domain in parallel
+- **Dynamic Discovery**: Automatically includes new domains from Sanity
 
-3. **Deploy automático**
-   - Cada push para `main` faz deploy automático
-   - Preview deployments para branches
-
-### Outras plataformas
-O projeto é compatível com qualquer plataforma que suporte Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-
-## 🔧 Comandos Disponíveis
+### Manual Deployment
 
 ```bash
-# Desenvolvimento
-pnpm run dev          # Executar em modo desenvolvimento
-pnpm run build        # Build para produção
-pnpm run start        # Executar versão de produção
-pnpm run lint         # Verificar code style
-pnpm run type-check   # Verificar tipos TypeScript
+# Local manual deployment
+pnpm deploy:cloudflare viverlisboa.pt production
+pnpm deploy:cloudflare viveravenidas.pt preview
 
-# Sanity
-pnpm sanity dev           # Executar Sanity Studio
-pnpm sanity deploy        # Deploy do Studio
-pnpm sanity dataset export # Exportar dados
+# Deploy specific domain
+pnpm deploy:cloudflare [domain] [environment]
 ```
 
-## 📊 SEO e Performance
+### Deployment Architecture
 
-### Implementações SEO
-- Meta tags dinâmicas por página
-- Open Graph e Twitter Cards
+```
+GitHub Push
+    ↓
+GitHub Actions
+    ↓
+Domain Discovery Job
+    ├── Fetches campaigns from Sanity CMS
+    ├── Discovers available domains dynamically
+    └── Generates deployment matrix
+    ↓
+Parallel Build & Deploy Jobs (Matrix Strategy)
+    ├── Build [domain1] → Deploy to [project-name1].pages.dev
+    ├── Build [domain2] → Deploy to [project-name2].pages.dev  
+    └── Build [domainN] → Deploy to [project-nameN].pages.dev
+```
+
+**🔄 Fully Dynamic**: Adding a new campaign in Sanity automatically includes it in future deployments!
+
+## 🔧 Available Commands
+
+```bash
+# Development
+pnpm dev                     # Run in development mode
+pnpm dev:lisboa             # Run with Lisboa campaign
+pnpm dev:avenidas           # Run with Avenidas campaign
+pnpm dev:alvalade           # Run with Alvalade campaign
+
+# Building
+pnpm build                  # Build for production
+pnpm build:domain           # Build specific domain
+pnpm build:all              # Build all domains (auto-discovered)
+
+# Domain Management
+pnpm discover-domains       # See all available domains
+pnpm validate-domains       # Validate domain configurations
+pnpm verify-setup          # Verify deployment setup
+
+# Deployment
+pnpm deploy:cloudflare      # Deploy to Cloudflare Pages
+pnpm deploy:preview         # Quick preview deployment
+pnpm deploy:production      # Quick production deployment
+
+# Utilities
+pnpm lint                   # Check code style
+pnpm type-check            # Check TypeScript types
+pnpm setup:check           # Combined setup verification
+
+# Sanity
+pnpm studio                # Run Sanity Studio
+pnpm sanity:build          # Build Sanity Studio
+pnpm sanity:deploy         # Deploy Sanity Studio
+pnpm seed                  # Seed test data
+pnpm clear-data            # Clear test data
+```
+
+## 📊 SEO and Performance
+
+### SEO Implementations
+- Dynamic meta tags per page
+- Open Graph and Twitter Cards
 - Structured data (JSON-LD)
-- Sitemap automático
+- Automatic sitemap
 - Canonical URLs
-- Meta robots configurável
+- Configurable meta robots
 
-### Otimizações de Performance
+### Performance Optimizations
 - Next.js Image optimization
-- Lazy loading de componentes
-- Code splitting automático
-- Preconnect para recursos externos
+- Component lazy loading
+- Automatic code splitting
+- Preconnect for external resources
 - Critical CSS inline
 
-## ♿ Acessibilidade
+## ♿ Accessibility
 
-- Navegação por teclado completa
-- Aria labels e roles adequados
-- Contraste de cores WCAG AA
-- Skip links para conteúdo principal
-- Texto alternativo em imagens
-- Foco visível em elementos interativos
+- Complete keyboard navigation
+- Appropriate aria labels and roles
+- WCAG AA color contrast
+- Skip links to main content
+- Alternative text for images
+- Visual focus on interactive elements
 
-## 🔒 Segurança
+## 🔒 Security
 
-- Headers de segurança configurados
-- Sanitização de conteúdo
-- Validação de forms
-- Rate limiting (recomendado adicionar)
-- HTTPS obrigatório
+- Configured security headers
+- Content sanitization
+- Form validation
+- HTTPS required
 
-## 📱 Responsividade
+## 📱 Responsiveness
 
-Breakpoints configurados:
+Configured breakpoints:
 - Mobile: < 640px
 - Tablet: 640px - 1024px
 - Desktop: > 1024px
 - Large: > 1280px
 
-## 🤝 Contribuição
+## 🛠 Setup and Configuration
 
-1. Fork o projeto
-2. Crie uma branch para a feature (`git checkout -b feature/AmazingFeature`)
-3. Commit as mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+### Prerequisites
 
-## 📞 Suporte
+1. **Cloudflare Account** with Pages enabled
+2. **GitHub Repository** with Actions enabled
+3. **Sanity CMS Project** with API access
 
-Para questões técnicas ou suporte:
-- Email: tech@viverlisboa.pt
-- Issues no GitHub
+### Environment Variables
 
-## 📄 Licença
+Required for GitHub Actions:
 
-Este projeto está licenciado sob MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
+```bash
+# Cloudflare Configuration
+CLOUDFLARE_API_TOKEN=your_api_token_here
+CLOUDFLARE_ACCOUNT_ID=your_account_id_here
+
+# Sanity CMS Configuration
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_sanity_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2025-08-20
+SANITY_API_TOKEN=your_sanity_api_token
+```
+
+### Getting Started
+
+1. **Set up Sanity**: Create campaigns with domain fields
+2. **Configure GitHub secrets**: Add required environment variables
+3. **Create Cloudflare Pages projects**: Use generated project names from domain discovery
+4. **Push to GitHub**: Automatic deployment will begin
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📞 Support
+
+For technical questions or support:
+- GitHub Issues
+- Check [DEPLOYMENT.md](DEPLOYMENT.md) for detailed setup instructions
+
+## 📄 License
+
+This project is licensed under MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Desenvolvido para a campanha Viver Lisboa 2025** 🏛️✊
+**Built for political campaigns with modern web technologies** 🏛️✊

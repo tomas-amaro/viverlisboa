@@ -1,6 +1,7 @@
 /**
  * Build-time configuration for domain-specific builds
  * This file determines which campaign data to use based on build environment
+ * Now supports dynamic domain discovery from Sanity CMS
  */
 
 export interface BuildConfig {
@@ -20,7 +21,9 @@ export interface BuildConfig {
   };
 }
 
-// Domain configurations - these match your Sanity campaigns
+// Fallback domain configurations when Sanity is not available
+// In production builds, the system will try to fetch from Sanity first
+// These configurations should match your Sanity campaigns as fallbacks
 const DOMAIN_CONFIGS: Record<string, BuildConfig["campaign"]> = {
   "viverlisboa.pt": {
     domain: "viverlisboa.pt",
@@ -69,9 +72,32 @@ const DOMAIN_CONFIGS: Record<string, BuildConfig["campaign"]> = {
 
 /**
  * Get build configuration based on CAMPAIGN_DOMAIN environment variable
- * Falls back to viverlisboa.pt if not specified
+ * Tries to fetch from Sanity first, falls back to hardcoded config
  */
-export function getBuildConfig(): BuildConfig {
+export async function getBuildConfig(): Promise<BuildConfig> {
+  const campaignDomain = process.env.CAMPAIGN_DOMAIN || "viverlisboa.pt";
+
+  // Try to fetch from Sanity first
+  const sanityConfig = await fetchCampaignFromSanity(campaignDomain);
+  if (sanityConfig) {
+    return { campaign: sanityConfig };
+  }
+
+  // Fallback to hardcoded configuration
+  const campaign = DOMAIN_CONFIGS[campaignDomain];
+  if (!campaign) {
+    throw new Error(
+      `Unknown campaign domain: ${campaignDomain}. Available domains: ${Object.keys(DOMAIN_CONFIGS).join(", ")}`
+    );
+  }
+
+  return { campaign };
+}
+
+/**
+ * Synchronous version for compatibility (uses hardcoded config only)
+ */
+export function getBuildConfigSync(): BuildConfig {
   const campaignDomain = process.env.CAMPAIGN_DOMAIN || "viverlisboa.pt";
 
   const campaign = DOMAIN_CONFIGS[campaignDomain];
@@ -85,9 +111,102 @@ export function getBuildConfig(): BuildConfig {
 }
 
 /**
- * Get all available domains for build scripts
+ * Fetch campaign from Sanity at build time
  */
-export function getAllDomains(): string[] {
+async function fetchCampaignFromSanity(
+  domain: string
+): Promise<BuildConfig["campaign"] | null> {
+  try {
+    // Only import Sanity client in build environment
+    const { createClient } = await import("@sanity/client");
+
+    const client = createClient({
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-08-20",
+      token: process.env.SANITY_API_TOKEN,
+      useCdn: false,
+      perspective: "published",
+    });
+
+    const query = `*[_type == "campaign" && domain == $domain][0]{
+      title,
+      slug,
+      description,
+      domain,
+      location,
+      mainColor,
+      secondaryColor,
+      socialMedia
+    }`;
+
+    const campaignData = await client.fetch(query, { domain });
+
+    if (campaignData) {
+      return {
+        domain: campaignData.domain,
+        title: campaignData.title,
+        slug:
+          campaignData.slug?.current ||
+          campaignData.domain.replace(".pt", "").replace(".", "-"),
+        description:
+          campaignData.description || `Campanha ${campaignData.title}`,
+        location: campaignData.location,
+        mainColor: campaignData.mainColor,
+        secondaryColor: campaignData.secondaryColor,
+        socialMedia: campaignData.socialMedia || {},
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.warn(
+      `⚠️  Could not fetch campaign "${domain}" from Sanity:`,
+      (error as Error).message
+    );
+    return null;
+  }
+}
+
+/**
+ * Get all available domains (try Sanity first, fallback to hardcoded)
+ */
+export async function getAllDomains(): Promise<string[]> {
+  try {
+    // Try to get domains from Sanity
+    const { createClient } = await import("@sanity/client");
+
+    const client = createClient({
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-08-20",
+      token: process.env.SANITY_API_TOKEN,
+      useCdn: false,
+      perspective: "published",
+    });
+
+    const domains = await client.fetch(
+      `*[_type == "campaign" && defined(domain)].domain`
+    );
+
+    if (domains && domains.length > 0) {
+      return domains;
+    }
+  } catch (error) {
+    console.warn(
+      "⚠️  Could not fetch domains from Sanity, using fallback configurations:",
+      (error as Error).message
+    );
+  }
+
+  // Fallback to hardcoded domains
+  return Object.keys(DOMAIN_CONFIGS);
+}
+
+/**
+ * Synchronous version for compatibility (uses hardcoded domains)
+ */
+export function getAllDomainsSync(): string[] {
   return Object.keys(DOMAIN_CONFIGS);
 }
 

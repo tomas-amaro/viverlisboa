@@ -33,9 +33,9 @@ Your project now supports dynamic page generation from Sanity CMS with the multi
 
 ### **Development Mode**
 ```bash
-npm run dev:lisboa    # Test Lisboa pages
-npm run dev:avenidas  # Test Avenidas pages
-npm run dev:alvalade  # Test Alvalade pages
+pnpm dev:lisboa    # Test Lisboa pages
+pnpm dev:avenidas  # Test Avenidas pages
+pnpm dev:alvalade  # Test Alvalade pages
 ```
 
 - Generates paths for all pages across all campaigns
@@ -44,7 +44,7 @@ npm run dev:alvalade  # Test Alvalade pages
 
 ### **Production Builds**
 ```bash
-npm run build:domain viverlisboa.pt
+pnpm build:domain viverlisboa.pt
 ```
 
 - Only generates pages for the specific campaign domain
@@ -160,7 +160,7 @@ viveralvalade.pt/about      ← Alvalade campaign
 ### **1. Create Content**
 ```bash
 # Start Sanity Studio
-npm run studio
+pnpm studio
 
 # Create pages, proposals, events for your campaigns
 ```
@@ -168,7 +168,7 @@ npm run studio
 ### **2. Build Specific Domain**
 ```bash
 # Build Lisboa campaign with all its pages
-npm run build:domain viverlisboa.pt
+pnpm build:domain viverlisboa.pt
 
 # Build includes:
 # - Homepage (index.tsx) 
@@ -179,10 +179,10 @@ npm run build:domain viverlisboa.pt
 ### **3. Deploy**
 ```bash
 # Deploy to Vercel
-npm run deploy:domain viverlisboa.pt vercel
+pnpm deploy:domain viverlisboa.pt vercel
 
 # Deploy to Netlify
-npm run deploy:domain viverlisboa.pt netlify
+pnpm deploy:domain viverlisboa.pt netlify
 ```
 
 ## 🐛 Troubleshooting
