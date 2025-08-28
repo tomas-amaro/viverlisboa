@@ -39,7 +39,7 @@ jobs:
         SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
       run: |
         echo "🔍 Discovering domains from Sanity..."
-        DISCOVERY_OUTPUT=$(node scripts/discover-domains.js --json)
+        DISCOVERY_OUTPUT=$(node scripts/discover-domains.js --json 2>/dev/null)
         DOMAINS=$(echo "$DISCOVERY_OUTPUT" | jq -c '.domains')
         DOMAIN_CONFIGS=$(echo "$DISCOVERY_OUTPUT" | jq -c '.domainConfigs')
         

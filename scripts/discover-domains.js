@@ -8,6 +8,30 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
+// Smart logger that outputs JSON in --json mode, human-readable otherwise
+const isJsonMode = process.argv.includes('--json');
+const log = (...args) => {
+  if (isJsonMode) {
+    console.error(JSON.stringify({ level: 'info', message: args.join(' '), timestamp: new Date().toISOString() }));
+  } else {
+    console.log(...args);
+  }
+};
+const warn = (...args) => {
+  if (isJsonMode) {
+    console.error(JSON.stringify({ level: 'warn', message: args.join(' '), timestamp: new Date().toISOString() }));
+  } else {
+    console.warn(...args);
+  }
+};
+const logError = (message, errorData = {}) => {
+  if (isJsonMode) {
+    console.log(JSON.stringify({ error: message, ...errorData }, null, 2));
+  } else {
+    console.error('\n❌ Failed to discover domains:', message);
+  }
+};
+
 // Import Sanity client - we'll use a dynamic import since it's TypeScript
 async function getSanityClient() {
   try {
@@ -41,12 +65,12 @@ async function getSanityClient() {
     console.error('❌ Failed to create Sanity client:', error.message);
     
     if (error.message.includes('NEXT_PUBLIC_SANITY_PROJECT_ID')) {
-      console.log('💡 Make sure to set your Sanity environment variables:');
-      console.log('   NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id');
-      console.log('   NEXT_PUBLIC_SANITY_DATASET=production');
-      console.log('   SANITY_API_TOKEN=your_token (optional for public data)');
-      console.log('');
-      console.log('   You can find these in your Sanity dashboard or .env.local file');
+      console.error('💡 Make sure to set your Sanity environment variables:');
+      console.error('   NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id');
+      console.error('   NEXT_PUBLIC_SANITY_DATASET=production');
+      console.error('   SANITY_API_TOKEN=your_token (optional for public data)');
+      console.error('');
+      console.error('   You can find these in your Sanity dashboard or .env.local file');
     }
     
     throw error;
@@ -54,7 +78,7 @@ async function getSanityClient() {
 }
 
 async function discoverDomainsFromSanity() {
-  console.log('🔍 Discovering available domains from Sanity CMS...');
+  log('🔍 Discovering available domains from Sanity CMS...');
   
   try {
     const client = await getSanityClient();
@@ -72,19 +96,19 @@ async function discoverDomainsFromSanity() {
       socialMedia
     }`;
     
-    console.log('📡 Fetching campaigns from Sanity...');
+    log('📡 Fetching campaigns from Sanity...');
     const campaigns = await client.fetch(query);
     
     if (!campaigns || campaigns.length === 0) {
-      console.warn('⚠️  No campaigns found in Sanity CMS');
-      console.log('💡 Make sure you have created campaigns in your Sanity Studio');
-      console.log('   Each campaign should have a "domain" field set (e.g., "viverlisboa.pt")');
+      warn('⚠️  No campaigns found in Sanity CMS');
+      log('💡 Make sure you have created campaigns in your Sanity Studio');
+      log('   Each campaign should have a "domain" field set (e.g., "viverlisboa.pt")');
       return [];
     }
     
-    console.log(`✅ Found ${campaigns.length} campaigns in Sanity:`);
+    log(`✅ Found ${campaigns.length} campaigns in Sanity:`);
     campaigns.forEach(campaign => {
-      console.log(`   • ${campaign.title} (${campaign.domain}) - ${campaign.location}`);
+      log(`   • ${campaign.title} (${campaign.domain}) - ${campaign.location}`);
     });
     
     return campaigns;
@@ -94,12 +118,12 @@ async function discoverDomainsFromSanity() {
     
     // Provide helpful error messages for common issues
     if (error.message.includes('Permission denied')) {
-      console.log('💡 This might be a permissions issue. Try:');
-      console.log('   1. Make sure your SANITY_API_TOKEN has read permissions');
-      console.log('   2. Check if your campaigns are published (not drafts)');
-      console.log('   3. Verify your project ID and dataset are correct');
+      console.error('💡 This might be a permissions issue. Try:');
+      console.error('   1. Make sure your SANITY_API_TOKEN has read permissions');
+      console.error('   2. Check if your campaigns are published (not drafts)');
+      console.error('   3. Verify your project ID and dataset are correct');
     } else if (error.message.includes('fetch')) {
-      console.log('💡 This might be a network issue. Check your internet connection.');
+      console.error('💡 This might be a network issue. Check your internet connection.');
     }
     
     throw error;
@@ -126,7 +150,7 @@ function generateDomainConfig(campaigns) {
 }
 
 async function validateDomains(campaigns) {
-  console.log('🔍 Validating domain configurations...');
+  log('🔍 Validating domain configurations...');
   
   const issues = [];
   
@@ -149,14 +173,14 @@ async function validateDomains(campaigns) {
   });
   
   if (issues.length > 0) {
-    console.log('⚠️  Found validation issues:');
-    issues.forEach(issue => console.log(`   • ${issue}`));
-    console.log('');
-    console.log('💡 Please fix these issues in your Sanity Studio');
+    log('⚠️  Found validation issues:');
+    issues.forEach(issue => log(`   • ${issue}`));
+    log('');
+    log('💡 Please fix these issues in your Sanity Studio');
     return false;
   }
   
-  console.log('✅ All domain configurations are valid');
+  log('✅ All domain configurations are valid');
   return true;
 }
 
@@ -193,25 +217,21 @@ async function main() {
         domainConfigs
       }, null, 2));
     } else {
-      console.log('');
-      console.log('📋 Available domains:');
-      domains.forEach(domain => console.log(`   • ${domain}`));
+      log('');
+      log('📋 Available domains:');
+      domains.forEach(domain => log(`   • ${domain}`));
       
-      console.log('');
-      console.log('🏗️  To build all domains: pnpm build:all');
-      console.log('🚀 To deploy all domains: pnpm deploy:all');
+      log('');
+      log('🏗️  To build all domains: pnpm build:all');
+      log('🚀 To deploy all domains: pnpm deploy:all');
       
       domains.forEach(domain => {
-        console.log(`   • Build ${domain}: node scripts/build-domain.js ${domain}`);
+        log(`   • Build ${domain}: node scripts/build-domain.js ${domain}`);
       });
     }
     
   } catch (error) {
-    if (jsonOutput) {
-      console.error(JSON.stringify({ error: error.message, domains: [], campaigns: [] }, null, 2));
-    } else {
-      console.error('\n❌ Failed to discover domains:', error.message);
-    }
+    logError(error.message, { domains: [], campaigns: [] });
     process.exit(1);
   }
 }
