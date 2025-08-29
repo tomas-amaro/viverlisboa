@@ -58,29 +58,18 @@ async function printUsage() {
 }
 
 function prepareBuildForCloudflare(domain) {
-  const buildDir = path.join(process.cwd(), 'builds', domain);
-  const outputDir = path.join(buildDir, 'out');
+  const outputDir = path.join(process.cwd(), 'out');
   
   console.log('🔄 Preparing build for Cloudflare Pages...');
   
-  // Check if build exists
-  if (!fs.existsSync(buildDir)) {
-    throw new Error(`Build not found for ${domain}. Run: node scripts/build-domain.js ${domain}`);
+  // Check if static export exists (should exist from workflow build step)
+  if (!fs.existsSync(outputDir)) {
+    throw new Error(`Static export not found at ${outputDir}. Make sure the build step completed successfully.`);
   }
+  
+  console.log('✅ Using static export from build step');
     
   try {
-    // Run static build (replaces next export)
-    console.log('📦 Generating static export...');
-    execSync('pnpm build', {
-      stdio: 'inherit',
-      cwd: buildDir,
-      env: {
-        ...process.env,
-        CAMPAIGN_DOMAIN: domain,
-        NODE_ENV: 'production',
-        NEXT_BUILD_TYPE: 'static'
-      }
-    });
     
     // Create _headers file for Cloudflare Pages
     const headersContent = `/*

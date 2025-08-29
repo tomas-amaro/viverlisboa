@@ -83,20 +83,21 @@ jobs:
     - name: Lint
       run: pnpm lint
 
-    - name: Build domain-specific site
+    - name: Build static export for domain
       env:
         CAMPAIGN_DOMAIN: ${{ matrix.domain }}
         NODE_ENV: production
+        NEXT_BUILD_TYPE: static
         NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
         NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
         NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
         SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
-      run: node scripts/build-domain.js ${{ matrix.domain }}
+      run: pnpm build
 
     - name: Deploy to Cloudflare Pages
       env:
+        CAMPAIGN_DOMAIN: ${{ matrix.domain }}
         NODE_ENV: production
-        NEXT_BUILD_TYPE: static
         NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
         NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
         NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
