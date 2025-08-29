@@ -28,7 +28,8 @@
         "type-check": "tsc --noEmit",
         "studio": "next dev",
         "sanity:build": "dotenv -e .env.local -- sanity build",
-        "sanity:deploy": "dotenv -e .env.local -- sanity deploy",
+        "sanity:deploy": "sanity deploy",
+        "sanity:deploy:local": "dotenv -e .env.local -- sanity deploy",
         "seed": "dotenv -e .env.local -- node scripts/seed-data.js",
         "clear-data": "dotenv -e .env.local -- node scripts/clear-data.js"
     },

@@ -65,14 +65,19 @@ export default function StudioPage() {
       }}>
         <h1>Studio Not Available</h1>
         <p>The Sanity Studio is not available in static builds.</p>
-        <p>Please access the studio through your hosted Sanity Studio or run this locally.</p>
+        <p>Please access the studio through the hosted version:</p>
         <a 
-          href="https://www.sanity.io/docs/deployment" 
+          href="https://your-studio-name.sanity.studio" 
           target="_blank" 
           rel="noopener noreferrer"
-          style={{ color: '#0066cc', textDecoration: 'underline' }}
+          style={{ 
+            color: '#0066cc', 
+            textDecoration: 'underline',
+            fontSize: '1.1em',
+            fontWeight: 'bold'
+          }}
         >
-          Learn about deploying Sanity Studio →
+          🎯 Access Studio →
         </a>
       </div>
     )
