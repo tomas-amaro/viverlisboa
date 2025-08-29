@@ -104,9 +104,10 @@ async function deployToCloudflare(domain, environment = 'production') {
   console.log('');
   
   try {
+    // For Cloudflare Pages, production vs preview is determined by branch
     const wranglerCmd = environment === 'production' 
-      ? `wrangler pages deploy "${outputDir}" --project-name="${projectName}" --production`
-      : `wrangler pages deploy "${outputDir}" --project-name="${projectName}"`;
+      ? `wrangler pages deploy "${outputDir}" --project-name="${projectName}"`
+      : `wrangler pages deploy "${outputDir}" --project-name="${projectName}" --branch="preview"`;
     
     // Ensure required environment variables are set
     if (!process.env.CLOUDFLARE_API_TOKEN) {
