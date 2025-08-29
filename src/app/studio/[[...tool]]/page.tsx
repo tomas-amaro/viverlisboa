@@ -7,23 +7,51 @@
  * https://github.com/sanity-io/next-sanity
  */
 
-import { NextStudio } from 'next-sanity/studio'
-import config from '../../../../sanity.config'
+import React from 'react'
+
+// Check if this is a static build
+const isStaticBuild = process.env.NEXT_BUILD_TYPE === 'static'
+
+// Only import Sanity dependencies if not in static build
+let NextStudio: React.ComponentType<{ config: unknown }> | null = null
+let config: unknown = null
+
+if (!isStaticBuild) {
+  try {
+    // These imports will only happen in non-static builds
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { NextStudio: Studio } = require('next-sanity/studio')
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const sanityConfig = require('../../../../sanity.config')
+    NextStudio = Studio
+    config = sanityConfig.default || sanityConfig
+  } catch {
+    // Ignore import errors in static builds
+  }
+}
 
 export const dynamic = 'force-static'
 
-// Exclude studio from static export builds
 export async function generateStaticParams() {
-  // Return empty array to exclude studio routes from static builds
-  // Studio should be hosted separately (e.g., Sanity's hosted studio)
-  return []
+  // Generate one static route for the studio page
+  return [{ tool: [] }]
 }
 
-export { metadata, viewport } from 'next-sanity/studio'
+// Simple metadata that works for both static and dynamic builds
+export const metadata = {
+  title: isStaticBuild ? 'Studio Not Available' : 'Studio',
+  description: isStaticBuild 
+    ? 'Sanity Studio is not available in static builds' 
+    : 'Content management studio'
+}
+
+export const viewport = {
+  themeColor: '#000',
+}
 
 export default function StudioPage() {
-  // In production static builds, redirect to hosted studio
-  if (process.env.NODE_ENV === 'production' && process.env.NEXT_BUILD_TYPE === 'static') {
+  // Show message for static builds
+  if (isStaticBuild || !NextStudio) {
     return (
       <div style={{ 
         display: 'flex', 

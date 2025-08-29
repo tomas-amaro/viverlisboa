@@ -8,10 +8,14 @@ const nextConfig = {
   images: {
     domains: ['cdn.sanity.io'],
     formats: ['image/webp', 'image/avif'],
+    // Disable image optimization for static exports
+    unoptimized: process.env.NEXT_BUILD_TYPE === 'static',
   },
   // Optimize for static builds
   output: process.env.NEXT_BUILD_TYPE === 'static' ? 'export' : 
           process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  
+
   
   // Environment variables that will be available to the client
   env: {
