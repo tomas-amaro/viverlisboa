@@ -13,9 +13,9 @@ const { discoverAvailableDomains } = require('./build-domain');
 
 // Generate Cloudflare project name from domain
 function generateProjectName(domain) {
-  // Convert domain to project name by removing .pt suffix
-  // e.g., viverlisboa.pt -> viverlisboa, viveravenidas.pt -> viveravenidas
-  return domain.replace(/\.pt$/, '');
+  // Convert domain to project name by removing any TLD
+  // e.g., viverlisboa.pt -> viverlisboa, example.com -> example, site.net -> site
+  return domain.replace(/\.[^.]+$/, '');
 }
 
 // Get Cloudflare project mappings dynamically
@@ -90,11 +90,62 @@ function prepareBuildForCloudflare(domain) {
   }
 }
 
+// Test Cloudflare API connectivity and authentication
+async function testCloudflareAuth() {
+  console.log('🔐 Testing Cloudflare authentication...');
+  
+  // Check if required environment variables are set
+  if (!process.env.CLOUDFLARE_API_TOKEN) {
+    throw new Error('❌ CLOUDFLARE_API_TOKEN environment variable is required');
+  }
+  if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
+    throw new Error('❌ CLOUDFLARE_ACCOUNT_ID environment variable is required');  
+  }
+  
+  console.log('✅ Environment variables are set');
+  console.log(`📋 Account ID: ${process.env.CLOUDFLARE_ACCOUNT_ID}`);
+  console.log(`🔑 API Token: ${process.env.CLOUDFLARE_API_TOKEN.substring(0, 10)}...`);
+  
+  try {
+    // Test API connectivity by listing projects
+    console.log('📡 Testing API connectivity...');
+    const testCmd = 'wrangler pages project list --format json';
+    const result = execSync(testCmd, { encoding: 'utf8', stdio: 'pipe' });
+    
+    // Parse and display basic info
+    const projects = JSON.parse(result);
+    console.log(`✅ API connection successful! Found ${projects.length} existing projects`);
+    
+    if (projects.length > 0) {
+      console.log('📋 Existing projects:');
+      projects.slice(0, 5).forEach(project => {
+        console.log(`   • ${project.name}`);
+      });
+      if (projects.length > 5) {
+        console.log(`   ... and ${projects.length - 5} more`);
+      }
+    }
+    
+    return true;
+    
+  } catch (error) {
+    console.error('❌ API connection failed:', error.message);
+    console.log('');
+    console.log('🔧 Troubleshooting:');
+    console.log('1. Verify your Cloudflare API token has the correct permissions');
+    console.log('2. Check that the account ID is correct');
+    console.log('3. Ensure the API token includes "Cloudflare Pages:Edit" permission');
+    console.log('4. Try: wrangler auth login');
+    throw new Error('Cloudflare authentication failed');
+  }
+}
+
 // Check if Cloudflare Pages project exists, create if not
 async function ensureProjectExists(projectName) {
+  console.log(`🔍 Checking if project "${projectName}" exists...`);
+  
   try {
     // Check if project exists by listing projects
-    console.log(`🔍 Checking if project "${projectName}" exists...`);
     const projectListCmd = 'wrangler pages project list --format json';
     const projectsOutput = execSync(projectListCmd, { encoding: 'utf8', stdio: 'pipe' });
     const projects = JSON.parse(projectsOutput);
@@ -103,18 +154,33 @@ async function ensureProjectExists(projectName) {
     
     if (projectExists) {
       console.log(`✅ Project "${projectName}" already exists`);
-      return;
+      return true;
     }
     
-    // Create project if it doesn't exist
+  } catch (listError) {
+    console.warn(`⚠️  Could not list projects: ${listError.message}`);
+    console.log('📝 Will attempt to create project anyway...');
+  }
+  
+  // Create project if it doesn't exist or if we couldn't verify
+  try {
     console.log(`📦 Creating new project "${projectName}"...`);
     const createCmd = `wrangler pages project create "${projectName}"`;
     execSync(createCmd, { stdio: 'inherit' });
     console.log(`✅ Project "${projectName}" created successfully`);
+    return true;
     
-  } catch (error) {
-    console.warn(`⚠️  Could not verify/create project: ${error.message}`);
-    console.log('📝 Will attempt deployment anyway (project might exist)');
+  } catch (createError) {
+    console.error(`❌ Failed to create project "${projectName}": ${createError.message}`);
+    
+    // If project creation fails with "already exists" error, that's actually OK
+    if (createError.message.includes('already exists') || createError.message.includes('already taken')) {
+      console.log(`✅ Project "${projectName}" already exists (from error message)`);
+      return true;
+    }
+    
+    console.log('📝 Will attempt deployment anyway in case project exists...');
+    return false;
   }
 }
 
@@ -128,16 +194,15 @@ async function deployToCloudflare(domain, environment = 'production') {
   console.log('');
   
   try {
-    // Ensure required environment variables are set
-    if (!process.env.CLOUDFLARE_API_TOKEN) {
-      throw new Error('CLOUDFLARE_API_TOKEN environment variable is required');
-    }
-    if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
-      throw new Error('CLOUDFLARE_ACCOUNT_ID environment variable is required');  
-    }
+    // Test Cloudflare authentication and API connectivity first
+    await testCloudflareAuth();
+    console.log('');
     
     // Ensure project exists before deployment
-    await ensureProjectExists(projectName);
+    const projectReady = await ensureProjectExists(projectName);
+    if (!projectReady) {
+      console.warn('⚠️  Project creation may have failed, but continuing with deployment...');
+    }
     
     // For Cloudflare Pages, production vs preview is determined by branch
     const wranglerCmd = environment === 'production' 
