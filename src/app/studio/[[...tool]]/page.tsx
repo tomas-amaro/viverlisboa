@@ -67,7 +67,7 @@ export default function StudioPage() {
         <p>The Sanity Studio is not available in static builds.</p>
         <p>Please access the studio through the hosted version:</p>
         <a 
-          href="https://your-studio-name.sanity.studio" 
+          href="https://viverlisboa.sanity.studio" 
           target="_blank" 
           rel="noopener noreferrer"
           style={{ 

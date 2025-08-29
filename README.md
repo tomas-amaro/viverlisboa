@@ -133,7 +133,7 @@ The project includes a complete design system based on campaign visual identity:
 
 ### Content Creation
 
-1. Access Sanity Studio at `/studio`
+1. Access Sanity Studio at `https://viverlisboa.sanity.studio`
 2. First create a "Campaign" with base configurations and **set the domain field**
 3. Add pages, proposals, events and news associated with the campaign
 4. Content will be automatically synchronized with the website
