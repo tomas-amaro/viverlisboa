@@ -67,19 +67,7 @@ function prepareBuildForCloudflare(domain) {
   if (!fs.existsSync(buildDir)) {
     throw new Error(`Build not found for ${domain}. Run: node scripts/build-domain.js ${domain}`);
   }
-  
-  // For Next.js static export, we need to modify next.config.js temporarily
-  const nextConfigPath = path.join(buildDir, 'next.config.js');
-  const originalConfig = fs.readFileSync(nextConfigPath, 'utf8');
-  
-  // Create a static-export version of the config
-  const staticConfig = originalConfig.replace(
-    "output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,",
-    "output: 'export',"
-  );
-  
-  fs.writeFileSync(nextConfigPath, staticConfig);
-  
+    
   try {
     // Run static build (replaces next export)
     console.log('📦 Generating static export...');
@@ -113,8 +101,7 @@ function prepareBuildForCloudflare(domain) {
     return outputDir;
     
   } finally {
-    // Restore original config
-    fs.writeFileSync(nextConfigPath, originalConfig);
+    // No config restoration needed
   }
 }
 
