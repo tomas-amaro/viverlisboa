@@ -22,13 +22,26 @@ Sanity Content Update → Webhook → Cloudflare Worker → GitHub Actions → D
 
 ### 2. Deploy Webhook Handler
 
+The webhook worker now **deploys automatically** when you modify `webhook-worker.js` and push to main!
+
+**Automatic Deployment (Recommended):**
+- ✅ Edit `webhook-worker.js`
+- ✅ Push to main branch
+- ✅ GitHub Actions automatically deploys the webhook worker
+
+**Manual Deployment (if needed):**
 ```bash
-# Deploy the webhook worker to Cloudflare
+# Deploy the webhook worker to Cloudflare manually
 pnpm webhook:deploy
 ```
 
 ### 3. Configure Cloudflare Worker Environment Variables
 
+**For Automatic Deployment (CI):**
+Environment variables are **automatically configured** from GitHub context! No manual setup needed. ✅
+
+**For Manual Deployment:**
+If you deploy manually with `pnpm webhook:deploy`, you'll need to:
 1. Go to [Cloudflare Workers Dashboard](https://dash.cloudflare.com/)
 2. Find your `sanity-webhook-handler` worker
 3. Go to **Settings → Variables**

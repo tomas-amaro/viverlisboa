@@ -25,17 +25,42 @@ name = "sanity-webhook-handler"
 main = "webhook-worker.js"
 compatibility_date = "2024-08-01"
 
+${process.env.GITHUB_ACTOR ? `
+# CI Environment - Use GitHub context
 [env.production.vars]
-# Set these in Cloudflare Workers dashboard:
+GITHUB_OWNER = "${process.env.GITHUB_ACTOR || process.env.GITHUB_REPOSITORY_OWNER || 'SET_GITHUB_OWNER'}"
+GITHUB_REPO = "${process.env.GITHUB_REPOSITORY ? process.env.GITHUB_REPOSITORY.split('/')[1] : 'SET_REPO_NAME'}"
+
+[env.production.secrets]
+GITHUB_TOKEN = "${process.env.GITHUB_TOKEN || 'SET_GITHUB_TOKEN'}"
+` : `
+# Local Development - Set these manually in Cloudflare Workers dashboard:
+[env.production.vars]
 # GITHUB_OWNER = "your-github-username"
 # GITHUB_REPO = "viverlisboa"
 # GITHUB_TOKEN = "your-personal-access-token"
-`;
+`}`;
+
+    console.log(process.env.GITHUB_ACTOR ? 
+      '🤖 Detected CI environment - using GitHub context for configuration' :
+      '💻 Local deployment - configure environment variables manually in Cloudflare dashboard'
+    );
 
     fs.writeFileSync('wrangler-webhook.toml', wranglerConfig);
     
     console.log('📦 Deploying worker...');
-    execSync('wrangler deploy --config wrangler-webhook.toml', { stdio: 'inherit' });
+    
+    // Use a separate token for Workers if needed
+    const env = {
+      ...process.env,
+      // Uncomment and set if you want to use a separate Workers token
+      // CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_WORKERS_TOKEN || process.env.CLOUDFLARE_API_TOKEN
+    };
+    
+    execSync('pnpm wrangler deploy --config wrangler-webhook.toml', { 
+      stdio: 'inherit',
+      env: env 
+    });
     
     console.log('✅ Webhook worker deployed successfully!');
     console.log('');

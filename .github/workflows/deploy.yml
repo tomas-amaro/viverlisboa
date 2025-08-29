@@ -139,4 +139,53 @@ jobs:
         NEXT_PUBLIC_SANITY_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION }}
       run: pnpm sanity:deploy
 
+  deploy-webhook:
+    runs-on: ubuntu-latest
+    # Only deploy webhook on main branch pushes when webhook-worker.js changes
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2  # Need to compare with previous commit
+
+    - name: Check for webhook changes
+      id: webhook-changes
+      run: |
+        if git diff --name-only HEAD^ HEAD | grep -q "webhook-worker.js"; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "🔄 webhook-worker.js has changes, will deploy"
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+          echo "✅ webhook-worker.js unchanged, skipping deployment"
+        fi
+
+    - name: Setup pnpm
+      if: steps.webhook-changes.outputs.changed == 'true'
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8.15.1
+
+    - name: Setup Node.js
+      if: steps.webhook-changes.outputs.changed == 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.10.0'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      if: steps.webhook-changes.outputs.changed == 'true'
+      run: pnpm install --frozen-lockfile
+
+    - name: Deploy Webhook Worker
+      if: steps.webhook-changes.outputs.changed == 'true'
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+      run: pnpm webhook:deploy
+
 
