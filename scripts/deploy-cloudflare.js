@@ -94,6 +94,34 @@ function prepareBuildForCloudflare(domain) {
   }
 }
 
+// Check if Cloudflare Pages project exists, create if not
+async function ensureProjectExists(projectName) {
+  try {
+    // Check if project exists by listing projects
+    console.log(`🔍 Checking if project "${projectName}" exists...`);
+    const projectListCmd = 'wrangler pages project list --format json';
+    const projectsOutput = execSync(projectListCmd, { encoding: 'utf8', stdio: 'pipe' });
+    const projects = JSON.parse(projectsOutput);
+    
+    const projectExists = projects.some(project => project.name === projectName);
+    
+    if (projectExists) {
+      console.log(`✅ Project "${projectName}" already exists`);
+      return;
+    }
+    
+    // Create project if it doesn't exist
+    console.log(`📦 Creating new project "${projectName}"...`);
+    const createCmd = `wrangler pages project create "${projectName}"`;
+    execSync(createCmd, { stdio: 'inherit' });
+    console.log(`✅ Project "${projectName}" created successfully`);
+    
+  } catch (error) {
+    console.warn(`⚠️  Could not verify/create project: ${error.message}`);
+    console.log('📝 Will attempt deployment anyway (project might exist)');
+  }
+}
+
 async function deployToCloudflare(domain, environment = 'production') {
   const projectName = generateProjectName(domain);
   const outputDir = prepareBuildForCloudflare(domain);
@@ -104,11 +132,6 @@ async function deployToCloudflare(domain, environment = 'production') {
   console.log('');
   
   try {
-    // For Cloudflare Pages, production vs preview is determined by branch
-    const wranglerCmd = environment === 'production' 
-      ? `wrangler pages deploy "${outputDir}" --project-name="${projectName}"`
-      : `wrangler pages deploy "${outputDir}" --project-name="${projectName}" --branch="preview"`;
-    
     // Ensure required environment variables are set
     if (!process.env.CLOUDFLARE_API_TOKEN) {
       throw new Error('CLOUDFLARE_API_TOKEN environment variable is required');
@@ -116,6 +139,14 @@ async function deployToCloudflare(domain, environment = 'production') {
     if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
       throw new Error('CLOUDFLARE_ACCOUNT_ID environment variable is required');  
     }
+    
+    // Ensure project exists before deployment
+    await ensureProjectExists(projectName);
+    
+    // For Cloudflare Pages, production vs preview is determined by branch
+    const wranglerCmd = environment === 'production' 
+      ? `wrangler pages deploy "${outputDir}" --project-name="${projectName}"`
+      : `wrangler pages deploy "${outputDir}" --project-name="${projectName}" --branch="preview"`;
       
     console.log('💫 Running Wrangler deployment...');
     execSync(wranglerCmd, { stdio: 'inherit' });
