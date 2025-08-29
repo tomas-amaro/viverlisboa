@@ -30,6 +30,7 @@
         "sanity:build": "dotenv -e .env.local -- sanity build",
         "sanity:deploy": "sanity deploy",
         "sanity:deploy:local": "dotenv -e .env.local -- sanity deploy",
+        "webhook:deploy": "node scripts/deploy-webhook.js",
         "seed": "dotenv -e .env.local -- node scripts/seed-data.js",
         "clear-data": "dotenv -e .env.local -- node scripts/clear-data.js"
     },
