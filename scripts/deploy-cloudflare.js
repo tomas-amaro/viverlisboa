@@ -109,23 +109,10 @@ async function testCloudflareAuth() {
   try {
     // Test API connectivity by listing projects
     console.log('📡 Testing API connectivity...');
-    const testCmd = 'wrangler pages project list --format json';
-    const result = execSync(testCmd, { encoding: 'utf8', stdio: 'pipe' });
+    const testCmd = 'wrangler pages project list';
+    execSync(testCmd, { stdio: 'pipe' }); // Just test if command works
     
-    // Parse and display basic info
-    const projects = JSON.parse(result);
-    console.log(`✅ API connection successful! Found ${projects.length} existing projects`);
-    
-    if (projects.length > 0) {
-      console.log('📋 Existing projects:');
-      projects.slice(0, 5).forEach(project => {
-        console.log(`   • ${project.name}`);
-      });
-      if (projects.length > 5) {
-        console.log(`   ... and ${projects.length - 5} more`);
-      }
-    }
-    
+    console.log('✅ API connection successful!');
     return true;
     
   } catch (error) {
@@ -140,46 +127,25 @@ async function testCloudflareAuth() {
   }
 }
 
-// Check if Cloudflare Pages project exists, create if not
+// Ensure Cloudflare Pages project exists by attempting to create it
 async function ensureProjectExists(projectName) {
-  console.log(`🔍 Checking if project "${projectName}" exists...`);
+  console.log(`📦 Ensuring project "${projectName}" exists...`);
   
   try {
-    // Check if project exists by listing projects
-    const projectListCmd = 'wrangler pages project list --format json';
-    const projectsOutput = execSync(projectListCmd, { encoding: 'utf8', stdio: 'pipe' });
-    const projects = JSON.parse(projectsOutput);
-    
-    const projectExists = projects.some(project => project.name === projectName);
-    
-    if (projectExists) {
-      console.log(`✅ Project "${projectName}" already exists`);
-      return true;
-    }
-    
-  } catch (listError) {
-    console.warn(`⚠️  Could not list projects: ${listError.message}`);
-    console.log('📝 Will attempt to create project anyway...');
-  }
-  
-  // Create project if it doesn't exist or if we couldn't verify
-  try {
-    console.log(`📦 Creating new project "${projectName}"...`);
     const createCmd = `wrangler pages project create "${projectName}"`;
     execSync(createCmd, { stdio: 'inherit' });
     console.log(`✅ Project "${projectName}" created successfully`);
     return true;
     
   } catch (createError) {
-    console.error(`❌ Failed to create project "${projectName}": ${createError.message}`);
-    
-    // If project creation fails with "already exists" error, that's actually OK
-    if (createError.message.includes('already exists') || createError.message.includes('already taken')) {
-      console.log(`✅ Project "${projectName}" already exists (from error message)`);
+    // If project already exists, that's fine
+    if (createError.message.includes('already exists') || createError.message.includes('already taken') || createError.message.includes('already in use')) {
+      console.log(`✅ Project "${projectName}" already exists`);
       return true;
     }
     
-    console.log('📝 Will attempt deployment anyway in case project exists...');
+    console.error(`❌ Failed to create project "${projectName}": ${createError.message}`);
+    console.log('📝 Will attempt deployment anyway...');
     return false;
   }
 }
