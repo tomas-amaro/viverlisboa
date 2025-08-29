@@ -33,6 +33,7 @@ async function handleRequest(request) {
           'Authorization': `Bearer ${GITHUB_TOKEN}`,
           'Accept': 'application/vnd.github.v3+json',
           'Content-Type': 'application/json',
+          'User-Agent': 'Sanity-Webhook-Handler/1.0 (Cloudflare Workers)',
         },
         body: JSON.stringify({
           event_type: 'sanity-content-update',
