@@ -118,6 +118,14 @@ async function deployToCloudflare(domain, environment = 'production') {
     const wranglerCmd = environment === 'production' 
       ? `wrangler pages deploy "${outputDir}" --project-name="${projectName}" --production`
       : `wrangler pages deploy "${outputDir}" --project-name="${projectName}"`;
+    
+    // Ensure required environment variables are set
+    if (!process.env.CLOUDFLARE_API_TOKEN) {
+      throw new Error('CLOUDFLARE_API_TOKEN environment variable is required');
+    }
+    if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
+      throw new Error('CLOUDFLARE_ACCOUNT_ID environment variable is required');  
+    }
       
     console.log('💫 Running Wrangler deployment...');
     execSync(wranglerCmd, { stdio: 'inherit' });
