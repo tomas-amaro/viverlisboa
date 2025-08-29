@@ -123,7 +123,7 @@ async function fetchCampaignFromSanity(
     const client = createClient({
       projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
       dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-08-20",
+      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-08-20",
       token: process.env.SANITY_API_TOKEN,
       useCdn: false,
       perspective: "published",
@@ -179,7 +179,7 @@ export async function getAllDomains(): Promise<string[]> {
     const client = createClient({
       projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
       dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-08-20",
+      apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-08-20",
       token: process.env.SANITY_API_TOKEN,
       useCdn: false,
       perspective: "published",

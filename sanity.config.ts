@@ -1,7 +1,6 @@
-"use client";
-
 /**
- * This configuration is used to for the Sanity Studio that’s mounted on the `/app/studio/[[...tool]]/page.tsx` route
+ * This configuration is used for the Sanity Studio that's mounted on the `/app/studio/[[...tool]]/page.tsx` route
+ * and for the hosted Sanity Studio at https://viverlisboa.sanity.studio
  */
 
 import { visionTool } from "@sanity/vision";
@@ -15,7 +14,7 @@ import { structure } from "./src/sanity/structure";
 export default defineConfig({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "yfbli0z3", // Your project ID
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-08-20",
+  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-08-20",
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema,
   plugins: [
@@ -24,7 +23,7 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({
       defaultApiVersion:
-        process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-08-20",
+        process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-08-20",
     }),
   ],
 });
