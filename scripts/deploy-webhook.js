@@ -25,6 +25,9 @@ name = "sanity-webhook-handler"
 main = "webhook-worker.js"
 compatibility_date = "2024-08-01"
 
+[observability.logs]
+enabled = true
+
 ${process.env.GITHUB_ACTOR ? `
 # CI Environment - Use GitHub context
 [env.production.vars]

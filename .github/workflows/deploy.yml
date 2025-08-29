@@ -153,12 +153,33 @@ jobs:
     - name: Check for webhook changes
       id: webhook-changes
       run: |
-        if git diff --name-only HEAD^ HEAD | grep -q "webhook-worker.js"; then
+        # Check for changes in webhook-related files
+        WEBHOOK_FILES=(
+          "webhook-worker.js"
+          "scripts/deploy-webhook.js"
+          "package.json"
+        )
+        
+        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        WEBHOOK_CHANGED=false
+        
+        echo "📋 Files changed in this commit:"
+        echo "$CHANGED_FILES"
+        echo ""
+        
+        for file in "${WEBHOOK_FILES[@]}"; do
+          if echo "$CHANGED_FILES" | grep -q "^${file}$"; then
+            echo "🔄 Webhook-related file changed: $file"
+            WEBHOOK_CHANGED=true
+          fi
+        done
+        
+        if [ "$WEBHOOK_CHANGED" = true ]; then
           echo "changed=true" >> $GITHUB_OUTPUT
-          echo "🔄 webhook-worker.js has changes, will deploy"
+          echo "✅ Webhook-related files have changes, will deploy worker"
         else
           echo "changed=false" >> $GITHUB_OUTPUT
-          echo "✅ webhook-worker.js unchanged, skipping deployment"
+          echo "✅ No webhook-related changes, skipping worker deployment"
         fi
 
     - name: Setup pnpm
