@@ -13,13 +13,9 @@ const { discoverAvailableDomains } = require('./build-domain');
 
 // Generate Cloudflare project name from domain
 function generateProjectName(domain) {
-  // Convert domain to project name (e.g., viverlisboa.pt -> viver-lisboa)
-  return domain
-    .replace(/\.pt$/, '') // Remove .pt suffix
-    .replace(/([a-z])([A-Z])/g, '$1-$2') // Add hyphens between camelCase
-    .toLowerCase()
-    .replace(/^viver/, 'viver-') // Ensure viver- prefix
-    .replace(/viver-viver/, 'viver'); // Avoid double prefix
+  // Convert domain to project name by removing .pt suffix
+  // e.g., viverlisboa.pt -> viverlisboa, viveravenidas.pt -> viveravenidas
+  return domain.replace(/\.pt$/, '');
 }
 
 // Get Cloudflare project mappings dynamically
