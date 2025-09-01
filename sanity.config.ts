@@ -19,11 +19,15 @@ export default defineConfig({
   schema,
   plugins: [
     structureTool({ structure }),
-    // Vision is for querying with GROQ from inside the Studio
-    // https://www.sanity.io/docs/the-vision-plugin
-    visionTool({
-      defaultApiVersion:
-        process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-08-20",
-    }),
+    // Only include Vision plugin in development/local environment
+    ...(process.env.NODE_ENV === "development" ||
+    !process.env.SANITY_STUDIO_HOSTED
+      ? [
+          visionTool({
+            defaultApiVersion:
+              process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-08-20",
+          }),
+        ]
+      : []),
   ],
 });
