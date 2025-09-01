@@ -7,51 +7,57 @@
  * https://github.com/sanity-io/next-sanity
  */
 
+'use client'
+
 import React from 'react'
-
-// Check if this is a static build
-const isStaticBuild = process.env.NEXT_BUILD_TYPE === 'static'
-
-// Only import Sanity dependencies if not in static build
-let NextStudio: React.ComponentType<{ config: unknown }> | null = null
-let config: unknown = null
-
-if (!isStaticBuild) {
-  try {
-    // These imports will only happen in non-static builds
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { NextStudio: Studio } = require('next-sanity/studio')
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const sanityConfig = require('../../../../sanity.config')
-    NextStudio = Studio
-    config = sanityConfig.default || sanityConfig
-  } catch {
-    // Ignore import errors in static builds
-  }
-}
-
-export const dynamic = 'force-static'
 
 export async function generateStaticParams() {
   // Generate one static route for the studio page
   return [{ tool: [] }]
 }
 
-// Simple metadata that works for both static and dynamic builds
-export const metadata = {
-  title: isStaticBuild ? 'Studio Not Available' : 'Studio',
-  description: isStaticBuild 
-    ? 'Sanity Studio is not available in static builds' 
-    : 'Content management studio'
-}
+// Dynamic Studio component that loads dynamically
+function DynamicStudio() {
+  const [StudioComponent, setStudioComponent] = React.useState<React.ComponentType<{ config: unknown }> | null>(null)
+  const [config, setConfig] = React.useState<unknown>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
 
-export const viewport = {
-  themeColor: '#000',
-}
+  React.useEffect(() => {
+    async function loadStudio() {
+      try {
+        // Dynamic imports to avoid bundling during static builds
+        const { NextStudio } = await import('next-sanity/studio')
+        const sanityConfig = await import('../../../../sanity.config')
+        
+        setStudioComponent(NextStudio as React.ComponentType<{ config: unknown }>)
+        setConfig(sanityConfig.default || sanityConfig)
+        setLoading(false)
+      } catch (err) {
+        console.error('Failed to load Sanity Studio:', err)
+        setError('Failed to load studio')
+        setLoading(false)
+      }
+    }
 
-export default function StudioPage() {
-  // Show message for static builds
-  if (isStaticBuild || !NextStudio) {
+    loadStudio()
+  }, [])
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh',
+        fontFamily: 'system-ui, sans-serif'
+      }}>
+        <p>Loading Studio...</p>
+      </div>
+    )
+  }
+
+  if (error || !StudioComponent) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -63,9 +69,8 @@ export default function StudioPage() {
         textAlign: 'center',
         padding: '2rem'
       }}>
-        <h1>Studio Not Available</h1>
-        <p>The Sanity Studio is not available in static builds.</p>
-        <p>Please access the studio through the hosted version:</p>
+        <h1>Studio Error</h1>
+        <p>Failed to load Sanity Studio. Please use the hosted version:</p>
         <a 
           href="https://viverlisboa.sanity.studio" 
           target="_blank" 
@@ -82,6 +87,10 @@ export default function StudioPage() {
       </div>
     )
   }
-  
-  return <NextStudio config={config} />
+
+  return <StudioComponent config={config} />
+}
+
+export default function StudioPage() {
+  return <DynamicStudio />
 }
