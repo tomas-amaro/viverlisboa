@@ -11,10 +11,7 @@
 
 import React from 'react'
 
-export async function generateStaticParams() {
-  // Generate one static route for the studio page
-  return [{ tool: [] }]
-}
+
 
 // Dynamic Studio component that loads dynamically
 function DynamicStudio() {
