@@ -1,10 +1,9 @@
-export const metadata = {
-  title: 'Sanity Studio',
-  description: 'Content management studio for Viver Lisboa',
-}
+import { Metadata } from 'next'
 
-export const viewport = {
-  themeColor: '#000',
+export const metadata: Metadata = {
+  title: 'Sanity Studio',
+  description: 'Content management studio',
+  robots: 'noindex',
 }
 
 export default function StudioLayout({
@@ -12,6 +11,11 @@ export default function StudioLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <html lang="en">
+      <body style={{ margin: 0 }}>
+        {children}
+      </body>
+    </html>
+  )
 }
-

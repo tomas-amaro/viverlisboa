@@ -7,54 +7,21 @@
  * https://github.com/sanity-io/next-sanity
  */
 
-'use client'
+import { Suspense } from 'react'
+import StudioClient from '../StudioClient'
 
-import React from 'react'
+// Required for static export builds
+export async function generateStaticParams() {
+  // Generate one static route for the studio page
+  return [{ tool: [] }]
+}
 
+// Check if this is a static build
+const isStaticBuild = process.env.NEXT_BUILD_TYPE === 'static'
 
-
-// Dynamic Studio component that loads dynamically
-function DynamicStudio() {
-  const [StudioComponent, setStudioComponent] = React.useState<React.ComponentType<{ config: unknown }> | null>(null)
-  const [config, setConfig] = React.useState<unknown>(null)
-  const [loading, setLoading] = React.useState(true)
-  const [error, setError] = React.useState<string | null>(null)
-
-  React.useEffect(() => {
-    async function loadStudio() {
-      try {
-        // Dynamic imports to avoid bundling during static builds
-        const { NextStudio } = await import('next-sanity/studio')
-        const sanityConfig = await import('../../../../sanity.config')
-        
-        setStudioComponent(NextStudio as React.ComponentType<{ config: unknown }>)
-        setConfig(sanityConfig.default || sanityConfig)
-        setLoading(false)
-      } catch (err) {
-        console.error('Failed to load Sanity Studio:', err)
-        setError('Failed to load studio')
-        setLoading(false)
-      }
-    }
-
-    loadStudio()
-  }, [])
-
-  if (loading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        minHeight: '100vh',
-        fontFamily: 'system-ui, sans-serif'
-      }}>
-        <p>Loading Studio...</p>
-      </div>
-    )
-  }
-
-  if (error || !StudioComponent) {
+export default function StudioPage() {
+  // For static builds, show a redirect message instead of the studio
+  if (isStaticBuild) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -66,8 +33,8 @@ function DynamicStudio() {
         textAlign: 'center',
         padding: '2rem'
       }}>
-        <h1>Studio Error</h1>
-        <p>Failed to load Sanity Studio. Please use the hosted version:</p>
+        <h1>Sanity Studio</h1>
+        <p>The studio is available at the hosted version:</p>
         <a 
           href="https://viverlisboa.sanity.studio" 
           target="_blank" 
@@ -85,9 +52,22 @@ function DynamicStudio() {
     )
   }
 
-  return <StudioComponent config={config} />
-}
-
-export default function StudioPage() {
-  return <DynamicStudio />
+  // For development, return the client studio component
+  return (
+    <Suspense 
+      fallback={
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          minHeight: '100vh',
+          fontFamily: 'system-ui, sans-serif'
+        }}>
+          <p>Loading Studio...</p>
+        </div>
+      }
+    >
+      <StudioClient />
+    </Suspense>
+  )
 }
