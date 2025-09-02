@@ -107,9 +107,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
       }
     `, { campaignId: campaign._id })
     
-    const paths = customPages.map((page: { slug: { current: string } }) => ({
-      params: { slug: page.slug.current }
-    }))
+    // Filter out reserved static page paths to avoid conflicts
+    const reservedPaths = ['contacto', 'propostas', 'eventos', 'noticias', 'studio', '404']
+    
+    const paths = customPages
+      .filter((page: { slug: { current: string } }) => 
+        !reservedPaths.includes(page.slug.current)
+      )
+      .map((page: { slug: { current: string } }) => ({
+        params: { slug: page.slug.current }
+      }))
 
     return {
       paths,
