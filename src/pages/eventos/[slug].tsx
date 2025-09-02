@@ -1,7 +1,6 @@
 import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
-import { Layout } from '../../components/layout'
 import { Container, Typography, Button } from '../../components/ui'
 import { ContentRenderer } from '../../components/content'
 import { getBuildConfiguration, getCampaignEvents, CampaignWithContent } from '../../lib/campaignUtils'
@@ -59,7 +58,6 @@ export default function EventPage({ event, campaign }: EventPageProps) {
           content={`${eventTypeLabels[event.eventType as keyof typeof eventTypeLabels]} - ${formatDate(event.date)}`}
         />
       </Head>
-      <Layout campaign={campaign}>
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             {/* Breadcrumb */}
@@ -233,7 +231,6 @@ export default function EventPage({ event, campaign }: EventPageProps) {
             </div>
           </div>
         </Container>
-      </Layout>
     </>
   )
 }

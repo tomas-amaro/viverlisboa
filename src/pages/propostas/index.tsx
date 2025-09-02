@@ -1,7 +1,6 @@
 import React from 'react'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
-import { Layout } from '../../components/layout'
 import { ProposalCard } from '../../components/content'
 import { Container, Grid, Typography, Button } from '../../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../../lib/campaignUtils'
@@ -18,7 +17,7 @@ interface ProposalsPageProps {
   navigationLabel: string
 }
 
-export default function ProposalsPage({ proposals, campaign, navigation, navigationLabel }: ProposalsPageProps) {
+export default function ProposalsPage({ proposals, campaign, navigationLabel }: ProposalsPageProps) {
   return (
     <>
       <Head>
@@ -28,7 +27,6 @@ export default function ProposalsPage({ proposals, campaign, navigation, navigat
           content={`Conheça as ${navigationLabel.toLowerCase()} da campanha ${campaign.title}`}
         />
       </Head>
-      <Layout campaign={campaign} navigation={navigation}>
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
@@ -63,7 +61,6 @@ export default function ProposalsPage({ proposals, campaign, navigation, navigat
             )}
           </div>
         </Container>
-      </Layout>
     </>
   )
 }

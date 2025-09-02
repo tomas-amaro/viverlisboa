@@ -2,7 +2,6 @@ import React from 'react'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import styled from 'styled-components'
-import { Layout } from '../components/layout'
 import { Container, Grid, Typography, Button, Card } from '../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../lib/campaignUtils'
 import { theme } from '../styles/theme'
@@ -93,7 +92,7 @@ const MapContainer = styled.div`
   }
 `
 
-export default function ContactPage({ campaign, navigation }: ContactPageProps) {
+export default function ContactPage({ campaign }: ContactPageProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Handle form submission - could integrate with email service
@@ -109,7 +108,6 @@ export default function ContactPage({ campaign, navigation }: ContactPageProps) 
           content={`Entre em contacto com a equipa ${campaign.title}. Estamos aqui para ouvir as suas ideias e responder às suas questões.`}
         />
       </Head>
-      <Layout campaign={campaign} navigation={navigation}>
         <Container>
           <ContactSection>
             {/* Header */}
@@ -311,7 +309,6 @@ export default function ContactPage({ campaign, navigation }: ContactPageProps) 
             </Grid>
           </ContactSection>
         </Container>
-      </Layout>
     </>
   )
 }

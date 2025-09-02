@@ -1,7 +1,6 @@
 import React from 'react'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
-import { Layout } from '../../components/layout'
 import { EventCard } from '../../components/content'
 import { Container, Grid, Typography, Button } from '../../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../../lib/campaignUtils'
@@ -18,7 +17,7 @@ interface EventsPageProps {
   navigationLabel: string
 }
 
-export default function EventsPage({ events, campaign, navigation, navigationLabel }: EventsPageProps) {
+export default function EventsPage({ events, campaign, navigationLabel }: EventsPageProps) {
   // Separate past and upcoming events
   const now = new Date()
   const upcomingEvents = events.filter(event => new Date(event.date) >= now)
@@ -33,7 +32,6 @@ export default function EventsPage({ events, campaign, navigation, navigationLab
           content={`Participe nos ${navigationLabel.toLowerCase()} da campanha ${campaign.title}`}
         />
       </Head>
-      <Layout campaign={campaign} navigation={navigation}>
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
@@ -95,9 +93,8 @@ export default function EventsPage({ events, campaign, navigation, navigationLab
                 )}
               </>
             )}
-                      </div>
+            </div>
           </Container>
-        </Layout>
       </>
     )
 }

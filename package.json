@@ -13,7 +13,7 @@
         "dev:alvalade": "DEV_CAMPAIGN_DOMAIN=viveralvalade.pt next dev",
         "build": "next build",
         "build:domain": "node scripts/build-domain.js",
-        "build:all": "node scripts/build-all-domains.js",
+        "build:all": "dotenv -e .env.local node scripts/build-all-domains.js",
         "deploy:domain": "node scripts/deploy-domain.js",
         "deploy:cloudflare": "node scripts/deploy-cloudflare.js",
         "deploy:preview": "node scripts/deploy-cloudflare.js",

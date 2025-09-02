@@ -2,7 +2,6 @@ import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Layout } from '../../components/layout'
 import { Container, Typography, Button } from '../../components/ui'
 import { ContentRenderer } from '../../components/content'
 import { getBuildConfiguration, getCampaignProposals, CampaignWithContent } from '../../lib/campaignUtils'
@@ -55,7 +54,6 @@ export default function ProposalPage({ proposal, campaign }: ProposalPageProps) 
         <title>{proposal.title} | {campaign.title}</title>
         <meta name="description" content={proposal.summary} />
       </Head>
-      <Layout campaign={campaign}>
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             {/* Breadcrumb */}
@@ -176,7 +174,6 @@ export default function ProposalPage({ proposal, campaign }: ProposalPageProps) 
             </div>
           </div>
         </Container>
-      </Layout>
     </>
   )
 }

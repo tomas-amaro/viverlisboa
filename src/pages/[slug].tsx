@@ -2,7 +2,6 @@ import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Layout } from '../components/layout'
 import { Container, Typography } from '../components/ui'
 import { ContentRenderer } from '../components/content'
 import { getBuildConfiguration, CampaignWithContent } from '../lib/campaignUtils'
@@ -31,7 +30,7 @@ interface CustomPageProps {
   }>
 }
 
-export default function CustomPagePage({ page, campaign, navigation }: CustomPageProps) {
+export default function CustomPagePage({ page, campaign }: CustomPageProps) {
   return (
     <>
       <Head>
@@ -44,7 +43,6 @@ export default function CustomPagePage({ page, campaign, navigation }: CustomPag
           <meta name="keywords" content={page.seo.keywords.join(', ')} />
         )}
       </Head>
-      <Layout campaign={campaign} navigation={navigation}>
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             {/* Header */}
@@ -94,7 +92,6 @@ export default function CustomPagePage({ page, campaign, navigation }: CustomPag
             </div>
           </div>
         </Container>
-      </Layout>
     </>
   )
 }

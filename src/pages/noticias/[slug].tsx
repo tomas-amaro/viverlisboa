@@ -1,7 +1,6 @@
 import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
-import { Layout } from '../../components/layout'
 import { Container, Typography, Button } from '../../components/ui'
 import { ContentRenderer } from '../../components/content'
 import { getBuildConfiguration, getCampaignNews, CampaignWithContent } from '../../lib/campaignUtils'
@@ -60,7 +59,6 @@ export default function PostPage({ post, campaign }: PostPageProps) {
           <meta name="keywords" content={post.seo.keywords.join(', ')} />
         )}
       </Head>
-      <Layout campaign={campaign}>
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             {/* Breadcrumb */}
@@ -168,7 +166,6 @@ export default function PostPage({ post, campaign }: PostPageProps) {
             </div>
           </div>
         </Container>
-      </Layout>
     </>
   )
 }

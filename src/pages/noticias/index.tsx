@@ -1,7 +1,6 @@
 import React from 'react'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
-import { Layout } from '../../components/layout'
 import { PostCard } from '../../components/content'
 import { Container, Grid, Typography, Button } from '../../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../../lib/campaignUtils'
@@ -18,7 +17,7 @@ interface NewsPageProps {
   navigationLabel: string
 }
 
-export default function NewsPage({ posts, campaign, navigation, navigationLabel }: NewsPageProps) {
+export default function NewsPage({ posts, campaign, navigationLabel }: NewsPageProps) {
   return (
     <>
       <Head>
@@ -28,7 +27,6 @@ export default function NewsPage({ posts, campaign, navigation, navigationLabel 
           content={`Acompanhe as ${navigationLabel.toLowerCase()} da campanha ${campaign.title}`}
         />
       </Head>
-      <Layout campaign={campaign} navigation={navigation}>
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
@@ -62,7 +60,6 @@ export default function NewsPage({ posts, campaign, navigation, navigationLabel 
             )}
           </div>
         </Container>
-      </Layout>
     </>
   )
 }

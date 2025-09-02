@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { theme } from '@/styles/theme'
 import { Container, Grid, Typography, Button } from '@/components/ui'
 import { HeroSection, ProposalCard, EventCard, PostCard } from '@/components/content'
-import { Layout } from '@/components/layout'
 import { Proposal, Event, Post } from '@/types/sanity'
 import { getBuildConfiguration, CampaignWithContent } from '@/lib/campaignUtils'
 
@@ -69,7 +68,6 @@ const CTAButtons = styled.div`
 
 const HomePage: React.FC<HomePageProps> = ({
   campaign,
-  navigation,
   featuredProposals,
   upcomingEvents,
   recentPosts,

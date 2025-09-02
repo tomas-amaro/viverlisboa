@@ -166,7 +166,7 @@ function MyApp({ Component, pageProps }: CustomAppProps) {
   }
 
   return (
-    <Layout campaign={campaign}>
+    <Layout campaign={campaign} navigation={pageProps.navigation}>
       <Component {...pageProps} campaign={campaign} />
     </Layout>
   )
