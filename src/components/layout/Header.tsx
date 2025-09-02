@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import styled, { css } from 'styled-components'
 import { theme } from '@/styles/theme'
-import { Container } from '@/components/ui'
+import { Container, CampaignName } from '@/components/ui'
 import { Campaign } from '@/types/sanity'
 import { urlFor } from '@/lib/sanity'
 
@@ -16,23 +16,22 @@ interface NavigationItem {
   href: string
 }
 
-const StyledHeader = styled.header<{ $scrolled: boolean }>`
+const StyledHeader = styled.header<{ $translateY: number; $isScrolled: boolean }>`
+  background-color: rgb(255, 255, 255);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  transition: ${theme.transitions.base};
+  transition: transform 0.3s ease-in-out, background-color 0.2s ease;
+  transform: translateY(${({ $translateY }) => $translateY}px);
   
-  ${({ $scrolled }) =>
-    $scrolled
-      ? css`
+  ${({ $isScrolled }) =>
+    $isScrolled
+      && css`
           background-color: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(10px);
           box-shadow: ${theme.shadows.sm};
-        `
-      : css`
-          background-color: transparent;
         `}
 `
 
@@ -60,7 +59,7 @@ const Logo = styled.div`
   position: relative;
   height: 48px;
   width: auto;
-  
+  align-content: center;
   img {
     height: 100%;
     width: auto;
@@ -219,23 +218,45 @@ const navigationItems: NavigationItem[] = [
 
 export const Header: React.FC<HeaderProps> = ({ campaign }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [translateY, setTranslateY] = useState(0)
 
-  // Efeito para detectar scroll (seria implementado com useEffect)
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     setIsScrolled(window.scrollY > 10)
-  //   }
-  //   window.addEventListener('scroll', handleScroll)
-  //   return () => window.removeEventListener('scroll', handleScroll)
-  // }, [])
+  useEffect(() => {
+    let lastScrollY = window.scrollY
+    const headerHeight = 80 // Match min-height from HeaderContainer
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      const isScrollingUp = currentScrollY < lastScrollY
+      
+      // Set background/blur effects when scrolled past 40px
+      setIsScrolled(currentScrollY > 40)
+      
+      // Handle translateY based on scroll direction and position
+      if (currentScrollY <= 40) {
+        // Always show header when near top
+        setTranslateY(0)
+      } else if (isScrollingUp) {
+        // Show header when scrolling up
+        setTranslateY(0)
+      } else {
+        // Hide header when scrolling down past 40px
+        setTranslateY(-headerHeight)
+      }
+      
+      lastScrollY = currentScrollY
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
 
   return (
-    <StyledHeader $scrolled={isScrolled}>
+    <StyledHeader $translateY={translateY} $isScrolled={isScrolled}>
       <HeaderContainer>
         <LogoContainer href="/">
           <Logo>
@@ -248,16 +269,11 @@ export const Header: React.FC<HeaderProps> = ({ campaign }) => {
                 priority
               />
             ) : (
-              <div style={{ 
-                height: '48px', 
-                display: 'flex', 
-                alignItems: 'center',
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                color: theme.colors.primary.blue 
-              }}>
-                {campaign.title}
-              </div>
+              <CampaignName 
+                mainTitle={campaign.title}
+                variant="default"
+                size="sm"
+              />
             )}
           </Logo>
         </LogoContainer>

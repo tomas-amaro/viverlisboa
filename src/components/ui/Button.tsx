@@ -94,14 +94,17 @@ const StyledButton = styled.button<{ $variant: ButtonVariant; $size: ButtonSize;
   align-items: center;
   justify-content: center;
   font-family: ${theme.fonts.primary};
-  font-weight: ${theme.fontWeights.semibold};
+  font-weight: ${theme.fontWeights.bold};
   text-decoration: none;
-  border-radius: ${theme.borderRadius.md};
-  transition: ${theme.transitions.fast};
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: ${theme.borderRadius.lg};
+  transition: all ${theme.transitions.base};
   cursor: pointer;
   position: relative;
   overflow: hidden;
   white-space: nowrap;
+  box-shadow: ${theme.shadows.md};
   
   ${({ $variant }) => getVariantStyles($variant)}
   ${({ $size }) => getSizeStyles($size)}
@@ -115,30 +118,45 @@ const StyledButton = styled.button<{ $variant: ButtonVariant; $size: ButtonSize;
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    box-shadow: none;
   }
   
   &:focus {
-    outline: 2px solid ${theme.colors.primary.blue};
+    outline: 3px solid rgba(72, 185, 202, 0.5);
     outline-offset: 2px;
   }
   
-  /* Adiciona um efeito de ondulação */
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: ${theme.shadows.lg};
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: ${theme.shadows.base};
+  }
+  
+  /* Diagonal accent effect */
   &::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    right: 0;
     width: 0;
-    height: 0;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    transition: width 0.3s ease;
+    z-index: 1;
   }
   
-  &:active::before {
-    width: 300px;
-    height: 300px;
+  &:hover::before {
+    width: 30px;
+  }
+  
+  /* Text content */
+  > * {
+    position: relative;
+    z-index: 2;
   }
 `
 

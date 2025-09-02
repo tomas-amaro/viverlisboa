@@ -1,13 +1,22 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
-import { Container, Typography } from '@/components/ui'
+import { Container, Typography, CampaignName } from '@/components/ui'
 import { Campaign } from '@/types/sanity'
 import { urlFor } from '@/lib/sanity'
 
 interface FooterProps {
   campaign: Campaign
+}
+
+interface PartyData {
+  name: string
+  abbreviation: string
+  logoPath: string
+  title: string
+  website: string
 }
 
 const StyledFooter = styled.footer`
@@ -20,7 +29,7 @@ const StyledFooter = styled.footer`
   color: ${theme.colors.text.white};
   padding-top: ${theme.spacing[16]};
   padding-bottom: ${theme.spacing[8]};
-  margin-top: ${theme.spacing[20]};
+  margin-top: ${theme.spacing[16]};
   position: relative;
   
   &::before {
@@ -98,44 +107,51 @@ const LogoSection = styled.div`
   }
 `
 
-const FooterLogo = styled.div`
-  position: relative;
-  height: 60px;
-  width: auto;
+const Logo = styled.div`
   margin-bottom: ${theme.spacing[4]};
-  
+  max-width: 180px;
+
   img {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
+    height: auto;
+  }
+`
+
+const CampaignDescription = styled(Typography)`
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin-bottom: ${theme.spacing[6]};
+  max-width: 300px;
+  
+  @media (max-width: ${theme.breakpoints.md}) {
+    text-align: center;
+    max-width: none;
   }
 `
 
 const SocialLinks = styled.div`
   display: flex;
-  gap: ${theme.spacing[3]};
-  margin-top: ${theme.spacing[4]};
+  gap: ${theme.spacing[4]};
   
   @media (max-width: ${theme.breakpoints.md}) {
     justify-content: center;
   }
 `
 
-const SocialLink = styled.a`
-  display: flex;
+const SocialLink = styled(Link)`
+  color: white;
+  font-size: ${theme.fontSizes.xl};
+  transition: ${theme.transitions.fast};
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: ${theme.borderRadius.full};
   background-color: rgba(255, 255, 255, 0.1);
-  color: ${theme.colors.text.white};
-  text-decoration: none;
-  transition: ${theme.transitions.fast};
   backdrop-filter: blur(10px);
   
   &:hover {
+    color: white;
     background-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
   }
@@ -148,7 +164,10 @@ const SocialLink = styled.a`
 
 const PartiesSection = styled.div`
   h3 {
+    font-size: ${theme.fontSizes.lg};
+    font-weight: ${theme.fontWeights.bold};
     margin-bottom: ${theme.spacing[4]};
+    color: ${theme.colors.text.white};
   }
 `
 
@@ -156,24 +175,73 @@ const PartiesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: ${theme.spacing[3]};
+  margin-bottom: ${theme.spacing[6]};
   
   @media (max-width: ${theme.breakpoints.sm}) {
     grid-template-columns: repeat(2, 1fr);
   }
 `
 
-const PartyIcon = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: ${theme.borderRadius.md};
-  background-color: rgba(255, 255, 255, 0.1);
+const PartyIconContainer = styled(Link)`
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: ${theme.fontWeights.bold};
   font-size: ${theme.fontSizes.sm};
   backdrop-filter: blur(10px);
+  overflow: hidden;
+  transition: ${theme.transitions.fast};
+  text-decoration: none;
+  color: white;
+  
+  &:hover {
+    ::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      z-index: 1;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    transform: scale(1.05);
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `
+
+const PartyIcon: React.FC<PartyData> = ({ name, abbreviation, logoPath, title, website }) => {
+  const [imageError, setImageError] = useState(false)
+  
+  return (
+    <PartyIconContainer 
+      href={website} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      title={`${title} - Visitar website oficial`}
+    >
+      {!imageError ? (
+        <Image
+          src={logoPath}
+          alt={`${name} logo`}
+          width={48}
+          height={48}
+          onError={() => setImageError(true)}
+          style={{ objectFit: 'contain' }}
+        />
+      ) : (
+        <span>{abbreviation}</span>
+      )}
+    </PartyIconContainer>
+  )
+}
 
 const FooterBottom = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -203,88 +271,108 @@ const ContactInfo = styled.div`
   }
 `
 
-export const Footer: React.FC<FooterProps> = ({ campaign }) => {
+const Footer: React.FC<FooterProps> = ({ campaign }) => {
   const currentYear = new Date().getFullYear()
+  
+  const parties: PartyData[] = [
+    {
+      name: "Partido Socialista",
+      abbreviation: "PS",
+      logoPath: "/assets/party-logos/ps.svg",
+      title: "Partido Socialista",
+      website: "https://www.ps.pt"
+    },
+    {
+      name: "Livre",
+      abbreviation: "L",
+      logoPath: "/assets/party-logos/livre.svg", 
+      title: "Livre",
+      website: "https://partidolivre.pt"
+    },
+    {
+      name: "Bloco de Esquerda",
+      abbreviation: "BE",
+      logoPath: "/assets/party-logos/be.svg",
+      title: "Bloco de Esquerda",
+      website: "https://www.bloco.org"
+    },
+    {
+      name: "Pessoas-Animais-Natureza",
+      abbreviation: "PAN", 
+      logoPath: "/assets/party-logos/pan.svg",
+      title: "Pessoas-Animais-Natureza",
+      website: "https://www.pan.com.pt"
+    }
+  ]
 
   return (
     <StyledFooter>
       <Container>
         <FooterContent>
-          <LogoSection>
-            {campaign.logo && campaign.logo.asset ? (
-              <FooterLogo>
-                <Image
-                  src={urlFor(campaign.logo).width(200).height(120).url()}
-                  alt={campaign.logo.alt || `Logo ${campaign.title}`}
-                  width={200}
-                  height={120}
-                />
-              </FooterLogo>
-            ) : (
-              <div style={{ 
-                height: '60px', 
-                display: 'flex', 
-                alignItems: 'center',
-                fontSize: '2rem',
-                fontWeight: 'bold',
-                color: 'white',
-                marginBottom: theme.spacing[4]
-              }}>
-                {campaign.title}
-              </div>
-            )}
-            
-            <Typography variant="body2" color="white" margin={false}>
-              Uma coligação de esquerda comprometida com o futuro de {campaign.location}.
-              Juntos por uma cidade mais justa, sustentável e democrática.
-            </Typography>
-
-            {campaign.socialMedia && (
+          <FooterSection>
+            <LogoSection>
+              <Logo>
+                {campaign.logo && campaign.logo.asset ? (
+                  <Image
+                    src={urlFor(campaign.logo).width(360).height(180).url()}
+                    alt={`${campaign.title} logo`}
+                    width={180}
+                    height={90}
+                    style={{ objectFit: 'contain' }}
+                  />
+                ) : (
+                  <CampaignName 
+                    mainTitle={campaign.title}
+                    year="2025"
+                    variant="white"
+                    size="md"
+                  />
+                )}
+              </Logo>
+              
+              <CampaignDescription>
+                {campaign.description || "Juntos construímos uma Lisboa melhor para todos. Uma cidade mais justa, sustentável e próspera."}
+              </CampaignDescription>
+              
               <SocialLinks>
-                {campaign.socialMedia.facebook && (
-                  <SocialLink
-                    href={campaign.socialMedia.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Facebook"
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                    </svg>
-                  </SocialLink>
-                )}
-                
-                {campaign.socialMedia.instagram && (
-                  <SocialLink
-                    href={campaign.socialMedia.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram"
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                  </SocialLink>
-                )}
-                
-                {campaign.socialMedia.twitter && (
-                  <SocialLink
-                    href={campaign.socialMedia.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Twitter/X"
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                  </SocialLink>
-                )}
+                <SocialLink href="#" aria-label="Facebook">
+                  <Image
+                    src="/assets/social-icons/facebook.svg"
+                    alt="Facebook"
+                    width={20}
+                    height={20}
+                  />
+                </SocialLink>
+                <SocialLink href="#" aria-label="Instagram">
+                  <Image
+                    src="/assets/social-icons/instagram.svg"
+                    alt="Instagram"
+                    width={20}
+                    height={20}
+                  />
+                </SocialLink>
+                <SocialLink href="#" aria-label="Twitter">
+                  <Image
+                    src="/assets/social-icons/twitter.svg"
+                    alt="Twitter"
+                    width={20}
+                    height={20}
+                  />
+                </SocialLink>
+                <SocialLink href="#" aria-label="LinkedIn">
+                  <Image
+                    src="/assets/social-icons/linkedin.svg"
+                    alt="LinkedIn"
+                    width={20}
+                    height={20}
+                  />
+                </SocialLink>
               </SocialLinks>
-            )}
-          </LogoSection>
+            </LogoSection>
+          </FooterSection>
 
           <FooterSection>
-            <h3>Links Úteis</h3>
+            <h3>Links Rápidos</h3>
             <ul>
               <li>
                 <FooterLink href="/propostas">Propostas</FooterLink>
@@ -296,7 +384,7 @@ export const Footer: React.FC<FooterProps> = ({ campaign }) => {
                 <FooterLink href="/noticias">Notícias</FooterLink>
               </li>
               <li>
-                <FooterLink href="/candidatos">Candidatos</FooterLink>
+                <FooterLink href="/sobre">Sobre Nós</FooterLink>
               </li>
               <li>
                 <FooterLink href="/apoiar">Como Apoiar</FooterLink>
@@ -311,10 +399,16 @@ export const Footer: React.FC<FooterProps> = ({ campaign }) => {
             <PartiesSection>
               <h3>Coligação</h3>
               <PartiesGrid>
-                <PartyIcon title="Partido Socialista">PS</PartyIcon>
-                <PartyIcon title="Livre">L</PartyIcon>
-                <PartyIcon title="Bloco de Esquerda">BE</PartyIcon>
-                <PartyIcon title="Pessoas-Animais-Natureza">PAN</PartyIcon>
+                {parties.map((party, index) => (
+                  <PartyIcon
+                    key={index}
+                    name={party.name}
+                    abbreviation={party.abbreviation}
+                    logoPath={party.logoPath}
+                    title={party.title}
+                    website={party.website}
+                  />
+                ))}
               </PartiesGrid>
             </PartiesSection>
 
@@ -345,4 +439,4 @@ export const Footer: React.FC<FooterProps> = ({ campaign }) => {
   )
 }
 
-export default Footer
+export { Footer }

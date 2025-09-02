@@ -3,8 +3,8 @@ import Head from 'next/head'
 import styled, { ThemeProvider } from 'styled-components'
 import { GlobalStyles } from '@/styles/GlobalStyles'
 import { theme } from '@/styles/theme'
-import Header from './Header'
-import Footer from './Footer'
+import { Header } from './Header'
+import { Footer } from './Footer'
 import { Campaign } from '@/types/sanity'
 
 interface LayoutProps {
@@ -214,7 +214,6 @@ export const Layout: React.FC<LayoutProps> = ({
         <MainContent id="main-content" role="main">
           {children}
         </MainContent>
-        
         <Footer campaign={campaign} />
         
         <BackToTop

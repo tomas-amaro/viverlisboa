@@ -1,0 +1,35 @@
+classDiagram
+direction TB
+    class BaseSite {
+    }
+
+    class Campaign {
+    }
+
+    class Proposal {
+    }
+
+    class News {
+    }
+
+    class Events {
+    }
+
+    class Header {
+    }
+
+    class Footer {
+    }
+
+    class Pages {
+    }
+
+    Campaign "1" <|-- "n" Proposal
+    Campaign "1" <|-- "n" News
+    Campaign "1" <|-- "n" Events
+    Campaign -- Header
+    Campaign -- Footer
+    Footer "1" -- "n" Pages
+    Pages "1" -- "n" Header
+    BaseSite "1" -- "n" Campaign
+

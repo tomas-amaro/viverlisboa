@@ -36,42 +36,6 @@ const SectionHeader = styled.div`
   }
 `
 
-const StatsSection = styled(Section)`
-  background: linear-gradient(
-    135deg,
-    ${theme.colors.primary.blue} 0%,
-    ${theme.colors.primary.teal} 50%,
-    ${theme.colors.primary.carmin} 100%
-  );
-  color: ${theme.colors.text.white};
-  text-align: center;
-`
-
-const StatsGrid = styled(Grid)`
-  max-width: 800px;
-  margin: 0 auto;
-`
-
-const StatCard = styled.div`
-  text-align: center;
-  
-  h3 {
-    font-size: ${theme.fontSizes['4xl']};
-    font-weight: ${theme.fontWeights.black};
-    margin-bottom: ${theme.spacing[2]};
-    
-    @media (max-width: ${theme.breakpoints.md}) {
-      font-size: ${theme.fontSizes['3xl']};
-    }
-  }
-  
-  p {
-    font-size: ${theme.fontSizes.lg};
-    opacity: 0.9;
-    margin: 0;
-  }
-`
-
 const CTASection = styled(Section)`
   background: linear-gradient(
     135deg,
@@ -133,36 +97,6 @@ const HomePage: React.FC<HomePageProps> = ({
           secondary: campaign.secondaryColor,
         }}
       />
-
-      {/* Stats Section */}
-      <StatsSection>
-        <Container>
-          <SectionHeader>
-            <Typography variant="h2" color="white" align="center">
-              A nossa força em números
-            </Typography>
-          </SectionHeader>
-          
-          <StatsGrid columns={{ sm: 2, lg: 4 }} gap={8}>
-            <StatCard>
-              <h3>4</h3>
-              <p>Partidos Unidos</p>
-            </StatCard>
-            <StatCard>
-              <h3>50+</h3>
-              <p>Propostas Concretas</p>
-            </StatCard>
-            <StatCard>
-              <h3>100+</h3>
-              <p>Candidatos</p>
-            </StatCard>
-            <StatCard>
-              <h3>24</h3>
-              <p>Freguesias</p>
-            </StatCard>
-          </StatsGrid>
-        </Container>
-      </StatsSection>
 
       {/* Featured Proposals Section */}
       <Section>
@@ -283,9 +217,8 @@ const HomePage: React.FC<HomePageProps> = ({
             A sua participação é fundamental para construirmos uma Lisboa mais justa, 
             sustentável e democrática. Descubra como pode apoiar a nossa campanha.
           </Typography>
-          
           <CTAButtons>
-            <Button variant="outline" size="lg" href="/apoiar">
+            <Button variant="primary" size="lg" href="/apoiar">
               Como apoiar
             </Button>
             <Button variant="secondary" size="lg" href="/contacto">

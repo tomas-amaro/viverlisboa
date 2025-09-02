@@ -10,3 +10,16 @@ export {
   Body,
   Caption,
 } from "./Typography";
+export { GeometricBackground } from "./GeometricBackground";
+export { InfoCallout } from "./InfoCallout";
+export { LayoutConstructionBackground } from "./LayoutConstructionBackground";
+export { CampaignName } from "./CampaignName";
+export {
+  StyledSection,
+  HeroStyledSection,
+  CallToActionSection,
+  HighlightSection,
+  ContentSection,
+  SectionTitle,
+  SectionSubtitle,
+} from "./StyledSection";

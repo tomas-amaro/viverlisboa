@@ -87,8 +87,15 @@ const nextConfig = {
     return config;
   },
   
-  // Add build-time information
+  // Add build-time information (stable during development)
   generateBuildId: async () => {
+    // In development, use a stable ID to prevent constant refreshes
+    if (process.env.NODE_ENV === 'development') {
+      const campaignDomain = process.env.CAMPAIGN_DOMAIN || process.env.DEV_CAMPAIGN_DOMAIN || 'default';
+      return `dev-${campaignDomain}`;
+    }
+    
+    // In production, use timestamp for unique builds
     const campaignDomain = process.env.CAMPAIGN_DOMAIN || 'default';
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     return `${campaignDomain}-${timestamp}`;

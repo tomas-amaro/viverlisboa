@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 import { motion } from 'framer-motion'
 import { theme } from '@/styles/theme'
 import { Container, Button } from '@/components/ui'
+import { GeometricBackground } from '@/components/ui/GeometricBackground'
 import { urlFor } from '@/lib/sanity'
 import { SanityImage } from '@/types/sanity'
 
@@ -57,8 +58,9 @@ const HeroContainer = styled.section<{ $height: HeroSectionProps['height']; $has
           background: linear-gradient(
             135deg,
             ${theme.colors.primary.blue} 0%,
-            ${theme.colors.primary.teal} 50%,
-            ${theme.colors.primary.carmin} 100%
+            ${theme.colors.primary.teal} 30%,
+            ${theme.colors.primary.carmin} 65%,
+            ${theme.colors.primary.red} 100%
           );
         `}
   
@@ -115,11 +117,17 @@ const HeroContent = styled(Container)<{ $textAlign: HeroSectionProps['textAlign'
 `
 
 const HeroTitle = styled(motion.h1)`
-  font-size: ${theme.fontSizes['6xl']};
+  font-size: ${theme.fontSizes['7xl']};
   font-weight: ${theme.fontWeights.black};
   line-height: 1.1;
   margin-bottom: ${theme.spacing[6]};
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  
+  @media (max-width: ${theme.breakpoints.xl}) {
+    font-size: ${theme.fontSizes['6xl']};
+  }
   
   @media (max-width: ${theme.breakpoints.lg}) {
     font-size: ${theme.fontSizes['5xl']};
@@ -185,33 +193,6 @@ const HeroCTA = styled(motion.div)`
   }
 `
 
-const DecorativeElement = styled(motion.div)`
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  
-  &:nth-child(1) {
-    top: 10%;
-    right: 10%;
-    z-index: 2;
-  }
-  
-  &:nth-child(2) {
-    bottom: 20%;
-    left: 5%;
-    width: 150px;
-    height: 150px;
-    z-index: 2;
-  }
-  
-  @media (max-width: ${theme.breakpoints.md}) {
-    display: none;
-  }
-`
-
 export const HeroSection: React.FC<HeroSectionProps> = ({
   title,
   subtitle,
@@ -243,14 +224,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     },
   }
 
-  const decorativeVariants = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: { duration: 1, ease: 'easeOut' },
-    },
-  }
+
 
   return (
     <HeroContainer $height={height} $hasImage={!!backgroundImage}>
@@ -266,21 +240,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </BackgroundImage>
       )}
       
-      <Overlay $show={overlay || !!backgroundImage} />
+      <GeometricBackground variant="hero" />
       
-      <DecorativeElement
-        variants={decorativeVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ delay: 1 }}
-      />
-      <DecorativeElement
-        variants={decorativeVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ delay: 1.2 }}
-      />
-
+      <Overlay $show={overlay || !!backgroundImage} />
       <HeroContent $textAlign={textAlign}>
         <motion.div
           variants={containerVariants}
@@ -311,13 +273,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 variant="secondary"
               >
                 {ctaText}
-              </Button>
-              <Button
-                href="/propostas"
-                size="lg"
-                variant="outline"
-              >
-                Ver Propostas
               </Button>
             </HeroCTA>
           )}
