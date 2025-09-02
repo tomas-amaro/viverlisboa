@@ -29,6 +29,27 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "showInNavigation",
+      title: "Mostrar na Navegação",
+      type: "boolean",
+      description: "Mostrar esta página no menu de navegação",
+      initialValue: false,
+    }),
+    defineField({
+      name: "navigationOrder",
+      title: "Ordem na Navegação",
+      type: "number",
+      description: "Ordem de aparição no menu (menor número = mais cedo)",
+      hidden: ({ document }) => !document?.showInNavigation,
+    }),
+    defineField({
+      name: "navigationLabel",
+      title: "Etiqueta da Navegação",
+      type: "string",
+      description: "Nome personalizado para o menu (usa título se vazio)",
+      hidden: ({ document }) => !document?.showInNavigation,
+    }),
+    defineField({
       name: "seo",
       title: "SEO",
       type: "object",

@@ -254,6 +254,12 @@ export const EventCard: React.FC<EventCardProps> = ({
     },
   }
 
+  // Handle missing or invalid event data
+  if (!event || !event.date) {
+    console.warn('EventCard: Missing event data or date', event)
+    return null
+  }
+
   const eventDate = new Date(event.date)
   const isUpcoming = eventDate > new Date()
 

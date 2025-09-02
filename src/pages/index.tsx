@@ -4,12 +4,17 @@ import styled from 'styled-components'
 import { theme } from '@/styles/theme'
 import { Container, Grid, Typography, Button } from '@/components/ui'
 import { HeroSection, ProposalCard, EventCard, PostCard } from '@/components/content'
-import { Campaign, Proposal, Event, Post } from '@/types/sanity'
-import { client } from '@/lib/sanity'
-import { getBuildConfig } from '@/lib/buildConfig'
+import { Layout } from '@/components/layout'
+import { Proposal, Event, Post } from '@/types/sanity'
+import { getBuildConfiguration, CampaignWithContent } from '@/lib/campaignUtils'
 
 interface HomePageProps {
-  campaign: Campaign
+  campaign: CampaignWithContent
+  navigation: Array<{
+    href: string
+    label: string
+    count?: number
+  }>
   featuredProposals: Proposal[]
   upcomingEvents: Event[]
   recentPosts: Post[]
@@ -64,6 +69,7 @@ const CTAButtons = styled.div`
 
 const HomePage: React.FC<HomePageProps> = ({
   campaign,
+  navigation,
   featuredProposals,
   upcomingEvents,
   recentPosts,
@@ -83,7 +89,7 @@ const HomePage: React.FC<HomePageProps> = ({
   ]
 
   return (
-    <>
+    <Layout campaign={campaign} navigation={navigation}>
       {/* Hero Section */}
       <HeroSection
         title={`${campaign.title}`}
@@ -227,163 +233,38 @@ const HomePage: React.FC<HomePageProps> = ({
           </CTAButtons>
         </Container>
       </CTASection>
-    </>
+    </Layout>
   )
 }
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
     // Get build-time campaign configuration
-    const buildConfig = await getBuildConfig()
-    const campaignDomain = buildConfig.campaign.domain
+    const { campaign, navigation } = await getBuildConfiguration()
+
+    // Fetch campaign-specific content using campaign utilities  
+    const { getCampaignProposals, getCampaignEvents, getCampaignNews } = await import('@/lib/campaignUtils')
     
-    // Create campaign object from build config
-    const campaign: Campaign = {
-      _id: `campaign-${buildConfig.campaign.slug}`,
-      _type: 'campaign',
-      title: buildConfig.campaign.title,
-      slug: { current: buildConfig.campaign.slug },
-      description: buildConfig.campaign.description,
-      domain: buildConfig.campaign.domain,
-      location: buildConfig.campaign.location,
-      mainColor: buildConfig.campaign.mainColor,
-      secondaryColor: buildConfig.campaign.secondaryColor,
-      socialMedia: buildConfig.campaign.socialMedia,
-    }
-
-    // Fetch campaign-specific data from Sanity
-    const [campaignData, proposalsData, eventsData, postsData] = await Promise.all([
-      // Get full campaign data from Sanity (for logo, heroImage, etc.)
-      client.fetch(
-        `*[_type == "campaign" && domain == $domain][0]{
-          _id,
-          _type,
-          title,
-          slug,
-          description,
-          domain,
-          location,
-          mainColor,
-          secondaryColor,
-          logo{
-            _type,
-            asset,
-            alt
-          },
-          heroImage{
-            _type,
-            asset,
-            alt
-          },
-          socialMedia
-        }`,
-        { domain: campaignDomain }
-      ),
-      
-      // Get featured proposals for this campaign
-      client.fetch(
-        `*[_type == "proposal" && campaign->domain == $domain && featured == true] | order(priority desc, _createdAt desc)[0...6]{
-          _id,
-          _type,
-          title,
-          slug,
-          campaign,
-          category,
-          summary,
-          content,
-          priority,
-          featured,
-          tags,
-          featuredImage{
-            _type,
-            asset,
-            alt
-          }
-        }`,
-        { domain: campaignDomain }
-      ),
-      
-      // Get upcoming events for this campaign
-      client.fetch(
-        `*[_type == "event" && campaign->domain == $domain && date >= now()] | order(date asc)[0...3]{
-          _id,
-          _type,
-          title,
-          slug,
-          campaign,
-          date,
-          time,
-          location,
-          eventType,
-          featured,
-          featuredImage{
-            _type,
-            asset,
-            alt
-          }
-        }`,
-        { domain: campaignDomain }
-      ),
-      
-      // Get recent posts for this campaign
-      client.fetch(
-        `*[_type == "post" && campaign->domain == $domain] | order(publishedAt desc)[0...3]{
-          _id,
-          _type,
-          title,
-          slug,
-          campaign,
-          publishedAt,
-          excerpt,
-          content,
-          categories,
-          featuredImage{
-            _type,
-            asset,
-            alt
-          }
-        }`,
-        { domain: campaignDomain }
-      ),
+    const [proposalsData, eventsData, postsData] = await Promise.all([
+      getCampaignProposals(campaign._id, 6),
+      getCampaignEvents(campaign._id, 3), 
+      getCampaignNews(campaign._id, 3)
     ])
-
-    // Merge Sanity data with build config (Sanity takes precedence for images, etc.)
-    const finalCampaign = campaignData ? { ...campaign, ...campaignData } : campaign
 
     return {
       props: {
-        campaign: finalCampaign,
+        campaign,
+        navigation,
         featuredProposals: proposalsData || [],
         upcomingEvents: eventsData || [],
         recentPosts: postsData || [],
       },
-      // Static generation - no revalidation needed since builds are domain-specific
+      revalidate: 60, // Revalidate every minute
     }
   } catch (error) {
     console.error('Error fetching homepage data:', error)
-    
-    // Fallback to build config data
-    const buildConfig = await getBuildConfig()
-    const fallbackCampaign: Campaign = {
-      _id: `campaign-${buildConfig.campaign.slug}`,
-      _type: 'campaign',
-      title: buildConfig.campaign.title,
-      slug: { current: buildConfig.campaign.slug },
-      description: buildConfig.campaign.description,
-      domain: buildConfig.campaign.domain,
-      location: buildConfig.campaign.location,
-      mainColor: buildConfig.campaign.mainColor,
-      secondaryColor: buildConfig.campaign.secondaryColor,
-      socialMedia: buildConfig.campaign.socialMedia,
-    }
-    
     return {
-      props: {
-        campaign: fallbackCampaign,
-        featuredProposals: [],
-        upcomingEvents: [],
-        recentPosts: [],
-      },
+      notFound: true
     }
   }
 }

@@ -237,7 +237,12 @@ const formatDate = (dateString: string): string => {
   })
 }
 
-const calculateReadingTime = (content: unknown[]): number => {
+const calculateReadingTime = (content: unknown[] | undefined | null): number => {
+  // Handle undefined or null content
+  if (!content || !Array.isArray(content)) {
+    return 1 // Default to 1 minute reading time
+  }
+  
   // Simplified calculation - in real implementation would traverse portable text
   const averageWordsPerMinute = 200
   const estimatedWords = content.length * 50 // rough estimate
@@ -274,6 +279,12 @@ export const PostCard: React.FC<PostCardProps> = ({
       y: 0,
       transition: { duration: 0.5, ease: 'easeOut' },
     },
+  }
+
+  // Handle missing or invalid post data
+  if (!post || !post.title) {
+    console.warn('PostCard: Missing post data or title', post)
+    return null
   }
 
   const readingTime = calculateReadingTime(post.content)

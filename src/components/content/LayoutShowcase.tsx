@@ -92,7 +92,7 @@ const LayoutShowcase: React.FC = () => {
             <Subtitle>
               Discover the geometric beauty and thoughtful design that powers our 
               campaign. Every element crafted with purpose, every pattern designed 
-              to inspire Lisboa's future.
+              to inspire Lisboa&apos;s future.
             </Subtitle>
             
             <ActionButton variant="primary">

@@ -40,6 +40,7 @@
         "@sanity/client": "^7.10.0",
         "@sanity/image-url": "^1.2.0",
         "@sanity/vision": "^3.99.0",
+        "dotenv": "^17.2.1",
         "framer-motion": "^10.16.16",
         "next": "^14.0.4",
         "next-sanity": "^9.12.3",

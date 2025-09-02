@@ -10,6 +10,11 @@ import { Campaign } from '@/types/sanity'
 interface LayoutProps {
   children: ReactNode
   campaign: Campaign
+  navigation?: Array<{
+    href: string
+    label: string
+    count?: number
+  }>
   seo?: {
     title?: string
     description?: string
@@ -23,14 +28,29 @@ interface LayoutProps {
 
 const LayoutContainer = styled.div`
   min-height: 100vh;
+  max-width: 100dvw;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
   display: flex;
   flex-direction: column;
+  
+  /* Handle safe areas on mobile devices */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 `
 
 const MainContent = styled.main`
   flex: 1;
-  padding-top: 80px; /* Height of fixed header */
+  padding-top: 60px; /* Height of fixed header */
   position: relative;
+  
+  /* Mobile adjustments */
+  @media (max-width: ${theme.breakpoints.md}) {
+    padding-top: 56px; /* Smaller header height on mobile */
+  }
+  
+  @media (max-width: ${theme.breakpoints.sm}) {
+    padding-top: 52px; /* Even smaller on small mobile */
+  }
 `
 
 const SkipLink = styled.a`
@@ -44,9 +64,24 @@ const SkipLink = styled.a`
   text-decoration: none;
   z-index: 100;
   transition: ${theme.transitions.fast};
+  font-size: 0.875rem;
   
   &:focus {
     top: 6px;
+  }
+  
+  /* Mobile improvements */
+  @media (max-width: ${theme.breakpoints.md}) {
+    left: ${theme.spacing[2]};
+    padding: ${theme.spacing[3]} ${theme.spacing[4]};
+    font-size: 1rem;
+    min-height: 44px; /* Minimum touch target size */
+    display: flex;
+    align-items: center;
+    
+    &:focus {
+      top: ${theme.spacing[2]};
+    }
   }
 `
 
@@ -54,8 +89,8 @@ const BackToTop = styled.button<{ $visible: boolean }>`
   position: fixed;
   bottom: ${theme.spacing[6]};
   right: ${theme.spacing[6]};
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: ${theme.borderRadius.full};
   background-color: ${theme.colors.primary.blue};
   color: ${theme.colors.text.white};
@@ -78,32 +113,76 @@ const BackToTop = styled.button<{ $visible: boolean }>`
       $visible ? 'translateY(-2px)' : 'translateY(100%)'};
   }
   
+  &:active {
+    transform: ${({ $visible }) => 
+      $visible ? 'translateY(0) scale(0.95)' : 'translateY(100%)'};
+  }
+  
   &:focus {
-    outline: 2px solid ${theme.colors.primary.blue};
+    outline: 2px solid ${theme.colors.primary.teal};
     outline-offset: 2px;
   }
   
   svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
   
+  /* Tablet adjustments */
+  @media (max-width: ${theme.breakpoints.lg}) {
+    bottom: ${theme.spacing[5]};
+    right: ${theme.spacing[5]};
+    width: 48px;
+    height: 48px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  /* Mobile adjustments */
   @media (max-width: ${theme.breakpoints.md}) {
     bottom: ${theme.spacing[4]};
     right: ${theme.spacing[4]};
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
+    box-shadow: ${theme.shadows.xl};
+    
+    /* Ensure minimum touch target size */
+    min-width: 44px;
+    min-height: 44px;
     
     svg {
       width: 18px;
       height: 18px;
     }
   }
+  
+  /* Small mobile adjustments */
+  @media (max-width: ${theme.breakpoints.sm}) {
+    bottom: calc(${theme.spacing[3]} + env(safe-area-inset-bottom));
+    right: ${theme.spacing[3]};
+    width: 44px;
+    height: 44px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  /* Handle landscape orientation on mobile */
+  @media (max-width: ${theme.breakpoints.md}) and (orientation: landscape) {
+    bottom: ${theme.spacing[2]};
+    right: ${theme.spacing[3]};
+  }
 `
 
 export const Layout: React.FC<LayoutProps> = ({
   children,
   campaign,
+  navigation,
   seo,
   className,
 }) => {
@@ -111,11 +190,25 @@ export const Layout: React.FC<LayoutProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 300)
+      // Show back to top button earlier on mobile for better UX
+      const threshold = window.innerWidth <= 768 ? 200 : 300
+      setShowBackToTop(window.scrollY > threshold)
     }
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    // Throttle scroll events for better performance on mobile
+    let ticking = false
+    const throttledHandleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll()
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', throttledHandleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', throttledHandleScroll)
   }, [])
 
   const scrollToTop = () => {
@@ -141,7 +234,7 @@ export const Layout: React.FC<LayoutProps> = ({
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
         <meta name="keywords" content={pageKeywords} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="robots" content={seo?.noindex ? 'noindex,nofollow' : 'index,follow'} />
         
         {/* Open Graph */}
@@ -171,6 +264,12 @@ export const Layout: React.FC<LayoutProps> = ({
         {/* Theme color based on campaign */}
         <meta name="theme-color" content={campaign.mainColor} />
         <meta name="msapplication-TileColor" content={campaign.mainColor} />
+        
+        {/* Mobile-specific meta tags */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content={campaign.title} />
+        <meta name="mobile-web-app-capable" content="yes" />
         
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://cdn.sanity.io" />
@@ -209,7 +308,7 @@ export const Layout: React.FC<LayoutProps> = ({
           Saltar para o conteúdo principal
         </SkipLink>
         
-        <Header campaign={campaign} />
+        <Header campaign={campaign} navigation={navigation} />
         
         <MainContent id="main-content" role="main">
           {children}

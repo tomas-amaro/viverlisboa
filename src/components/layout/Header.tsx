@@ -9,11 +9,17 @@ import { urlFor } from '@/lib/sanity'
 
 interface HeaderProps {
   campaign: Campaign
+  navigation?: Array<{
+    href: string
+    label: string
+    count?: number
+  }>
 }
 
 interface NavigationItem {
   label: string
   href: string
+  count?: number
 }
 
 const StyledHeader = styled.header<{ $translateY: number; $isScrolled: boolean }>`
@@ -208,15 +214,13 @@ const SocialLink = styled.a`
   }
 `
 
-const navigationItems: NavigationItem[] = [
+// Default navigation (fallback)
+const defaultNavigationItems: NavigationItem[] = [
   { label: 'Início', href: '/' },
-  { label: 'Propostas', href: '/propostas' },
-  { label: 'Eventos', href: '/eventos' },
-  { label: 'Notícias', href: '/noticias' },
   { label: 'Contacto', href: '/contacto' },
 ]
 
-export const Header: React.FC<HeaderProps> = ({ campaign }) => {
+export const Header: React.FC<HeaderProps> = ({ campaign, navigation = defaultNavigationItems }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [translateY, setTranslateY] = useState(0)
@@ -279,9 +283,22 @@ export const Header: React.FC<HeaderProps> = ({ campaign }) => {
         </LogoContainer>
 
         <Navigation $isOpen={isMenuOpen}>
-          {navigationItems.map((item) => (
+          {navigation.map((item) => (
             <NavLink key={item.href} href={item.href}>
               {item.label}
+              {item.count && item.count > 0 && (
+                <span style={{
+                  marginLeft: '0.5rem',
+                  fontSize: '0.75rem',
+                  background: 'rgba(72, 185, 202, 0.2)',
+                  color: '#48B9CA',
+                  padding: '0.125rem 0.375rem',
+                  borderRadius: '0.75rem',
+                  fontWeight: 600
+                }}>
+                  {item.count}
+                </span>
+              )}
             </NavLink>
           ))}
           

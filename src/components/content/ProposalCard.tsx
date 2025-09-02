@@ -256,6 +256,12 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
   proposal,
   featured = false,
 }) => {
+  // Handle missing or invalid proposal data
+  if (!proposal || !proposal.title) {
+    console.warn('ProposalCard: Missing proposal data or title', proposal)
+    return null
+  }
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
