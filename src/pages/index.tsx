@@ -89,7 +89,7 @@ const HomePage: React.FC<HomePageProps> = ({
   ]
 
   return (
-    <Layout campaign={campaign} navigation={navigation}>
+    <>
       {/* Hero Section */}
       <HeroSection
         title={`${campaign.title}`}
@@ -233,7 +233,7 @@ const HomePage: React.FC<HomePageProps> = ({
           </CTAButtons>
         </Container>
       </CTASection>
-    </Layout>
+      </>
   )
 }
 
