@@ -257,7 +257,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
         upcomingEvents: eventsData || [],
         recentPosts: postsData || [],
       },
-      revalidate: 60, // Revalidate every minute
+
     }
   } catch (error) {
     console.error('Error fetching homepage data:', error)

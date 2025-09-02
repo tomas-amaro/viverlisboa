@@ -86,7 +86,7 @@ export const getStaticProps: GetStaticProps<ProposalsPageProps> = async () => {
         navigation,
         navigationLabel: campaign.navigationLabels?.proposals || 'Propostas'
       },
-      revalidate: 60 // Revalidate every minute
+
     }
   } catch (error) {
     console.error('Error in getStaticProps:', error)

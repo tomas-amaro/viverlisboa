@@ -237,7 +237,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         post,
         campaign
       },
-      revalidate: 60
+
     }
   } catch (error) {
     console.error('Error in getStaticProps:', error)

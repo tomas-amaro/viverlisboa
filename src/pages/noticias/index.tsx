@@ -85,7 +85,7 @@ export const getStaticProps: GetStaticProps<NewsPageProps> = async () => {
         navigation,
         navigationLabel: campaign.navigationLabels?.news || 'Notícias'
       },
-      revalidate: 60 // Revalidate every minute
+
     }
   } catch (error) {
     console.error('Error in getStaticProps:', error)

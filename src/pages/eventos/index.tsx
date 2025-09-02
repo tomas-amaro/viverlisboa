@@ -120,7 +120,7 @@ export const getStaticProps: GetStaticProps<EventsPageProps> = async () => {
         navigation,
         navigationLabel: campaign.navigationLabels?.events || 'Eventos'
       },
-      revalidate: 60 // Revalidate every minute
+
     }
   } catch (error) {
     console.error('Error in getStaticProps:', error)

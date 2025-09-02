@@ -322,7 +322,7 @@ export const getStaticProps: GetStaticProps<ContactPageProps> = async () => {
         campaign,
         navigation
       },
-      revalidate: 60
+
     }
   } catch (error) {
     console.error('Error in getStaticProps:', error)
