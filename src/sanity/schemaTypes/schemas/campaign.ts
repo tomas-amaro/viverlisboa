@@ -201,6 +201,159 @@ export default defineType({
         },
       ],
     }),
+    defineField({
+      name: "headerContent",
+      title: "Conteúdo do Header",
+      type: "object",
+      fields: [
+        {
+          name: "tagline",
+          title: "Slogan",
+          type: "string",
+          description: "Slogan curto exibido no menu mobile",
+        },
+      ],
+    }),
+    defineField({
+      name: "footerContent",
+      title: "Conteúdo do Footer",
+      type: "object",
+      fields: [
+        {
+          name: "description",
+          title: "Descrição da Campanha",
+          type: "text",
+          rows: 2,
+          description: "Descrição curta exibida no rodapé",
+        },
+        {
+          name: "contactInfo",
+          title: "Informações de Contacto",
+          type: "object",
+          fields: [
+            {
+              name: "phone",
+              title: "Telefone",
+              type: "string",
+            },
+            {
+              name: "email",
+              title: "Email",
+              type: "email",
+            },
+            {
+              name: "address",
+              title: "Morada",
+              type: "string",
+            },
+          ],
+        },
+        {
+          name: "quickLinks",
+          title: "Links Rápidos",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              fields: [
+                {
+                  name: "label",
+                  title: "Nome do Link",
+                  type: "string",
+                  description:
+                    "Deixe vazio para usar o título da página automaticamente",
+                },
+                {
+                  name: "linkType",
+                  title: "Tipo de Link",
+                  type: "string",
+                  options: {
+                    list: [
+                      { title: "Página Personalizada", value: "page" },
+                      { title: "Lista de Propostas", value: "proposals" },
+                      { title: "Lista de Notícias", value: "news" },
+                      { title: "Lista de Eventos", value: "events" },
+                      { title: "URL Externa", value: "external" },
+                    ],
+                  },
+                },
+                {
+                  name: "pageReference",
+                  title: "Página",
+                  type: "reference",
+                  to: [{ type: "page" }],
+                  hidden: ({ parent }) => parent?.linkType !== "page",
+                  validation: (Rule) =>
+                    Rule.custom((value, { parent }) => {
+                      if (
+                        (parent as { linkType?: string })?.linkType ===
+                          "page" &&
+                        !value
+                      ) {
+                        return "Página é obrigatória para links do tipo 'Página Personalizada'";
+                      }
+                      return true;
+                    }),
+                },
+                {
+                  name: "externalUrl",
+                  title: "URL Externa",
+                  type: "url",
+                  hidden: ({ parent }) => parent?.linkType !== "external",
+                  validation: (Rule) =>
+                    Rule.custom((value, { parent }) => {
+                      if (
+                        (parent as { linkType?: string })?.linkType ===
+                          "external" &&
+                        !value
+                      ) {
+                        return "URL é obrigatória para links externos";
+                      }
+                      return true;
+                    }),
+                },
+              ],
+              preview: {
+                select: {
+                  label: "label",
+                  linkType: "linkType",
+                  pageTitle: "pageReference.title",
+                  externalUrl: "externalUrl",
+                },
+                prepare({ label, linkType, pageTitle, externalUrl }) {
+                  const typeConfig = {
+                    page: { label: "Página", defaultTitle: pageTitle },
+                    proposals: {
+                      label: "Propostas",
+                      defaultTitle: "Propostas",
+                    },
+                    news: { label: "Notícias", defaultTitle: "Notícias" },
+                    events: { label: "Eventos", defaultTitle: "Eventos" },
+                    external: { label: "Externa", defaultTitle: externalUrl },
+                  };
+
+                  const config =
+                    typeConfig[linkType as keyof typeof typeConfig];
+                  const title =
+                    label || config?.defaultTitle || "Link sem título";
+
+                  const subtitleParts = [config?.label || linkType];
+                  if (linkType === "page" && pageTitle)
+                    subtitleParts.push(pageTitle);
+                  if (linkType === "external" && externalUrl)
+                    subtitleParts.push(externalUrl);
+
+                  return {
+                    title,
+                    subtitle: subtitleParts.join(" - "),
+                  };
+                },
+              },
+            },
+          ],
+        },
+      ],
+    }),
   ],
   preview: {
     select: {

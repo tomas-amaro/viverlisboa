@@ -3,9 +3,10 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
-import { Container, Typography, CampaignName } from '@/components/ui'
+import { Container, Typography, CampaignName, SocialLinks } from '@/components/ui'
 import { Campaign } from '@/types/sanity'
 import { urlFor } from '@/lib/sanity'
+import { resolveQuickLink } from '@/lib/campaignUtils'
 
 interface FooterProps {
   campaign: Campaign
@@ -128,39 +129,7 @@ const CampaignDescription = styled(Typography)`
   }
 `
 
-const SocialLinks = styled.div`
-  display: flex;
-  gap: ${theme.spacing[4]};
-  
-  @media (max-width: ${theme.breakpoints.md}) {
-    justify-content: center;
-  }
-`
 
-const SocialLink = styled(Link)`
-  color: white;
-  font-size: ${theme.fontSizes.xl};
-  transition: ${theme.transitions.fast};
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: ${theme.borderRadius.full};
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  
-  &:hover {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-  }
-  
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`
 
 const PartiesSection = styled.div`
   h3 {
@@ -331,67 +300,53 @@ const Footer: React.FC<FooterProps> = ({ campaign }) => {
               </Logo>
               
               <CampaignDescription>
-                {campaign.description || "Juntos construímos uma Lisboa melhor para todos. Uma cidade mais justa, sustentável e próspera."}
+                {campaign.footerContent?.description || campaign.description || "Juntos construímos uma cidade melhor para todos. Uma cidade mais justa, sustentável e próspera."}
               </CampaignDescription>
               
-              <SocialLinks>
-                <SocialLink href="#" aria-label="Facebook">
-                  <Image
-                    src="/assets/social-icons/facebook.svg"
-                    alt="Facebook"
-                    width={20}
-                    height={20}
-                  />
-                </SocialLink>
-                <SocialLink href="#" aria-label="Instagram">
-                  <Image
-                    src="/assets/social-icons/instagram.svg"
-                    alt="Instagram"
-                    width={20}
-                    height={20}
-                  />
-                </SocialLink>
-                <SocialLink href="#" aria-label="Twitter">
-                  <Image
-                    src="/assets/social-icons/twitter.svg"
-                    alt="Twitter"
-                    width={20}
-                    height={20}
-                  />
-                </SocialLink>
-                <SocialLink href="#" aria-label="LinkedIn">
-                  <Image
-                    src="/assets/social-icons/linkedin.svg"
-                    alt="LinkedIn"
-                    width={20}
-                    height={20}
-                  />
-                </SocialLink>
-              </SocialLinks>
+              <SocialLinks socialMedia={campaign.socialMedia} variant="footer" />
             </LogoSection>
           </FooterSection>
 
           <FooterSection>
             <h3>Links Rápidos</h3>
             <ul>
-              <li>
-                <FooterLink href="/propostas">Propostas</FooterLink>
-              </li>
-              <li>
-                <FooterLink href="/eventos">Eventos</FooterLink>
-              </li>
-              <li>
-                <FooterLink href="/noticias">Notícias</FooterLink>
-              </li>
-              <li>
-                <FooterLink href="/sobre">Sobre Nós</FooterLink>
-              </li>
-              <li>
-                <FooterLink href="/apoiar">Como Apoiar</FooterLink>
-              </li>
-              <li>
-                <FooterLink href="/contacto">Contacto</FooterLink>
-              </li>
+                          {campaign.footerContent?.quickLinks ? (
+              campaign.footerContent.quickLinks.map((link, index) => {
+                const { url, label, isExternal } = resolveQuickLink(link);
+                return (
+                  <li key={index}>
+                    <FooterLink 
+                      href={url}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noopener noreferrer" : undefined}
+                    >
+                      {label}
+                    </FooterLink>
+                  </li>
+                );
+              })
+            ) : (
+                <>
+                  <li>
+                    <FooterLink href="/propostas">Propostas</FooterLink>
+                  </li>
+                  <li>
+                    <FooterLink href="/eventos">Eventos</FooterLink>
+                  </li>
+                  <li>
+                    <FooterLink href="/noticias">Notícias</FooterLink>
+                  </li>
+                  <li>
+                    <FooterLink href="/sobre">Sobre Nós</FooterLink>
+                  </li>
+                  <li>
+                    <FooterLink href="/apoiar">Como Apoiar</FooterLink>
+                  </li>
+                  <li>
+                    <FooterLink href="/contacto">Contacto</FooterLink>
+                  </li>
+                </>
+              )}
             </ul>
           </FooterSection>
 
@@ -415,13 +370,15 @@ const Footer: React.FC<FooterProps> = ({ campaign }) => {
             <ContactInfo>
               <h3>Contacto</h3>
               <p>
-                <strong>Email:</strong> geral@{campaign.domain}
+                <strong>Email:</strong> {campaign.footerContent?.contactInfo?.email || `geral@${campaign.domain}`}
               </p>
+              {campaign.footerContent?.contactInfo?.phone && (
+                <p>
+                  <strong>Telefone:</strong> {campaign.footerContent.contactInfo.phone}
+                </p>
+              )}
               <p>
-                <strong>Telefone:</strong> +351 XXX XXX XXX
-              </p>
-              <p>
-                <strong>Morada:</strong> {campaign.location}
+                <strong>Morada:</strong> {campaign.footerContent?.contactInfo?.address || campaign.location}
               </p>
             </ContactInfo>
           </FooterSection>

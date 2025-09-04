@@ -24,6 +24,49 @@ export interface CampaignWithContent extends Campaign {
 }
 
 /**
+ * Resolve quick link to actual URL and label
+ */
+export function resolveQuickLink(
+  quickLink: NonNullable<
+    NonNullable<Campaign["footerContent"]>["quickLinks"]
+  >[0]
+) {
+  let url: string;
+  let label: string;
+
+  switch (quickLink.linkType) {
+    case "page":
+      url = quickLink.pageReference
+        ? `/${quickLink.pageReference.slug.current}`
+        : "#";
+      label = quickLink.label || quickLink.pageReference?.title || "Página";
+      break;
+    case "proposals":
+      url = "/propostas";
+      label = quickLink.label || "Propostas";
+      break;
+    case "news":
+      url = "/noticias";
+      label = quickLink.label || "Notícias";
+      break;
+    case "events":
+      url = "/eventos";
+      label = quickLink.label || "Eventos";
+      break;
+    case "external":
+      url = quickLink.externalUrl || "#";
+      label = quickLink.label || quickLink.externalUrl || "Link Externo";
+      break;
+    default:
+      url = "#";
+      label = quickLink.label || "Link";
+      break;
+  }
+
+  return { url, label, isExternal: quickLink.linkType === "external" };
+}
+
+/**
  * Get campaign by domain with content counts
  */
 export async function getCampaignByDomain(
@@ -35,6 +78,7 @@ export async function getCampaignByDomain(
        _id,
        title,
        domain,
+       location,
        contentTypes,
        navigationLabels,
        mainColor,
@@ -42,7 +86,22 @@ export async function getCampaignByDomain(
        logo,
        description,
        socialMedia,
-       seoSettings
+       seoSettings,
+       headerContent,
+       footerContent {
+         description,
+         contactInfo,
+         quickLinks[] {
+           label,
+           linkType,
+           pageReference-> {
+             _id,
+             title,
+             slug
+           },
+           externalUrl
+         }
+       }
      }
    `,
     { domain }
@@ -329,6 +388,29 @@ export async function getBuildConfiguration() {
         proposals: "Propostas",
         news: "Notícias",
         events: "Eventos",
+      },
+      headerContent: {
+        tagline: "Juntos por uma cidade mais justa",
+      },
+      footerContent: {
+        description:
+          "Uma coligação de esquerda comprometida com a transformação social e ambiental das Avenidas Novas.",
+        contactInfo: {
+          phone: "+351 XXX XXX XXX",
+          email: `geral@${domain}`,
+          address: "Avenidas Novas, Lisboa",
+        },
+        quickLinks: [
+          { linkType: "proposals" },
+          { linkType: "events" },
+          { linkType: "news" },
+          {
+            label: "Como Apoiar",
+            linkType: "external",
+            externalUrl: "/apoiar",
+          },
+          { label: "Contacto", linkType: "external", externalUrl: "/contacto" },
+        ],
       },
       content: {
         proposalsCount: 0,

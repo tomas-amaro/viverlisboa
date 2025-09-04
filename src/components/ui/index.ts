@@ -23,3 +23,4 @@ export {
   SectionTitle,
   SectionSubtitle,
 } from "./StyledSection";
+export { SocialLinks } from "./SocialLinks";

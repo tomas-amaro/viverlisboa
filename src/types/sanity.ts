@@ -41,10 +41,48 @@ export interface Campaign {
   secondaryColor: string;
   logo?: SanityImage;
   heroImage?: SanityImage;
+  contentTypes?: {
+    proposals?: boolean;
+    news?: boolean;
+    events?: boolean;
+    customPages?: boolean;
+  };
+  navigationLabels?: {
+    proposals?: string;
+    news?: string;
+    events?: string;
+  };
   socialMedia?: {
     facebook?: string;
     instagram?: string;
     twitter?: string;
+    linkedin?: string;
+  };
+  seoSettings?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    ogImage?: SanityImage;
+  };
+  headerContent?: {
+    tagline?: string;
+  };
+  footerContent?: {
+    description?: string;
+    contactInfo?: {
+      phone?: string;
+      email?: string;
+      address?: string;
+    };
+    quickLinks?: Array<{
+      label?: string;
+      linkType: "page" | "proposals" | "news" | "events" | "external";
+      pageReference?: {
+        _id: string;
+        title: string;
+        slug: { current: string };
+      };
+      externalUrl?: string;
+    }>;
   };
 }
 
