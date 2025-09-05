@@ -50,6 +50,13 @@ class MyDocument extends Document {
           <link rel="dns-prefetch" href="//fonts.googleapis.com" />
           <link rel="dns-prefetch" href="//fonts.gstatic.com" />
           
+          {/* Favicon and icons */}
+          <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png" />
+          <link rel="manifest" href="/assets/favicon/site.webmanifest" />
+          <link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
+          
           {/* Basic meta tags */}
           <meta charSet="utf-8" />
           <meta httpEquiv="x-ua-compatible" content="ie=edge" />
@@ -70,6 +77,7 @@ class MyDocument extends Document {
           <meta name="msapplication-config" content="/browserconfig.xml" />
           <meta name="msapplication-TileColor" content="#48B9CA" />
           <meta name="msapplication-tap-highlight" content="no" />
+          <meta name="theme-color" content="#48B9CA" />
           
           {/* Fallback meta description */}
           <meta 
