@@ -162,11 +162,6 @@ const Custom404 = () => {
                   Como apoiar
                 </Link>
               </li>
-              <li>
-                <Link href="/contacto">
-                  Contacto
-                </Link>
-              </li>
             </ul>
           </SuggestedLinks>
         </ErrorContent>

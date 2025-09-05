@@ -23,7 +23,6 @@ const getVariantStyles = (variant: ButtonVariant) => {
         border: 2px solid ${theme.colors.primary.blue};
         
         &:hover:not(:disabled) {
-          background-color: ${theme.colors.primary.teal};
           border-color: ${theme.colors.primary.teal};
         }
       `
@@ -34,7 +33,6 @@ const getVariantStyles = (variant: ButtonVariant) => {
         border: 2px solid ${theme.colors.primary.red};
         
         &:hover:not(:disabled) {
-          background-color: ${theme.colors.primary.carmin};
           border-color: ${theme.colors.primary.carmin};
         }
       `

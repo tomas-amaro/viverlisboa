@@ -2,18 +2,17 @@ import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Container, Typography, Button } from '../../components/ui'
-import { ContentRenderer } from '../../components/content'
+import { Container, Typography, Button, PortableTextRenderer } from '../../components/ui'
 import { getBuildConfiguration, getCampaignProposals, CampaignWithContent } from '../../lib/campaignUtils'
 import { client } from '../../lib/sanity'
-import { ContentBlock } from '../../types/sanity'
+import { PortableTextBlock } from '@portabletext/types'
 
 interface Proposal {
   _id: string
   title: string
   slug: { current: string }
   summary: string
-  content: ContentBlock[]
+  content: PortableTextBlock[]
   category: string
   priority: string
   featured: boolean
@@ -122,7 +121,7 @@ export default function ProposalPage({ proposal, campaign }: ProposalPageProps) 
 
             {/* Content */}
             <div style={{ marginBottom: '3rem' }}>
-              <ContentRenderer content={proposal.content} campaign={campaign} />
+              <PortableTextRenderer content={proposal.content} campaign={campaign} />
             </div>
 
             {/* Tags */}
@@ -164,12 +163,6 @@ export default function ProposalPage({ proposal, campaign }: ProposalPageProps) 
                 href="/propostas"
               >
                 ← Todas as {campaign.navigationLabels?.proposals || 'Propostas'}
-              </Button>
-              <Button 
-                variant="primary" 
-                href="/contacto"
-              >
-                Fale Connosco
               </Button>
             </div>
           </div>
@@ -220,7 +213,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title,
         slug,
         summary,
-        content,
+        content[]{
+          ...,
+          _type == "image" => {
+            ...,
+            asset->{
+              _id,
+              _ref,
+              _type,
+              url
+            }
+          }
+        },
         category,
         priority,
         featured,

@@ -1,19 +1,18 @@
 import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
-import { Container, Typography, Button } from '../../components/ui'
-import { ContentRenderer } from '../../components/content'
+import { Container, Typography, Button, PortableTextRenderer } from '../../components/ui'
 import { getBuildConfiguration, getCampaignNews, CampaignWithContent } from '../../lib/campaignUtils'
 import { client } from '../../lib/sanity'
-import { ContentBlock } from '../../types/sanity'
 import Link from 'next/link'
+import { PortableTextBlock } from '@portabletext/types'
 
 interface Post {
   _id: string
   title: string
   slug: { current: string }
   excerpt?: string
-  content: ContentBlock[]
+  content: PortableTextBlock[]
   publishedAt: string
   featuredImage?: { asset: { url: string }; alt?: string }
   categories?: string[]
@@ -46,6 +45,7 @@ export default function PostPage({ post, campaign }: PostPageProps) {
     imprensa: '#059669',
     campanha: '#DC2626'
   }
+
 
   return (
     <>
@@ -140,7 +140,10 @@ export default function PostPage({ post, campaign }: PostPageProps) {
 
             {/* Content */}
             <div style={{ marginBottom: '3rem' }}>
-              <ContentRenderer content={post.content} campaign={campaign} />
+              <PortableTextRenderer 
+                content={post.content} 
+                campaign={campaign}
+              />
             </div>
 
             {/* Navigation */}
@@ -156,12 +159,6 @@ export default function PostPage({ post, campaign }: PostPageProps) {
                 href="/noticias"
               >
                 ← Todas as {campaign.navigationLabels?.news || 'Notícias'}
-              </Button>
-              <Button 
-                variant="primary" 
-                href="/contacto"
-              >
-                Fale Connosco
               </Button>
             </div>
           </div>
@@ -212,7 +209,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         title,
         slug,
         excerpt,
-        content,
+        content[]{
+          ...,
+          _type == "image" => {
+            ...,
+            asset->{
+              _id,
+              _ref,
+              _type,
+              url
+            }
+          }
+        },
         publishedAt,
         featuredImage{
           asset->{

@@ -46,7 +46,6 @@ async function updateCampaignContent() {
             { linkType: "events" },
             { linkType: "news" },
             { label: "Como Apoiar", linkType: "external", externalUrl: "https://apoiar.viverlisboa.pt" },
-            { linkType: "external", label: "Contacto", externalUrl: "/contacto" }
           ]
         }
       }

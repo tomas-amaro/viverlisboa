@@ -169,7 +169,18 @@ export async function getCampaignProposals(campaignId: string, limit = 10) {
       priority,
       featured,
       tags,
-      content,
+      content[]{
+        ...,
+        _type == "image" => {
+          ...,
+          asset->{
+            _id,
+            _ref,
+            _type,
+            url
+          }
+        }
+      },
       icon{
         asset->{
           _id,
@@ -200,7 +211,18 @@ export async function getCampaignNews(campaignId: string, limit = 10) {
         alt
       },
       categories,
-      content
+      content[]{
+        ...,
+        _type == "image" => {
+          ...,
+          asset->{
+            _id,
+            _ref,
+            _type,
+            url
+          }
+        }
+      }
     }
   `,
     { campaignId, limit }
@@ -311,9 +333,6 @@ export async function getCampaignNavigation(campaign: CampaignWithContent) {
     );
   }
 
-  // Always add contact
-  navItems.push({ href: "/contacto", label: "Contacto" });
-
   return navItems;
 }
 
@@ -409,7 +428,6 @@ export async function getBuildConfiguration() {
             linkType: "external",
             externalUrl: "/apoiar",
           },
-          { label: "Contacto", linkType: "external", externalUrl: "/contacto" },
         ],
       },
       content: {

@@ -37,7 +37,6 @@ const testDataIds = [
   
   // Pages
   'page-sobre',
-  'page-contacto',
 ];
 
 async function clearData() {

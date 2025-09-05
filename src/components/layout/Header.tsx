@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styled, { css } from 'styled-components'
 import { theme } from '@/styles/theme'
-import { Container, CampaignName, SocialLinks, Typography } from '@/components/ui'
+import { Container, CampaignName, Typography } from '@/components/ui'
 import { Campaign } from '@/types/sanity'
 import { urlFor } from '@/lib/sanity'
 
@@ -193,7 +193,6 @@ const TaglineContainer = styled.div`
 // Default navigation (fallback)
 const defaultNavigationItems: NavigationItem[] = [
   { label: 'Início', href: '/' },
-  { label: 'Contacto', href: '/contacto' },
 ]
 
 export const Header: React.FC<HeaderProps> = ({ campaign, navigation = defaultNavigationItems }) => {
@@ -286,8 +285,6 @@ export const Header: React.FC<HeaderProps> = ({ campaign, navigation = defaultNa
               </Typography>
             </TaglineContainer>
           )}
-
-          <SocialLinks socialMedia={campaign.socialMedia} variant="header" />
         </Navigation>
 
         <MobileMenuButton 

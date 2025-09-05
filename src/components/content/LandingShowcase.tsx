@@ -448,9 +448,6 @@ export const LandingShowcase: React.FC = () => {
               <Button variant="secondary" size="lg" href="/propostas">
                 Ver Todas as Propostas
               </Button>
-              <Button variant="outline" size="lg" href="/contacto">
-                Entrar em Contacto
-              </Button>
             </HeroActions>
           </motion.div>
         </Container>

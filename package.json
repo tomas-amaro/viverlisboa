@@ -36,7 +36,8 @@
         "clear-data": "dotenv -e .env.local -- node scripts/clear-data.js"
     },
     "dependencies": {
-        "@portabletext/react": "^3.0.11",
+        "@portabletext/react": "^3.2.1",
+        "@portabletext/types": "^2.0.15",
         "@sanity/client": "^7.10.0",
         "@sanity/image-url": "^1.2.0",
         "@sanity/vision": "^3.99.0",

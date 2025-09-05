@@ -1,12 +1,11 @@
 import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
-import { Container, Typography, Button } from '../../components/ui'
-import { ContentRenderer } from '../../components/content'
+import { Container, Typography, Button, AddToCalendar, PortableTextRenderer } from '../../components/ui'
 import { getBuildConfiguration, getCampaignEvents, CampaignWithContent } from '../../lib/campaignUtils'
 import { client } from '../../lib/sanity'
-import { ContentBlock } from '../../types/sanity'
 import Link from 'next/link'
+import { PortableTextBlock } from '@portabletext/types'
 
 interface Event {
   _id: string
@@ -15,7 +14,7 @@ interface Event {
   date: string
   time?: string
   location?: string
-  description?: ContentBlock[]
+  description?: PortableTextBlock[]
   image?: { asset: { url: string }; alt?: string }
   registrationUrl?: string
   eventType: string
@@ -178,7 +177,7 @@ export default function EventPage({ event, campaign }: EventPageProps) {
                 <Typography variant="h3" margin={true}>
                   Sobre o Evento
                 </Typography>
-                <ContentRenderer content={event.description} campaign={campaign} />
+                <PortableTextRenderer content={event.description} campaign={campaign} />
               </div>
             )}
 
@@ -197,14 +196,57 @@ export default function EventPage({ event, campaign }: EventPageProps) {
                 <Typography variant="body1" margin={true}>
                   Junte-se a nós neste evento e ajude a construir o futuro da nossa comunidade.
                 </Typography>
-                <Button 
-                  variant="primary" 
-                  href={event.registrationUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Inscrever-se no Evento
-                </Button>
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <Button 
+                    variant="primary" 
+                    href={event.registrationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Inscrever-se no Evento
+                  </Button>
+                  <AddToCalendar 
+                    event={{
+                      title: event.title,
+                      date: event.date,
+                      time: event.time,
+                      location: event.location,
+                      description: `${eventTypeLabels[event.eventType as keyof typeof eventTypeLabels]} da campanha ${campaign.title}`
+                    }}
+                    variant="outline"
+                    size="lg"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Add to Calendar for events without registration */}
+            {!event.registrationUrl && isUpcoming && (
+              <div style={{ 
+                padding: '2rem',
+                background: `${campaign.mainColor || '#48B9CA'}05`,
+                borderRadius: '8px',
+                textAlign: 'center',
+                marginBottom: '3rem',
+                border: `1px solid ${campaign.mainColor || '#48B9CA'}20`
+              }}>
+                <Typography variant="h3" margin={true}>
+                  Não perca este evento
+                </Typography>
+                <Typography variant="body1" margin={true}>
+                  Adicione este evento ao seu calendário para não se esquecer.
+                </Typography>
+                <AddToCalendar 
+                  event={{
+                    title: event.title,
+                    date: event.date,
+                    time: event.time,
+                    location: event.location,
+                    description: `${eventTypeLabels[event.eventType as keyof typeof eventTypeLabels]} da campanha ${campaign.title}`
+                  }}
+                  variant="primary"
+                  size="lg"
+                />
               </div>
             )}
 
@@ -214,7 +256,9 @@ export default function EventPage({ event, campaign }: EventPageProps) {
               paddingTop: '2rem',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem'
             }}>
               <Button 
                 variant="outline" 
@@ -222,12 +266,20 @@ export default function EventPage({ event, campaign }: EventPageProps) {
               >
                 ← Todos os {campaign.navigationLabels?.events || 'Eventos'}
               </Button>
-              <Button 
-                variant="primary" 
-                href="/contacto"
-              >
-                Fale Connosco
-              </Button>
+              
+              {!isUpcoming && (
+                <AddToCalendar 
+                  event={{
+                    title: `[PASSADO] ${event.title}`,
+                    date: event.date,
+                    time: event.time,
+                    location: event.location,
+                    description: `${eventTypeLabels[event.eventType as keyof typeof eventTypeLabels]} da campanha ${campaign.title} (evento já realizado)`
+                  }}
+                  variant="outline"
+                  size="sm"
+                />
+              )}
             </div>
           </div>
         </Container>
@@ -279,7 +331,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         date,
         time,
         location,
-        description,
+        description[]{
+          ...,
+          _type == "image" => {
+            ...,
+            asset->{
+              _id,
+              _ref,
+              _type,
+              url
+            }
+          }
+        },
         image{
           asset->{
             _id,

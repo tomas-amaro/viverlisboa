@@ -24,3 +24,6 @@ export {
   SectionSubtitle,
 } from "./StyledSection";
 export { SocialLinks } from "./SocialLinks";
+export { ResponsiveCarousel } from "./ResponsiveCarousel";
+export { AddToCalendar } from "./AddToCalendar";
+export { PortableTextRenderer } from "./PortableTextRenderer";

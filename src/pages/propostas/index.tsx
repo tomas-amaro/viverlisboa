@@ -1,10 +1,24 @@
 import React from 'react'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
+import styled from 'styled-components'
 import { ProposalCard } from '../../components/content'
-import { Container, Grid, Typography, Button } from '../../components/ui'
+import { Container, Typography, Button, ResponsiveCarousel } from '../../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../../lib/campaignUtils'
 import { Proposal } from '../../types/sanity'
+import { theme } from '../../styles/theme'
+import { getCategoryLabel } from '@/components/content/ProposalCard'
+
+const CategoryHeading = styled.h2`
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid ${theme.colors.primary};
+  padding-bottom: 0.5rem;
+  font-family: ${theme.fonts.primary};
+`
+
 
 interface ProposalsPageProps {
   proposals: Proposal[]
@@ -39,22 +53,55 @@ export default function ProposalsPage({ proposals, campaign, navigationLabel }: 
             </div>
 
             {proposals.length > 0 ? (
-              <Grid columns={3} gap={2}>
-                {proposals.map((proposal) => (
-                  <ProposalCard
-                    key={proposal._id}
-                    proposal={proposal}
-                    featured={proposal.featured}
-                  />
-                ))}
-              </Grid>
+              (() => {
+              // Group proposals by category
+              const proposalsByCategory = proposals.reduce((acc, proposal) => {
+                const category = proposal.category || 'Outras';
+                if (!acc[category]) {
+                  acc[category] = [];
+                }
+                  acc[category].push(proposal);
+                return acc;
+              }, {} as Record<string, typeof proposals>);
+
+              // Sort categories alphabetically and render each group
+              return Object.keys(proposalsByCategory)
+                .sort()
+                .map((category) => (
+                  <div key={category} style={{ marginBottom: '3rem' }}>
+                    <CategoryHeading>
+                      {getCategoryLabel(category)}
+                    </CategoryHeading>
+                    <ResponsiveCarousel
+                      items={proposalsByCategory[category].sort((a, b) => {
+                        // Sort by priority (high, medium, low), then by title
+                        const priorityOrder = { high: 3, medium: 2, low: 1 };
+                        const aPriority = priorityOrder[a.priority || 'medium'];
+                        const bPriority = priorityOrder[b.priority || 'medium'];
+                        
+                        if (aPriority !== bPriority) {
+                          return bPriority - aPriority; // Higher priority first
+                        }
+                        return a.title.localeCompare(b.title);
+                      })}
+                      renderItem={(proposal) => (
+                        <ProposalCard
+                          key={proposal._id}
+                          proposal={proposal}
+                          featured={proposal.featured}
+                        />
+                      )}
+                    />
+                  </div>
+                ));
+              })()
             ) : (
               <div style={{ textAlign: 'center', padding: '3rem 0' }}>
                 <Typography variant="h3" margin={true}>
                   Em breve
                 </Typography>
                 <Typography variant="body1" color="secondary" margin={true}>
-                  As nossas propostas estão sendo preparadas e serão publicadas em breve.
+                  As nossas propostas estão a ser preparadas e serão publicadas em breve.
                 </Typography>
                 <Button href="/">Voltar ao Início</Button>
               </div>

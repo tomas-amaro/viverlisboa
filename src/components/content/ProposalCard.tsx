@@ -17,6 +17,7 @@ const StyledCard = styled(Card)<{ $featured?: boolean; $priority: string }>`
   height: 100%;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   transition: all ${theme.transitions.base};
   position: relative;
   overflow: hidden;
@@ -225,7 +226,7 @@ const Tag = styled.span`
   font-weight: ${theme.fontWeights.medium};
 `
 
-const getCategoryLabel = (category: string): string => {
+export const getCategoryLabel = (category: string): string => {
   const labels: Record<string, string> = {
     habitacao: 'Habitação',
     transportes: 'Transportes',
@@ -245,9 +246,9 @@ const getCategoryLabel = (category: string): string => {
 
 const getPriorityLabel = (priority: string): string => {
   const labels: Record<string, string> = {
-    high: 'Alta',
-    medium: 'Média',
-    low: 'Baixa',
+    high: 'Transformadora',
+    medium: 'Essencial',
+    low: 'Importante',
   }
   return labels[priority] || priority
 }
@@ -280,7 +281,7 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
     >
       <StyledCard
         $featured={featured}
-        $priority={proposal.priority}
+        $priority={proposal.priority || 'medium'}
         hover
         clickable
         onClick={() => window.location.href = `/propostas/${proposal.slug.current}`}
@@ -324,11 +325,12 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
         </div>
         
         <CardFooter>
-          <PriorityIndicator priority={proposal.priority}>
-            <PriorityDot priority={proposal.priority} />
-            {getPriorityLabel(proposal.priority)}
-          </PriorityIndicator>
-          
+          {proposal.priority && ( 
+            <PriorityIndicator priority={proposal.priority}>
+              <PriorityDot priority={proposal.priority} />
+              {getPriorityLabel(proposal.priority)}
+            </PriorityIndicator>  
+          )}
           <Button
             variant="ghost"
             size="sm"

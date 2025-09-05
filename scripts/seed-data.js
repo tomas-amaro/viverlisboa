@@ -407,35 +407,6 @@ const sampleData = {
         }
       ],
     },
-    {
-      _id: 'page-contacto',
-      _type: 'page',
-      title: 'Contacto',
-      slug: { current: 'contacto' },
-      campaign: { _ref: 'campaign-viver-lisboa', _type: 'reference' },
-      seo: {
-        title: 'Contacto - Viver Lisboa',
-        description: 'Entre em contacto com a campanha Viver Lisboa. Estamos aqui para ouvir as suas propostas e responder às suas questões.',
-        keywords: ['contacto', 'comunicação', 'telefone', 'email'],
-      },
-      content: [
-        {
-          _type: 'block',
-          style: 'h1',
-          children: [{ _type: 'span', text: 'Fale Connosco' }]
-        },
-        {
-          _type: 'block',
-          style: 'normal',
-          children: [
-            {
-              _type: 'span',
-              text: 'Estamos aqui para ouvir as suas propostas, responder às suas questões e receber o seu apoio.'
-            }
-          ]
-        }
-      ],
-    },
   ],
 };
 

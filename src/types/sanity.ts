@@ -215,7 +215,7 @@ export interface Proposal {
   category: string;
   summary: string;
   content: PortableTextBlock[];
-  priority: "high" | "medium" | "low";
+  priority?: "high" | "medium" | "low";
   icon?: SanityImage;
   featured?: boolean;
 }

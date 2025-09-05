@@ -101,11 +101,6 @@ const LogoSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  
-  @media (max-width: ${theme.breakpoints.md}) {
-    align-items: center;
-    text-align: center;
-  }
 `
 
 const Logo = styled.div`
@@ -122,11 +117,6 @@ const CampaignDescription = styled(Typography)`
   line-height: 1.6;
   margin-bottom: ${theme.spacing[6]};
   max-width: 300px;
-  
-  @media (max-width: ${theme.breakpoints.md}) {
-    text-align: center;
-    max-width: none;
-  }
 `
 
 
@@ -145,10 +135,6 @@ const PartiesGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: ${theme.spacing[3]};
   margin-bottom: ${theme.spacing[6]};
-  
-  @media (max-width: ${theme.breakpoints.sm}) {
-    grid-template-columns: repeat(2, 1fr);
-  }
 `
 
 const PartyIconContainer = styled(Link)`
@@ -298,7 +284,7 @@ const Footer: React.FC<FooterProps> = ({ campaign }) => {
                   />
                 )}
               </Logo>
-              
+
               <CampaignDescription>
                 {campaign.footerContent?.description || campaign.description || "Juntos construímos uma cidade melhor para todos. Uma cidade mais justa, sustentável e próspera."}
               </CampaignDescription>
@@ -342,9 +328,6 @@ const Footer: React.FC<FooterProps> = ({ campaign }) => {
                   <li>
                     <FooterLink href="/apoiar">Como Apoiar</FooterLink>
                   </li>
-                  <li>
-                    <FooterLink href="/contacto">Contacto</FooterLink>
-                  </li>
                 </>
               )}
             </ul>
@@ -366,21 +349,26 @@ const Footer: React.FC<FooterProps> = ({ campaign }) => {
                 ))}
               </PartiesGrid>
             </PartiesSection>
-
+            {campaign.footerContent?.contactInfo && (
             <ContactInfo>
               <h3>Contacto</h3>
+              {campaign.footerContent?.contactInfo?.email && (
               <p>
-                <strong>Email:</strong> {campaign.footerContent?.contactInfo?.email || `geral@${campaign.domain}`}
+                <strong>Email:</strong> {campaign.footerContent.contactInfo.email}
               </p>
+              )}
               {campaign.footerContent?.contactInfo?.phone && (
                 <p>
                   <strong>Telefone:</strong> {campaign.footerContent.contactInfo.phone}
                 </p>
               )}
+              {campaign.footerContent?.contactInfo?.address && (
               <p>
-                <strong>Morada:</strong> {campaign.footerContent?.contactInfo?.address || campaign.location}
-              </p>
+              <strong>Morada:</strong> {campaign.footerContent.contactInfo.address}
+            </p>
+              )}
             </ContactInfo>
+            )}
           </FooterSection>
         </FooterContent>
 

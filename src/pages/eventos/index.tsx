@@ -1,10 +1,31 @@
 import React from 'react'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
+import styled from 'styled-components'
 import { EventCard } from '../../components/content'
-import { Container, Grid, Typography, Button } from '../../components/ui'
+import { Container, Typography, Button } from '../../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../../lib/campaignUtils'
 import { Event } from '../../types/sanity'
+import { theme } from '../../styles/theme'
+
+const ResponsiveEventsContainer = styled.div`
+  /* Mobile: Full-width stacked list */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  
+  /* Desktop: Grid layout */
+  @media (min-width: ${theme.breakpoints.md}) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  
+  @media (min-width: ${theme.breakpoints.lg}) {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2.5rem;
+  }
+`
 
 interface EventsPageProps {
   events: Event[]
@@ -61,7 +82,7 @@ export default function EventsPage({ events, campaign, navigationLabel }: Events
                                          <Typography variant="h2" color="primary" margin={true}>
                        Próximos Eventos
                      </Typography>
-                    <Grid columns={3} gap={2}>
+                    <ResponsiveEventsContainer>
                       {upcomingEvents.map((event) => (
                         <EventCard
                           key={event._id}
@@ -69,7 +90,7 @@ export default function EventsPage({ events, campaign, navigationLabel }: Events
                           featured={event.featured}
                         />
                       ))}
-                    </Grid>
+                    </ResponsiveEventsContainer>
                   </section>
                 )}
 
@@ -79,7 +100,7 @@ export default function EventsPage({ events, campaign, navigationLabel }: Events
                                          <Typography variant="h2" margin={true} color="primary">
                        Eventos Passados
                      </Typography>
-                    <Grid columns={3} gap={2}>
+                    <ResponsiveEventsContainer>
                       {pastEvents.map((event) => (
                         <div key={event._id} style={{ opacity: 0.7 }}>
                           <EventCard
@@ -88,7 +109,7 @@ export default function EventsPage({ events, campaign, navigationLabel }: Events
                           />
                         </div>
                       ))}
-                    </Grid>
+                    </ResponsiveEventsContainer>
                   </section>
                 )}
               </>

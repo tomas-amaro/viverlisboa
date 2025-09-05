@@ -2,17 +2,16 @@ import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Container, Typography } from '../components/ui'
-import { ContentRenderer } from '../components/content'
+import { Container, Typography, PortableTextRenderer } from '../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../lib/campaignUtils'
 import { client } from '../lib/sanity'
-import { ContentBlock } from '../types/sanity'
+import { PortableTextBlock } from '@portabletext/types'
 
 interface CustomPage {
   _id: string
   title: string
   slug: { current: string }
-  content: ContentBlock[]
+  content: PortableTextBlock[]
   seo?: {
     title?: string
     description?: string
@@ -54,7 +53,7 @@ export default function CustomPagePage({ page, campaign }: CustomPageProps) {
 
             {/* Content */}
             <div style={{ marginBottom: '3rem' }}>
-              <ContentRenderer content={page.content} campaign={campaign} />
+              <PortableTextRenderer content={page.content} campaign={campaign} />
             </div>
 
             {/* Navigation */}
@@ -75,20 +74,6 @@ export default function CustomPagePage({ page, campaign }: CustomPageProps) {
               >
                 ← Voltar ao Início
               </Link>
-              <Link 
-                href="/contacto"
-                style={{
-                  background: campaign.mainColor || '#48B9CA',
-                  color: 'white',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '6px',
-                  textDecoration: 'none',
-                  fontWeight: 500,
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                Fale Connosco
-              </Link>
             </div>
           </div>
         </Container>
@@ -108,7 +93,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     `, { campaignId: campaign._id })
     
     // Filter out reserved static page paths to avoid conflicts
-    const reservedPaths = ['contacto', 'propostas', 'eventos', 'noticias', 'studio', '404']
+    const reservedPaths = ['propostas', 'eventos', 'noticias', 'studio', '404']
     
     const paths = customPages
       .filter((page: { slug: { current: string } }) => 
@@ -141,7 +126,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         _id,
         title,
         slug,
-        content,
+        content[]{
+          ...,
+          _type == "image" => {
+            ...,
+            asset->{
+              _id,
+              _ref,
+              _type,
+              url
+            }
+          }
+        },
         seo
       }
     `, { slug, campaignId: campaign._id })

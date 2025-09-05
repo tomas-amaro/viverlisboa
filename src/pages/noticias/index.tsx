@@ -1,10 +1,31 @@
 import React from 'react'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
+import styled from 'styled-components'
 import { PostCard } from '../../components/content'
-import { Container, Grid, Typography, Button } from '../../components/ui'
+import { Container, Typography, Button } from '../../components/ui'
 import { getBuildConfiguration, CampaignWithContent } from '../../lib/campaignUtils'
 import { Post } from '../../types/sanity'
+import { theme } from '../../styles/theme'
+
+const ResponsivePostsContainer = styled.div`
+  /* Mobile: Full-width stacked list */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  
+  /* Desktop: Grid layout */
+  @media (min-width: ${theme.breakpoints.md}) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  
+  @media (min-width: ${theme.breakpoints.lg}) {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2.5rem;
+  }
+`
 
 interface NewsPageProps {
   posts: Post[]
@@ -39,14 +60,14 @@ export default function NewsPage({ posts, campaign, navigationLabel }: NewsPageP
             </div>
 
             {posts.length > 0 ? (
-              <Grid columns={3} gap={2}>
+              <ResponsivePostsContainer>
                 {posts.map((post) => (
                   <PostCard
                     key={post._id}
                     post={post}
                   />
                 ))}
-              </Grid>
+              </ResponsivePostsContainer>
             ) : (
               <div style={{ textAlign: 'center', padding: '3rem 0' }}>
                 <Typography variant="h3" margin={true}>

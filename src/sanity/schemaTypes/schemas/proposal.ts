@@ -76,7 +76,6 @@ export default defineType({
         ],
       },
       initialValue: "medium",
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "icon",

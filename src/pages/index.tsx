@@ -225,9 +225,6 @@ const HomePage: React.FC<HomePageProps> = ({
             <Button variant="primary" size="lg" href="/apoiar">
               Como apoiar
             </Button>
-            <Button variant="secondary" size="lg" href="/contacto">
-              Entrar em contacto
-            </Button>
           </CTAButtons>
         </Container>
       </CTASection>
