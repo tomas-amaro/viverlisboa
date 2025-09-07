@@ -1,0 +1,48 @@
+# GitHub Pages Configuration for Sistema Viver Documentation
+
+title: "Sistema Viver - Websites para Candidaturas Autárquicas 2025"
+description: "Sistema completo para websites de candidaturas da coligação de esquerda nas Eleições Autárquicas de Lisboa 2025"
+url: "https://tomas-amaro.github.io"
+baseurl: "/viveravenidas"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Include assets and other files
+include:
+  - assets/
+
+# Keep files (important for assets)
+keep_files:
+  - assets/
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+
+# SEO settings
+lang: pt
+author: "Partido Livre"
+twitter:
+  username: 
+  card: summary_large_image
+
+# Social media
+social:
+  name: "Sistema Viver"
+  links:
+    - https://github.com/tomas-amaro/viveravenidas
+
+# Theme
+theme: minima

@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Viver Lisboa - Websites para Candidaturas Autárquicas 2025</title>
+    <meta name="description" content="Sistema completo para websites de candidaturas da coligação de esquerda nas Eleições Autárquicas de Lisboa 2025">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/viveravenidas/">
+    <meta property="og:title" content="Sistema Viver Lisboa - Websites para Candidaturas Autárquicas 2025">
+    <meta property="og:description" content="Sistema completo para websites de candidaturas da coligação de esquerda nas Eleições Autárquicas de Lisboa 2025">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourusername.github.io/viveravenidas/">
+    <meta property="twitter:title" content="Sistema Viver Lisboa - Websites para Candidaturas Autárquicas 2025">
+    <meta property="twitter:description" content="Sistema completo para websites de candidaturas da coligação de esquerda nas Eleições Autárquicas de Lisboa 2025">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Favicon and App Manifest -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%2348B9CA'/><text x='50' y='58' font-family='Arial' font-size='24' text-anchor='middle' fill='white' font-weight='bold'>V</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#48B9CA">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Sistema Viver Lisboa">
+
+    <style>
+        /* CSS Variables for Design System */
+        :root {
+            /* Colors */
+            --color-primary-blue: #48B9CA;
+            --color-primary-teal: #23757E;
+            --color-primary-red: #FF394C;
+            --color-primary-carmin: #7D3C4B;
+            --color-primary-white: #FFFFFF;
+            --color-primary-black: #000000;
+            
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #4a4a4a;
+            --color-text-light: #7a7a7a;
+            --color-text-white: #ffffff;
+            
+            --color-bg-primary: #ffffff;
+            --color-bg-secondary: #f8f9fa;
+            --color-bg-dark: #1a1a1a;
+            
+            --color-gray-100: #f7f7f7;
+            --color-gray-200: #e1e1e1;
+            --color-gray-300: #cfcfcf;
+            --color-gray-400: #b1b1b1;
+            --color-gray-500: #9e9e9e;
+            --color-gray-600: #757575;
+            --color-gray-700: #616161;
+            --color-gray-800: #424242;
+            --color-gray-900: #212121;
+            
+            /* Typography */
+            --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-secondary: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            
+            --font-weight-light: 300;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+            --font-weight-black: 900;
+            
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 3.75rem;
+            
+            /* Spacing */
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-5: 1.25rem;
+            --spacing-6: 1.5rem;
+            --spacing-8: 2rem;
+            --spacing-10: 2.5rem;
+            --spacing-12: 3rem;
+            --spacing-16: 4rem;
+            --spacing-20: 5rem;
+            --spacing-24: 6rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            /* Border Radius */
+            --border-radius-sm: 0.125rem;
+            --border-radius-base: 0.25rem;
+            --border-radius-md: 0.375rem;
+            --border-radius-lg: 0.5rem;
+            --border-radius-xl: 0.75rem;
+            --border-radius-2xl: 1rem;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 200ms ease;
+            --transition-slow: 300ms ease;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-normal);
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background-color: var(--color-bg-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+            font-variant-numeric: oldstyle-nums;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-4);
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 0 var(--spacing-8);
+            }
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(var(--font-size-4xl), 5vw, var(--font-size-6xl));
+            font-weight: var(--font-weight-black);
+            line-height: 1.2;
+            margin-bottom: var(--spacing-6);
+            color: var(--color-text-primary);
+        }
+
+        h2 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            line-height: 1.3;
+            margin-bottom: var(--spacing-4);
+            margin-top: var(--spacing-8);
+            color: var(--color-primary-teal);
+        }
+
+        h3 {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.3;
+            margin-bottom: var(--spacing-3);
+            margin-top: var(--spacing-6);
+            color: var(--color-primary-blue);
+        }
+
+        h4 {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.3;
+            margin-bottom: var(--spacing-2);
+            margin-top: var(--spacing-4);
+            color: var(--color-text-primary);
+        }
+
+        p {
+            margin-bottom: var(--spacing-4);
+            line-height: 1.7;
+        }
+
+        /* Links */
+        a {
+            color: var(--color-primary-blue);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        a:hover {
+            color: var(--color-primary-teal);
+            text-decoration: underline;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-bottom: var(--spacing-4);
+            padding-left: var(--spacing-6);
+        }
+
+        li {
+            margin-bottom: var(--spacing-2);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--color-primary-blue), var(--color-primary-teal));
+            color: var(--color-text-white);
+            padding: var(--spacing-16) 0 var(--spacing-20);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--color-text-white);
+            margin-bottom: var(--spacing-4);
+        }
+
+        .header .subtitle {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-medium);
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main {
+            padding: var(--spacing-16) 0;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: var(--spacing-16);
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--color-bg-primary);
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-8);
+            margin-bottom: var(--spacing-8);
+            transition: var(--transition-base);
+            border: 1px solid var(--color-gray-200);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: var(--spacing-4);
+        }
+
+        .card h4 {
+            margin-top: 0;
+            margin-bottom: var(--spacing-3);
+        }
+
+        @media (max-width: 767px) {
+            .card {
+                padding: var(--spacing-6);
+                margin-bottom: var(--spacing-6);
+            }
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: var(--spacing-6);
+            margin-bottom: var(--spacing-8);
+        }
+
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-8);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-8);
+            }
+        }
+
+        /* Benefits List */
+        .benefits-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .benefits-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-3);
+            padding: var(--spacing-3);
+            background: var(--color-gray-100);
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-base);
+        }
+
+        .benefits-list li:hover {
+            background: var(--color-gray-200);
+            transform: translateX(4px);
+        }
+
+        .benefits-list li::before {
+            content: '✅';
+            margin-right: var(--spacing-3);
+            font-size: var(--font-size-lg);
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-8);
+            background: var(--color-bg-primary);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-gray-200);
+        }
+
+        .table th,
+        .table td {
+            padding: var(--spacing-4) var(--spacing-6);
+            text-align: left;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+
+        .table th {
+            background: linear-gradient(135deg, var(--color-primary-blue), var(--color-primary-teal));
+            color: var(--color-text-white);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:hover {
+            background: var(--color-gray-100);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        @media (max-width: 767px) {
+            .table th,
+            .table td {
+                padding: var(--spacing-3) var(--spacing-4);
+                font-size: var(--font-size-sm);
+            }
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-primary-red), var(--color-primary-carmin));
+            color: var(--color-text-white);
+            padding: var(--spacing-16);
+            border-radius: var(--border-radius-2xl);
+            text-align: center;
+            margin: var(--spacing-16) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="cta-grid" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23cta-grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .cta-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section h2 {
+            color: var(--color-text-white);
+            margin-top: 0;
+            margin-bottom: var(--spacing-4);
+        }
+
+        .cta-section p {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-6);
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--color-text-white);
+            color: var(--color-primary-red);
+            padding: var(--spacing-4) var(--spacing-8);
+            border-radius: var(--border-radius-lg);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-lg);
+            text-decoration: none;
+            transition: var(--transition-base);
+            margin-top: var(--spacing-4);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            color: var(--color-primary-carmin);
+        }
+
+        @media (max-width: 767px) {
+            .cta-section {
+                padding: var(--spacing-12);
+                margin: var(--spacing-12) 0;
+            }
+            
+            .cta-section h2 {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .cta-section p {
+                font-size: var(--font-size-base);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--color-bg-dark);
+            color: var(--color-text-white);
+            padding: var(--spacing-16) 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--color-primary-blue);
+        }
+
+        .footer a:hover {
+            color: var(--color-text-white);
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .header {
+                padding: var(--spacing-12) 0 var(--spacing-16);
+            }
+            
+            .header h1 {
+                font-size: var(--font-size-3xl);
+                margin-bottom: var(--spacing-3);
+            }
+            
+            .header .subtitle {
+                font-size: var(--font-size-lg);
+            }
+            
+            .main {
+                padding: var(--spacing-12) 0;
+            }
+            
+            .section {
+                margin-bottom: var(--spacing-12);
+            }
+            
+            .container {
+                padding: 0 var(--spacing-3);
+            }
+            
+            h2 {
+                font-size: var(--font-size-2xl);
+            }
+            
+            h3 {
+                font-size: var(--font-size-xl);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Scrollspy styles */
+        .toc {
+            background: var(--color-bg-primary);
+            padding: var(--spacing-6);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-base);
+            margin-bottom: var(--spacing-8);
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: var(--spacing-2);
+        }
+
+        .toc a {
+            display: block;
+            padding: var(--spacing-2) var(--spacing-3);
+            border-radius: var(--border-radius-base);
+            transition: var(--transition-base);
+        }
+
+        .toc a:hover {
+            background: var(--color-gray-100);
+            text-decoration: none;
+        }
+
+        /* Highlight boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(72, 185, 202, 0.08), rgba(35, 117, 126, 0.05));
+            border-left: 4px solid var(--color-primary-blue);
+            padding: var(--spacing-6);
+            border-radius: var(--border-radius-lg);
+            margin: var(--spacing-6) 0;
+            border: 1px solid rgba(72, 185, 202, 0.2);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .highlight-box.warning {
+            background: linear-gradient(135deg, rgba(255, 57, 76, 0.08), rgba(125, 60, 75, 0.05));
+            border-left-color: var(--color-primary-red);
+            border-color: rgba(255, 57, 76, 0.2);
+        }
+
+        .highlight-box.success {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(22, 163, 74, 0.05));
+            border-left-color: #22c55e;
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .highlight-box h3,
+        .highlight-box h4 {
+            margin-top: 0;
+        }
+
+        .highlight-box p:last-child,
+        .highlight-box ul:last-child,
+        .highlight-box ol:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Emoji styling */
+        .emoji {
+            font-style: normal;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content animate-fade-in-up">
+                <h1>Sistema Viver Lisboa</h1>
+                <p class="subtitle">Websites para Candidaturas Autárquicas 2025</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            
+            <!-- Table of Contents -->
+            <nav class="toc">
+                <h3>Índice</h3>
+                <ul>
+                    <li><a href="#o-que-e">O que é este Sistema?</a></li>
+                    <li><a href="#para-que-serve">Para que Serve?</a></li>
+                    <li><a href="#estrutura">Estrutura do Sistema</a></li>
+                    <li><a href="#como-aderir">Como Aderir</a></li>
+                    <li><a href="#como-funciona">Como Funciona?</a></li>
+                    <li><a href="#como-utilizar">Como Utilizar</a></li>
+                    <li><a href="#vantagens">Vantagens Técnicas</a></li>
+                    <li><a href="#exemplos">Exemplos de Utilização</a></li>
+                    <li><a href="#contributo">Contributo para a Coligação</a></li>
+                    <li><a href="#beneficios">Resumo dos Benefícios</a></li>
+                    <li><a href="#desenvolvimentos">Próximos Desenvolvimentos</a></li>
+                </ul>
+            </nav>
+
+            <!-- O que é este Sistema? -->
+            <section id="o-que-e" class="section">
+                <h2><span class="emoji">📖</span> O que é este Sistema?</h2>
+                <div class="card">
+                    <p>O <strong>Sistema Viver</strong> é uma plataforma web completa, desenvolvida especialmente para apoiar as candidaturas da coligação de esquerda nas <strong>Eleições Autárquicas de Lisboa 2025</strong>.</p>
+                    
+                    <p>Trata-se de uma solução técnica moderna que permite a <strong>cada candidatura</strong> ter o seu próprio website profissional, mantendo uma <strong>identidade visual coerente</strong> da coligação, mas com <strong>conteúdo totalmente personalizado</strong> para as especificidades locais.</p>
+                </div>
+            </section>
+
+            <!-- Para que Serve? -->
+            <section id="para-que-serve" class="section">
+                <h2><span class="emoji">🎯</span> Para que Serve?</h2>
+                
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3>Para as Candidaturas:</h3>
+                        <ul class="benefits-list">
+                            <li>Website profissional sem custos de desenvolvimento</li>
+                            <li>Gestão de conteúdo fácil através do Sanity CMS</li>
+                            <li>Identidade visual consistente da coligação</li>
+                            <li>Flexibilidade total para conteúdo local</li>
+                            <li>Funcionalidades completas: propostas, eventos, notícias, páginas personalizadas</li>
+                            <li>Design responsivo para todos os dispositivos</li>
+                            <li>SEO otimizado para melhor visibilidade online</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Para a Coligação:</h3>
+                        <ul class="benefits-list">
+                            <li style="--emoji: '🎨'">Coerência visual em todas as candidaturas</li>
+                            <li style="--emoji: '📊'">Gestão centralizada da infraestrutura técnica</li>
+                            <li style="--emoji: '🚀'">Rápido lançamento de novos websites</li>
+                            <li style="--emoji: '💰'">Economia de recursos (desenvolvimento partilhado)</li>
+                            <li style="--emoji: '🛠️'">Manutenção eficiente e atualizações centralizadas</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Estrutura do Sistema -->
+            <section id="estrutura" class="section">
+                <h2><span class="emoji">🏛️</span> Estrutura do Sistema</h2>
+                
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3>Multi-Domínio e Isolamento</h3>
+                        <p>Cada freguesia terá:</p>
+                        <ul>
+                            <li><strong>Domínio próprio</strong>: <code>viverfreguesianome.pt</code></li>
+                            <li><strong>Conteúdo isolado</strong>: Totalmente independente entre freguesias</li>
+                            <li><strong>Gestão individual</strong>: Cada candidatura gere o seu conteúdo</li>
+                            <li><strong>Base comum</strong>: Design e funcionalidades partilhadas</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Funcionalidades Incluídas</h3>
+                        <ul>
+                            <li><span class="emoji">📋</span> <strong>Propostas/Programa</strong>: Apresentação detalhada das propostas eleitorais</li>
+                            <li><span class="emoji">📰</span> <strong>Notícias</strong>: Comunicação regular com os munícipes</li>
+                            <li><span class="emoji">📅</span> <strong>Eventos</strong>: Agenda de atividades e iniciativas</li>
+                            <li><span class="emoji">📄</span> <strong>Páginas Personalizadas</strong>: Conteúdo específico</li>
+                            <li><span class="emoji">📞</span> <strong>Contactos</strong>: Informações dinâmicas</li>
+                            <li><span class="emoji">🔗</span> <strong>Redes Sociais</strong>: Integração com plataformas sociais</li>
+                            <li><span class="emoji">📱</span> <strong>Mobile First</strong>: Otimizado para dispositivos móveis</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Como Aderir -->
+            <section id="como-aderir" class="section">
+                <h2><span class="emoji">🤝</span> Como Aderir</h2>
+                
+                <div class="highlight-box">
+                    <h3>Processo de Adesão</h3>
+                    <ol>
+                        <li><strong>Manifestar interesse</strong> junto da coordenação</li>
+                        <li><strong>Definir domínio</strong> e detalhes da candidatura</li>
+                        <li><strong>Comprar domínio</strong> (normalmente o primeiro ano de domínios .pt é gratuíto)</li>
+                        <li><strong>Receber credenciais</strong> de acesso</li>
+                        <li><strong>Formação básica</strong> para utilização do sistema</li>
+                        <li><strong>Lançamento</strong> do website</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Como Funciona? -->
+            <section id="como-funciona" class="section">
+                <h2><span class="emoji">👥</span> Como Funciona?</h2>
+                
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h4>1. Setup Inicial</h4>
+                        <ul>
+                            <li>A <strong>infraestrutura técnica</strong> é configurada centralmente</li>
+                            <li>Cada freguesia recebe <strong>acesso ao seu painel de gestão</strong></li>
+                            <li>O <strong>domínio específico</strong> é configurado e ativado</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>2. Gestão de Conteúdo</h4>
+                        <ul>
+                            <li><strong>Interface intuitiva</strong>: O Sanity CMS permite gestão visual do conteúdo</li>
+                            <li><strong>Sem conhecimentos técnicos</strong>: Qualquer pessoa pode adicionar/editar conteúdo</li>
+                            <li><strong>Colaboração</strong>: Vários utilizadores podem gerir o mesmo website</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>3. Personalização</h4>
+                        <ul>
+                            <li><strong>Cores da campanha</strong>: Adaptar às cores específicas da freguesia</li>
+                            <li><strong>Logo local</strong>: Upload do logotipo da candidatura</li>
+                            <li><strong>Conteúdo único</strong>: Propostas, biografia de candidatos, agenda local</li>
+                            <li><strong>Informações de contacto</strong>: Dados específicos da candidatura local</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Como Utilizar o Sistema -->
+            <section id="como-utilizar" class="section">
+                <h2><span class="emoji">🚀</span> Como Utilizar o Sistema</h2>
+                
+                <div class="card">
+                    <h3>Passo 1: Acesso ao Painel</h3>
+                    <ol>
+                        <li>Recebe credenciais de acesso ao <strong>Sanity Studio</strong></li>
+                        <li>Acede através do link: <a href="https://viverlisboa.sanity.studio/">https://viverlisboa.sanity.studio/</a></li>
+                        <li>Faz login com as credenciais fornecidas</li>
+                    </ol>
+                </div>
+
+                <div class="card">
+                    <h3>Passo 2: Estrutura do Sanity Studio</h3>
+                    <p>O <strong>Sanity Studio</strong> está organizado de forma intuitiva para facilitar a gestão de conteúdo:</p>
+                    
+                    <div class="highlight-box">
+                        <h4><span class="emoji">🖥️</span> Interface Visual do Sanity Studio</h4>
+                        <p>O Sanity Studio apresenta uma interface limpa e organizada com <strong>três painéis principais</strong>:</p>
+                        
+                        <div style="text-align: center; margin: 1rem 0 2rem 0;">
+                            <img src="assets/sanity-interface-geral.png" alt="Interface geral do Sanity Studio mostrando os três painéis principais" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+                            <p style="font-size: 0.9em; color: #666; margin-top: 0.5rem;"><em>Interface do Sanity Studio com sistema multi-campanha</em></p>
+                        </div>
+                        
+                        <ul>
+                            <li><strong>Painel Esquerdo</strong>: Navegação entre diferentes tipos de conteúdo</li>
+                            <li><strong>Painel Central</strong>: Seleção de campanha específica</li>
+                            <li><strong>Painel Direito</strong>: Gestão detalhada do conteúdo selecionado</li>
+                        </ul>
+                        <p><em>Esta organização permite uma gestão eficiente e intuitiva, mesmo para utilizadores sem experiência técnica.</em></p>
+                    </div>
+
+                    <div class="grid grid-1">
+                        <div class="highlight-box">
+                            <h4><span class="emoji">🗂️</span> Navegação Principal (Painel Esquerdo)</h4>
+                            <ul>
+                                <li><strong>📁 Campanhas</strong>: Configurações gerais de cada campanha</li>
+                                <li><strong>🎯 Por Campanha</strong>: Acesso direto ao conteúdo específico</li>
+                                <li><strong>📋 Todas as Propostas</strong>: Vista global de todas as propostas</li>
+                                <li><strong>📰 Todas as Notícias</strong>: Vista global de todas as notícias</li>
+                                <li><strong>🗓️ Todos os Eventos</strong>: Vista global de todos os eventos</li>
+                                <li><strong>📄 Todas as Páginas</strong>: Vista global de páginas personalizadas</li>
+                            </ul>
+                            <p><em>Esta navegação permite tanto gestão específica por campanha como vista geral de todo o conteúdo.</em></p>
+                        </div>
+
+                        <div class="highlight-box">
+                            <h4><span class="emoji">🎯</span> Seleção de Campanha (Painel Central)</h4>
+                            <p><strong>Sistema Multi-Campanha:</strong> O Sanity permite gerir várias candidaturas simultaneamente</p>
+                            <ul>
+                                <li><strong>🟦 Viver Avenidas Novas</strong> (Avenidas Novas) - <em>ativa</em></li>
+                                <li><strong>🟦 Viver Lisboa</strong> (Lisboa) - <em>ativa</em></li>
+                                <li><strong>🟦 Viver Alvalde</strong> (Alvalde) - <em>ativa</em></li>
+                                <li><strong>➕ Adicionar Nova Campanha</strong>: Expandir para novas freguesias</li>
+                            </ul>
+                            <p><em>Cada campanha mantém o seu conteúdo totalmente isolado das outras.</em></p>
+                        </div>
+
+                        <div class="highlight-box">
+                            <h4><span class="emoji">📝</span> Gestão de Conteúdo (Painel Direito)</h4>
+                            <p><strong>Após selecionar uma campanha específica:</strong></p>
+                            <ul>
+                                <li><strong>💡 Propostas</strong>: Programa eleitoral da freguesia</li>
+                                <li><strong>📰 Notícias</strong>: Comunicados locais e atualizações</li>
+                                <li><strong>🗓️ Eventos</strong>: Agenda específica da candidatura</li>
+                                <li><strong>📄 Páginas</strong>: Conteúdo personalizado (Sobre Nós, etc.)</li>
+                            </ul>
+                            <p><em>Todo o conteúdo criado aqui aparece exclusivamente no website dessa campanha.</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Passo 3: Gestão de Cada Tipo de Conteúdo</h3>
+                    <p>O Sanity Studio organiza o conteúdo por categorias, facilitando a navegação e edição:</p>
+
+                    <div class="grid grid-1">
+                        <div class="highlight-box">
+                            <h4><span class="emoji">📰</span> Gestão de Notícias</h4>
+                            <p><strong>Exemplo prático:</strong> "Adesão de Personalidades a Campanha"</p>
+                            
+                            <div style="text-align: center; margin: 1rem 0 1.5rem 0;">
+                                <img src="assets/sanity-noticias.png" alt="Interface de gestão de notícias no Sanity Studio" style="max-width: 100%; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" />
+                                <p style="font-size: 0.85em; color: #666; margin-top: 0.5rem;"><em>Editor de notícias com data de publicação, resumo e editor de conteúdo</em></p>
+                            </div>
+                            
+                            <p>Para cada notícia pode definir:</p>
+                            <ul>
+                                <li><strong>Data de Publicação</strong>: ex: 2025-08-29 19:49</li>
+                                <li><strong>Resumo</strong>: "Várias personalidades da cultura, ciência e desporto manifestaram apoio..."</li>
+                                <li><strong>Imagem Destacada</strong>: Upload de foto com texto alternativo</li>
+                                <li><strong>Conteúdo</strong>: Editor rich text com formatação completa</li>
+                                <li><strong>Categorias</strong>: ex: "campanha"</li>
+                            </ul>
+                        </div>
+
+                        <div class="highlight-box">
+                            <h4><span class="emoji">🗓️</span> Gestão de Eventos</h4>
+                            <p><strong>Exemplo prático:</strong> "Arruada no Mercado do Arco do Cego"</p>
+                            
+                            <div style="text-align: center; margin: 1rem 0 1.5rem 0;">
+                                <img src="assets/sanity-eventos.png" alt="Interface de gestão de eventos no Sanity Studio" style="max-width: 100%; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" />
+                                <p style="font-size: 0.85em; color: #666; margin-top: 0.5rem;"><em>Editor de eventos com data, hora, local e descrição</em></p>
+                            </div>
+                            
+                            <p>Para cada evento pode definir:</p>
+                            <ul>
+                                <li><strong>Título do Evento</strong>: ex: "Arruada no Mercado do Arco do Cego"</li>
+                                <li><strong>URL Slug</strong>: ex: "arruada-mercado" (gerado automaticamente)</li>
+                                <li><strong>Data e Hora</strong>: ex: 2025-09-07 às 09:00</li>
+                                <li><strong>Local</strong>: ex: "Mercado do Arco do Cego"</li>
+                                <li><strong>Descrição</strong>: Editor visual para detalhes do evento</li>
+                            </ul>
+                        </div>
+
+                        <div class="highlight-box">
+                            <h4><span class="emoji">📋</span> Gestão de Propostas</h4>
+                            <p><strong>Exemplo prático:</strong> "Centro Cultural Comunitário"</p>
+                            
+                            <div style="text-align: center; margin: 1rem 0 1.5rem 0;">
+                                <img src="assets/sanity-propostas.png" alt="Interface de gestão de propostas no Sanity Studio" style="max-width: 100%; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" />
+                                <p style="font-size: 0.85em; color: #666; margin-top: 0.5rem;"><em>Editor de propostas com categoria, resumo e conteúdo detalhado</em></p>
+                            </div>
+                            
+                            <p>Para cada proposta pode definir:</p>
+                            <ul>
+                                <li><strong>Título da Proposta</strong>: ex: "Centro Cultural Comunitário"</li>
+                                <li><strong>URL Slug</strong>: ex: "centro-cultural-comunitario"</li>
+                                <li><strong>Categoria</strong>: ex: "Cultura" (com indicador colorido)</li>
+                                <li><strong>Resumo</strong>: "Estabelecer um espaço cultural dinâmico..."</li>
+                                <li><strong>Conteúdo Detalhado</strong>: Explicação completa com editor visual</li>
+                                <li><strong>Prioridade</strong>: Alta, Média ou Baixa (opcional)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box success">
+                        <h4><span class="emoji">✨</span> Funcionalidades Visuais</h4>
+                        <p>Cada tipo de conteúdo tem <strong>indicadores visuais</strong> que facilitam a navegação:</p>
+                        <div class="grid grid-2">
+                            <div>
+                                <ul>
+                                    <li><strong>Estados de Publicação</strong>: "Published" (verde) vs "Draft" (cinza)</li>
+                                    <li><strong>Categorias com Cores</strong>: Cada categoria tem um indicador colorido</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <ul>
+                                    <li><strong>Datas Visíveis</strong>: Todas as datas aparecem no formato PT (dd/mm/aaaa)</li>
+                                    <li><strong>Navegação Rápida</strong>: Lista lateral para acesso direto aos conteúdos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Passo 4: Editor Visual de Conteúdo</h3>
+                    <p>O Sanity Studio inclui um <strong>editor visual rico</strong> que permite:</p>
+
+                    <div class="grid grid-2">
+                        <div>
+                            <ul class="benefits-list">
+                                <li><strong>Texto formatado</strong>: Negrito, itálico, listas, títulos</li>
+                                <li><strong>Imagens</strong>: Upload direto com otimização automática</li>
+                                <li><strong>Vídeos</strong>: Incorporação de conteúdo multimédia</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <ul class="benefits-list">
+                                <li><strong>Links</strong>: Ligações internas e externas</li>
+                                <li><strong>Botões de ação</strong>: Call-to-actions personalizados</li>
+                                <li><strong>Código</strong>: Blocos de código formatados</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Passo 5: Publicação</h3>
+                    <div class="grid grid-2">
+                        <div>
+                            <ul class="benefits-list">
+                                <li><strong>Publicar</strong>: Tornar o conteúdo visível no website</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <ul class="benefits-list">
+                                <li><strong>Rascunho</strong>: Guardar trabalho em progresso</li>
+                                <li><strong>Agendamento</strong>: Programar publicação futura</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box success">
+                    <h3><span class="emoji">💡</span> Dicas de Utilização</h3>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h4><span class="emoji">🎨</span> Boas Práticas de Conteúdo</h4>
+                            <ul>
+                                <li><strong>Títulos claros</strong>: Use títulos descritivos e concisos</li>
+                                <li><strong>Imagens otimizadas</strong>: Prefira imagens de alta qualidade</li>
+                                <li><strong>Categorização</strong>: Use categorias consistentes</li>
+                                <li><strong>SEO amigável</strong>: Slugs simples e descritivos</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4><span class="emoji">⚡</span> Fluxo de Trabalho Sugerido</h4>
+                            <ol>
+                                <li><strong>Planeamento</strong>: Defina o tipo de conteúdo a criar</li>
+                                <li><strong>Rascunho</strong>: Crie o conteúdo em modo rascunho</li>
+                                <li><strong>Publicação</strong>: Publique quando estiver satisfeito</li>
+                                <li><strong>Atualização</strong>: Edite e republique quando necessário</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4><span class="emoji">📚</span> Apoio Contínuo</h4>
+                    <ul>
+                        <li><span class="emoji">📚</span> <strong>Documentação completa</strong></li>
+                        <li><span class="emoji">🎓</span> <strong>Formação para utilizadores</strong></li>
+                        <li><span class="emoji">🛠️</span> <strong>Suporte técnico</strong> quando necessário</li>
+                        <li><span class="emoji">💬</span> <strong>Grupo de apoio</strong> entre candidaturas</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Vantagens Técnicas -->
+            <section id="vantagens" class="section">
+                <h2><span class="emoji">💡</span> Vantagens Técnicas</h2>
+                
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3>Performance e SEO</h3>
+                        <ul class="benefits-list">
+                            <li><strong>Velocidade otimizada</strong>: Carregamento rápido</li>
+                            <li><strong>SEO amigável</strong>: Melhor posicionamento no Google</li>
+                            <li><strong>Mobile-first</strong>: Prioridade para dispositivos móveis</li>
+                            <li><strong>Segurança</strong>: Infraestrutura robusta e segura</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Gestão Simplificada</h3>
+                        <ul class="benefits-list">
+                            <li><strong>Interface visual</strong>: Sem necessidade de código</li>
+                            <li><strong>Backup automático</strong>: Conteúdo sempre protegido</li>
+                            <li><strong>Atualizações automáticas</strong>: Sistema sempre atualizado</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exemplos de Utilização -->
+            <section id="exemplos" class="section">
+                <h2><span class="emoji">🌟</span> Exemplos de Utilização</h2>
+                
+                <div class="card">
+                    <a href="https://viveravenidas.pt"><h3>Viver Avenidas Novas (viveravenidas.pt)</h3></a>
+                    <ul>
+                        <li>Website modelo com conteúdo completo</li>
+                        <li>Demonstra todas as funcionalidades</li>
+                    </ul>
+
+                    <h4>Funcionalidades Demonstradas:</h4>
+                    <ul class="benefits-list">
+                        <li>Propostas organizadas por categoria</li>
+                        <li>Agenda de eventos local</li>
+                        <li>Notícias de campanha</li>
+                        <li>Páginas informativas</li>
+                        <li>Contactos e redes sociais</li>
+                        <li>Design responsivo e acessível</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Contributo para a Coligação -->
+            <section id="contributo" class="section">
+                <h2><span class="emoji">✊</span> Contributo para a Coligação</h2>
+                
+                <div class="card">
+                    <p>Este sistema representa uma <strong>contribuição pessoal</strong> para o sucesso das candidaturas da coligação de esquerda em Lisboa. Desenvolvido com <strong>software livre</strong> e <strong>tecnologias abertas</strong>.</p>
+
+                    <h3><span class="emoji">🌍</span> Impacto Esperado</h3>
+                    <ul>
+                        <li><strong>24 websites</strong> (uma por freguesia)</li>
+                        <li><strong>Comunicação coordenada</strong> mas localmente relevante</li>
+                        <li><strong>Visibilidade aumentada</strong> da coligação de esquerda</li>
+                        <li><strong>Participação cidadã</strong> facilitada digitalmente</li>
+                    </ul>
+
+                    <p class="highlight-box"><strong>Juntos construímos uma presença digital forte para uma Lisboa mais justa, sustentável e democrática.</strong> <span class="emoji">🏛️✊</span></p>
+                </div>
+            </section>
+
+            <!-- Resumo dos Benefícios -->
+            <section id="beneficios" class="section">
+                <h2><span class="emoji">📋</span> Resumo dos Benefícios</h2>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Benefício</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong><span class="emoji">💰</span> Custo</strong></td>
+                            <td>Infraestrutura partilhada, sem custos de desenvolvimento individual</td>
+                        </tr>
+                        <tr>
+                            <td><strong><span class="emoji">⏰</span> Tempo</strong></td>
+                            <td>Lançamento rápido, foco no conteúdo em vez da técnica</td>
+                        </tr>
+                        <tr>
+                            <td><strong><span class="emoji">🎨</span> Design</strong></td>
+                            <td>Identidade visual profissional e coerente</td>
+                        </tr>
+                        <tr>
+                            <td><strong><span class="emoji">📱</span> Tecnologia</strong></td>
+                            <td>Moderna, rápida, segura e mobile-first</td>
+                        </tr>
+                        <tr>
+                            <td><strong><span class="emoji">🛠️</span> Gestão</strong></td>
+                            <td>Interface simples, sem necessidade de conhecimentos técnicos</td>
+                        </tr>
+                        <tr>
+                            <td><strong><span class="emoji">🔗</span> Flexibilidade</strong></td>
+                            <td>Totalmente personalizável para cada freguesia</td>
+                        </tr>
+                        <tr>
+                            <td><strong><span class="emoji">📈</span> SEO</strong></td>
+                            <td>Otimizado para motores de busca</td>
+                        </tr>
+                        <tr>
+                            <td><strong><span class="emoji">🤝</span> Suporte</strong></td>
+                            <td>Documentação, formação e apoio técnico</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Próximos Desenvolvimentos -->
+            <section id="desenvolvimentos" class="section">
+                <h2><span class="emoji">🚀</span> Próximos Desenvolvimentos</h2>
+                
+                <div class="card">
+                    <h3><span class="emoji">🔮</span> Funcionalidades em Desenvolvimento</h3>
+
+                    <h4><span class="emoji">📊</span> Módulo de Analytics <em>(Q1 2025)</em></h4>
+                    <ul>
+                        <li>Dashboard personalizado para cada candidatura</li>
+                        <li>Métricas de engagement e alcance</li>
+                        <li>Relatórios automatizados mensais</li>
+                        <li>Comparação com outras candidaturas (anónima)</li>
+                    </ul>
+
+                    <h4><span class="emoji">💬</span> Sistema de sugestão de propostas <em>(Q2 2025)</em></h4>
+                    <ul>
+                        <li>Interação direta com munícipes</li>
+                        <li>Moderação manual</li>
+                        <li>Respostas dos candidatos</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h2>Pronto para Começar?</h2>
+                <p>Entre em contacto connosco e lance o website da sua candidatura hoje mesmo!</p>
+                <a href="#contributo" class="cta-button">Saiba Mais</a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p><em>Este documento foi criado para apoiar as candidaturas da coligação de esquerda nas <strong>Eleições Autárquicas de Lisboa 2025</strong>. Representa uma contribuição pessoal do <strong>Partido Livre</strong> e está disponível gratuitamente para todas as candidaturas da coligação.</em></p>
+            
+            <p><strong><span class="emoji">🗳️</span> Juntos por uma Lisboa mais digital, transparente e participativa! <span class="emoji">✊</span></strong></p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add animation on scroll with better performance
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                    observer.unobserve(entry.target); // Stop observing once animated
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -10% 0px'
+        });
+
+        document.querySelectorAll('.card, .section').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll behavior polyfill for older browsers
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!CSS.supports('scroll-behavior', 'smooth')) {
+                // Add polyfill if needed
+                console.log('Browser does not support smooth scroll-behavior');
+            }
+        });
+    </script>
+</body>
+</html>
