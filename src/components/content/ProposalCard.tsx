@@ -16,9 +16,11 @@ interface ProposalCardProps {
 
 const StyledCard = styled(Card)<{ $featured?: boolean; $priority: string }>`
   height: 100%;
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  justify-content: space-between;
   transition: all ${theme.transitions.base};
   position: relative;
   overflow: hidden;

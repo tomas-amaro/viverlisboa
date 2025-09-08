@@ -2,20 +2,28 @@ import React from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Container, Typography, PortableTextRenderer } from '../components/ui'
+import { Container, Typography } from '../components/ui'
+import { PageBuilder } from '../components/content/blocks'
 import { getBuildConfiguration, CampaignWithContent } from '../lib/campaignUtils'
 import { client } from '../lib/sanity'
-import { PortableTextBlock } from '@portabletext/types'
+import { ContentBlock } from '../components/content/blocks/types'
 
 interface CustomPage {
   _id: string
   title: string
   slug: { current: string }
-  content: PortableTextBlock[]
+  content: ContentBlock[]
   seo?: {
     title?: string
     description?: string
     keywords?: string[]
+    ogImage?: {
+      asset: {
+        _id: string
+        url: string
+      }
+      alt?: string
+    }
   }
 }
 
@@ -30,6 +38,9 @@ interface CustomPageProps {
 }
 
 export default function CustomPagePage({ page, campaign }: CustomPageProps) {
+  // Check if page has content blocks or needs fallback
+  const hasBlocks = page.content && Array.isArray(page.content) && page.content.length > 0
+  
   return (
     <>
       <Head>
@@ -41,7 +52,33 @@ export default function CustomPagePage({ page, campaign }: CustomPageProps) {
         {page.seo?.keywords && (
           <meta name="keywords" content={page.seo.keywords.join(', ')} />
         )}
+        {page.seo?.ogImage && (
+          <>
+            <meta property="og:image" content={page.seo.ogImage.asset.url} />
+            <meta property="og:image:alt" content={page.seo.ogImage.alt || page.title} />
+          </>
+        )}
       </Head>
+      
+      {hasBlocks ? (
+        // Render using PageBuilder for modular content
+        <>
+          <PageBuilder blocks={page.content} campaign={campaign} />
+          
+          {/* Navigation Footer */}
+              <Link 
+                href="/"
+                style={{
+                  textDecoration: 'none',
+                  color: campaign.mainColor || '#48B9CA',
+                  fontWeight: 500
+                }}
+              >
+                ← Voltar ao Início
+              </Link>
+        </>
+      ) : (
+        // Fallback for pages without blocks (legacy support)
         <Container>
           <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
             {/* Header */}
@@ -51,9 +88,22 @@ export default function CustomPagePage({ page, campaign }: CustomPageProps) {
               </Typography>
             </div>
 
-            {/* Content */}
-            <div style={{ marginBottom: '3rem' }}>
-              <PortableTextRenderer content={page.content} campaign={campaign} />
+            {/* Empty state */}
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '4rem 2rem',
+              color: '#666',
+              backgroundColor: '#f9f9f9',
+              borderRadius: '8px',
+              marginBottom: '3rem'
+            }}>
+              <Typography variant="h3" margin={true}>
+                Página em Construção
+              </Typography>
+              <Typography variant="body1">
+                Esta página ainda não possui conteúdo configurado. 
+                Use o editor do Sanity para adicionar blocos de conteúdo.
+              </Typography>
             </div>
 
             {/* Navigation */}
@@ -77,6 +127,7 @@ export default function CustomPagePage({ page, campaign }: CustomPageProps) {
             </div>
           </div>
         </Container>
+      )}
     </>
   )
 }
@@ -128,17 +179,92 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         slug,
         content[]{
           ...,
-          _type == "image" => {
+          _type == "heroBlock" => {
             ...,
-            asset->{
+            backgroundImage{
+              asset->{
+                _id,
+                url
+              },
+              alt
+            }
+          },
+          _type == "textBlock" => {
+            ...,
+            content[]{
+              ...,
+              _type == "image" => {
+                ...,
+                asset->{
+                  _id,
+                  url
+                }
+              }
+            }
+          },
+          _type == "imageBlock" => {
+            ...,
+            image{
+              asset->{
+                _id,
+                url
+              },
+              alt,
+              caption
+            }
+          },
+          _type == "galleryBlock" => {
+            ...,
+            images[]{
+              asset->{
+                _id,
+                url
+              },
+              alt,
+              caption
+            }
+          },
+          _type == "videoBlock" => {
+            ...,
+            thumbnail{
+              asset->{
+                _id,
+                url
+              },
+              alt
+            }
+          },
+          _type == "proposalsShowcaseBlock" => {
+            ...,
+            proposals[]->{
               _id,
-              _ref,
-              _type,
-              url
+              title,
+              slug,
+              summary,
+              category,
+              priority,
+              featured,
+              tags,
+              icon{
+                asset->{
+                  _id,
+                  url
+                },
+                alt
+              }
             }
           }
         },
-        seo
+        seo{
+          ...,
+          ogImage{
+            asset->{
+              _id,
+              url
+            },
+            alt
+          }
+        }
       }
     `, { slug, campaignId: campaign._id })
 

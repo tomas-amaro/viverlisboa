@@ -4,6 +4,16 @@ import post from "./post";
 import event from "./event";
 import proposal from "./proposal";
 import blockContent from "./blockContent";
+import {
+  heroBlock,
+  textBlock,
+  imageBlock,
+  galleryBlock,
+  ctaBlock,
+  videoBlock,
+  proposalsShowcaseBlock,
+  spacerBlock,
+} from "./contentBlocks";
 
 export const schemaTypes = [
   campaign,
@@ -12,4 +22,13 @@ export const schemaTypes = [
   event,
   proposal,
   blockContent,
+  // Content Blocks
+  heroBlock,
+  textBlock,
+  imageBlock,
+  galleryBlock,
+  ctaBlock,
+  videoBlock,
+  proposalsShowcaseBlock,
+  spacerBlock,
 ];

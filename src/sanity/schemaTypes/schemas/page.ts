@@ -90,95 +90,18 @@ export default defineType({
     }),
     defineField({
       name: "content",
-      title: "Conteúdo",
+      title: "Conteúdo da Página",
       type: "array",
+      description: "Construa sua página usando blocos modulares",
       of: [
-        { type: "block" },
-        {
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            {
-              name: "alt",
-              type: "string",
-              title: "Texto Alternativo",
-            },
-            {
-              name: "caption",
-              type: "string",
-              title: "Legenda",
-            },
-          ],
-        },
-        {
-          type: "object",
-          name: "hero",
-          title: "Seção Hero",
-          fields: [
-            {
-              name: "title",
-              title: "Título",
-              type: "string",
-            },
-            {
-              name: "subtitle",
-              title: "Subtítulo",
-              type: "string",
-            },
-            {
-              name: "image",
-              title: "Imagem",
-              type: "image",
-              options: { hotspot: true },
-            },
-            {
-              name: "ctaText",
-              title: "Texto do Botão",
-              type: "string",
-            },
-            {
-              name: "ctaUrl",
-              title: "URL do Botão",
-              type: "string",
-            },
-          ],
-        },
-        {
-          type: "object",
-          name: "proposals",
-          title: "Seção de Propostas",
-          fields: [
-            {
-              name: "title",
-              title: "Título da Seção",
-              type: "string",
-            },
-            {
-              name: "proposals",
-              title: "Propostas",
-              type: "array",
-              of: [{ type: "reference", to: [{ type: "proposal" }] }],
-            },
-          ],
-        },
-        {
-          type: "object",
-          name: "events",
-          title: "Seção de Eventos",
-          fields: [
-            {
-              name: "title",
-              title: "Título da Seção",
-              type: "string",
-            },
-            {
-              name: "events",
-              title: "Eventos",
-              type: "array",
-              of: [{ type: "reference", to: [{ type: "event" }] }],
-            },
-          ],
-        },
+        { type: "heroBlock" },
+        { type: "textBlock" },
+        { type: "imageBlock" },
+        { type: "galleryBlock" },
+        { type: "ctaBlock" },
+        { type: "videoBlock" },
+        { type: "proposalsShowcaseBlock" },
+        { type: "spacerBlock" },
       ],
     }),
   ],
