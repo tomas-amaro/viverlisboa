@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { CATEGORY_LABELS, getCategoryLabel } from "../../../lib/categoryUtils";
 
 export default defineType({
   name: "proposal",
@@ -33,20 +34,10 @@ export default defineType({
       title: "Categoria",
       type: "string",
       options: {
-        list: [
-          { title: "Habitação", value: "habitacao" },
-          { title: "Transportes", value: "transportes" },
-          { title: "Ambiente", value: "ambiente" },
-          { title: "Cultura", value: "cultura" },
-          { title: "Educação", value: "educacao" },
-          { title: "Saúde", value: "saude" },
-          { title: "Economia", value: "economia" },
-          { title: "Participação Cidadã", value: "participacao" },
-          { title: "Igualdade", value: "igualdade" },
-          { title: "Juventude", value: "juventude" },
-          { title: "Idosos", value: "idosos" },
-          { title: "Urbanismo", value: "urbanismo" },
-        ],
+        list: Object.entries(CATEGORY_LABELS).map(([value, title]) => ({
+          title,
+          value,
+        })),
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -119,20 +110,6 @@ export default defineType({
     },
     prepare(selection) {
       const { title, category, priority } = selection;
-      const categoryLabels = {
-        habitacao: "Habitação",
-        transportes: "Transportes",
-        ambiente: "Ambiente",
-        cultura: "Cultura",
-        educacao: "Educação",
-        saude: "Saúde",
-        economia: "Economia",
-        participacao: "Participação Cidadã",
-        igualdade: "Igualdade",
-        juventude: "Juventude",
-        idosos: "Idosos",
-        urbanismo: "Urbanismo",
-      };
 
       const priorityEmoji = {
         high: "🔴",
@@ -142,9 +119,9 @@ export default defineType({
 
       return {
         title,
-        subtitle: `${
-          categoryLabels[category as keyof typeof categoryLabels] || category
-        } ${priorityEmoji[priority as keyof typeof priorityEmoji] || ""}`,
+        subtitle: `${getCategoryLabel(category)} ${
+          priorityEmoji[priority as keyof typeof priorityEmoji] || ""
+        }`,
         media: selection.media,
       };
     },

@@ -7,7 +7,7 @@ import { Container, Typography, Button, ResponsiveCarousel } from '../../compone
 import { getBuildConfiguration, CampaignWithContent } from '../../lib/campaignUtils'
 import { Proposal } from '../../types/sanity'
 import { theme } from '../../styles/theme'
-import { getCategoryLabel } from '@/components/content/ProposalCard'
+import { getCategoryLabel } from '../../lib/categoryUtils'
 
 const CategoryHeading = styled.h2`
   margin-bottom: 1.5rem;

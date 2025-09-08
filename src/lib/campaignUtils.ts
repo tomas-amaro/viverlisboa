@@ -1,5 +1,6 @@
 import { client } from "./sanity";
 import { Campaign } from "../types/sanity";
+import { formatCategoriesWithAll } from "./categoryUtils";
 
 export interface CampaignContent {
   proposalsCount: number;
@@ -252,6 +253,21 @@ export async function getCampaignEvents(campaignId: string, limit = 10) {
   `,
     { campaignId, limit }
   );
+}
+
+/**
+ * Get available proposal categories for a campaign
+ */
+export async function getCampaignProposalCategories(campaignId: string) {
+  const categories = await client.fetch(
+    `
+    array::unique(*[_type == "proposal" && references($campaignId) && defined(category)].category)
+  `,
+    { campaignId }
+  );
+
+  // Transform categories into the expected format using utility
+  return formatCategoriesWithAll(categories);
 }
 
 export async function getCampaignCustomPages(campaignId: string) {

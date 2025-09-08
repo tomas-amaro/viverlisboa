@@ -6,6 +6,7 @@ import { theme } from '@/styles/theme'
 import { Card, Typography, Button } from '@/components/ui'
 import { Proposal } from '@/types/sanity'
 import { urlFor } from '@/lib/sanity'
+import { getCategoryLabel } from '@/lib/categoryUtils'
 
 interface ProposalCardProps {
   proposal: Proposal
@@ -226,23 +227,6 @@ const Tag = styled.span`
   font-weight: ${theme.fontWeights.medium};
 `
 
-export const getCategoryLabel = (category: string): string => {
-  const labels: Record<string, string> = {
-    habitacao: 'Habitação',
-    transportes: 'Transportes',
-    ambiente: 'Ambiente',
-    cultura: 'Cultura',
-    educacao: 'Educação',
-    saude: 'Saúde',
-    economia: 'Economia',
-    participacao: 'Participação Cidadã',
-    igualdade: 'Igualdade',
-    juventude: 'Juventude',
-    idosos: 'Idosos',
-    urbanismo: 'Urbanismo',
-  }
-  return labels[category] || category
-}
 
 const getPriorityLabel = (priority: string): string => {
   const labels: Record<string, string> = {

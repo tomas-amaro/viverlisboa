@@ -6,6 +6,7 @@ import { Container, Grid, Typography, Button } from '@/components/ui'
 import { HeroSection, ProposalCard, EventCard, PostCard } from '@/components/content'
 import { Proposal, Event, Post } from '@/types/sanity'
 import { getBuildConfiguration, CampaignWithContent } from '@/lib/campaignUtils'
+import { CategoryOption } from '@/lib/categoryUtils'
 
 interface HomePageProps {
   campaign: CampaignWithContent
@@ -17,6 +18,7 @@ interface HomePageProps {
   featuredProposals: Proposal[]
   upcomingEvents: Event[]
   recentPosts: Post[]
+  categories: CategoryOption[]
 }
 
 const Section = styled.section`
@@ -71,20 +73,13 @@ const HomePage: React.FC<HomePageProps> = ({
   featuredProposals,
   upcomingEvents,
   recentPosts,
+  categories,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   const filteredProposals = selectedCategory === 'all' 
     ? featuredProposals 
     : featuredProposals.filter(proposal => proposal.category === selectedCategory)
-
-  const categories = [
-    { value: 'all', label: 'Todas' },
-    { value: 'habitacao', label: 'Habitação' },
-    { value: 'transportes', label: 'Transportes' },
-    { value: 'ambiente', label: 'Ambiente' },
-    { value: 'cultura', label: 'Cultura' },
-  ]
 
   return (
     <>
@@ -238,12 +233,13 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     const { campaign, navigation } = await getBuildConfiguration()
 
     // Fetch campaign-specific content using campaign utilities  
-    const { getCampaignProposals, getCampaignEvents, getCampaignNews } = await import('@/lib/campaignUtils')
+    const { getCampaignProposals, getCampaignEvents, getCampaignNews, getCampaignProposalCategories } = await import('@/lib/campaignUtils')
     
-    const [proposalsData, eventsData, postsData] = await Promise.all([
+    const [proposalsData, eventsData, postsData, categoriesData] = await Promise.all([
       getCampaignProposals(campaign._id, 6),
       getCampaignEvents(campaign._id, 3), 
-      getCampaignNews(campaign._id, 3)
+      getCampaignNews(campaign._id, 3),
+      getCampaignProposalCategories(campaign._id)
     ])
 
     return {
@@ -253,6 +249,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
         featuredProposals: proposalsData || [],
         upcomingEvents: eventsData || [],
         recentPosts: postsData || [],
+        categories: categoriesData || [{ value: 'all', label: 'Todas' }],
       },
 
     }

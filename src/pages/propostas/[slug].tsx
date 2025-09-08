@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Container, Typography, Button, PortableTextRenderer } from '../../components/ui'
 import { getBuildConfiguration, getCampaignProposals, CampaignWithContent } from '../../lib/campaignUtils'
 import { client } from '../../lib/sanity'
+import { getCategoryLabel } from '../../lib/categoryUtils'
 import { PortableTextBlock } from '@portabletext/types'
 
 interface Proposal {
@@ -26,20 +27,6 @@ interface ProposalPageProps {
 }
 
 export default function ProposalPage({ proposal, campaign }: ProposalPageProps) {
-  const categoryLabels = {
-    habitacao: "Habitação",
-    transportes: "Transportes", 
-    ambiente: "Ambiente",
-    cultura: "Cultura",
-    educacao: "Educação",
-    saude: "Saúde",
-    economia: "Economia",
-    participacao: "Participação Cidadã",
-    igualdade: "Igualdade",
-    juventude: "Juventude",
-    idosos: "Idosos",
-    urbanismo: "Urbanismo",
-  }
 
   const priorityLabels = {
     high: "Alta Prioridade",
@@ -77,7 +64,7 @@ export default function ProposalPage({ proposal, campaign }: ProposalPageProps) 
                   fontSize: '0.875rem',
                   fontWeight: 500
                 }}>
-                  {categoryLabels[proposal.category as keyof typeof categoryLabels] || proposal.category}
+                  {getCategoryLabel(proposal.category)}
                 </span>
                 <span style={{
                   background: proposal.priority === 'high' ? '#FF394C' : 
