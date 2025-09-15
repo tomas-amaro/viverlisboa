@@ -3,11 +3,15 @@
  * Deploy this to Cloudflare Workers
  */
 
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
+const worker = {
+  async fetch(request, env) {
+    return handleRequest(request, env)
+  }
+}
 
-async function handleRequest(request) {
+export default worker
+
+async function handleRequest(request, env) {
   const requestId = crypto.randomUUID().slice(0, 8)
   console.log(`[${requestId}] Incoming request: ${request.method} ${request.url}`)
   
@@ -26,6 +30,29 @@ async function handleRequest(request) {
     if (!payload._type || !payload._id) {
       console.log(`[${requestId}] Invalid payload - missing _type or _id`)
       return new Response('Invalid payload', { status: 400 })
+    }
+
+    // Get environment variables
+    const GITHUB_OWNER = env.GITHUB_OWNER
+    const GITHUB_REPO = env.GITHUB_REPO
+    const GITHUB_TOKEN = env.GITHUB_TOKEN
+
+    // Validate required environment variables
+    if (!GITHUB_OWNER || !GITHUB_REPO || !GITHUB_TOKEN) {
+      console.error(`[${requestId}] Missing environment variables:`, {
+        GITHUB_OWNER: !!GITHUB_OWNER,
+        GITHUB_REPO: !!GITHUB_REPO,
+        GITHUB_TOKEN: !!GITHUB_TOKEN
+      })
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Server configuration error - missing environment variables',
+        requestId: requestId,
+        timestamp: new Date().toISOString()
+      }), { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
 
     console.log(`[${requestId}] Valid Sanity webhook: ${payload._type}/${payload._id}`)
@@ -95,7 +122,8 @@ async function handleRequest(request) {
   }
 }
 
-// Environment variables (set these in Cloudflare Workers dashboard):
+// Modern Cloudflare Workers format with environment variables
+// Set these in Cloudflare Workers dashboard or via wrangler.toml:
 // GITHUB_OWNER = your-github-username
 // GITHUB_REPO = viverlisboa (or your repo name)  
 // GITHUB_TOKEN = your personal access token

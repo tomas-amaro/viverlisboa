@@ -33,7 +33,8 @@
         "webhook:deploy:local": "dotenv -e .env.local -- node scripts/deploy-webhook.js",
         "webhook:deploy": "node scripts/deploy-webhook.js",
         "seed": "dotenv -e .env.local -- node scripts/seed-data.js",
-        "clear-data": "dotenv -e .env.local -- node scripts/clear-data.js"
+        "clear-data": "dotenv -e .env.local -- node scripts/clear-data.js",
+        "node:local": "dotenv -e .env.local -- node $SCRIPT"
     },
     "dependencies": {
         "@portabletext/react": "^3.2.1",

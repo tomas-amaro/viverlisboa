@@ -8,7 +8,8 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-
+const { CI, GITHUB_REPOSITORY_OWNER, GITHUB_REPOSITORY, GITHUB_TOKEN } = require('process');
+const repoName = GITHUB_REPOSITORY.split('/')[1];
 async function deployWebhook() {
   console.log('🚀 Deploying Sanity webhook handler to Cloudflare Workers...');
   
@@ -28,14 +29,11 @@ compatibility_date = "2024-08-01"
 [observability.logs]
 enabled = true
 
-${process.env.GITHUB_ACTOR ? `
+${CI ? `
 # CI Environment - Use GitHub context
 [env.production.vars]
-GITHUB_OWNER = "${process.env.GITHUB_ACTOR || process.env.GITHUB_REPOSITORY_OWNER || 'SET_GITHUB_OWNER'}"
-GITHUB_REPO = "${process.env.GITHUB_REPOSITORY ? process.env.GITHUB_REPOSITORY.split('/')[1] : 'SET_REPO_NAME'}"
-
-[env.production.secrets]
-GITHUB_TOKEN = "${process.env.GITHUB_TOKEN || 'SET_GITHUB_TOKEN'}"
+GITHUB_OWNER = "${GITHUB_REPOSITORY_OWNER || 'tomas-amaro'}"
+GITHUB_REPO = "${repoName || 'viverlisboa'}"
 ` : `
 # Local Development - Set these manually in Cloudflare Workers dashboard:
 [env.production.vars]
