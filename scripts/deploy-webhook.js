@@ -58,7 +58,7 @@ GITHUB_REPO = "${repoName || 'viverlisboa'}"
       // CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_WORKERS_TOKEN || process.env.CLOUDFLARE_API_TOKEN
     };
     
-    execSync('pnpm wrangler deploy --config wrangler-webhook.toml --env production', { 
+    execSync('pnpm wrangler deploy --config wrangler-webhook.toml --env production --name sanity-webhook-handler', { 
       stdio: 'inherit',
       env: env 
     });
