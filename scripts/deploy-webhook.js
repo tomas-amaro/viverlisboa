@@ -8,8 +8,8 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { CI, GITHUB_REPOSITORY_OWNER, GITHUB_REPOSITORY, GITHUB_TOKEN } = require('process');
-const repoName = GITHUB_REPOSITORY.split('/')[1];
+const { CI, GITHUB_REPOSITORY_OWNER, GITHUB_REPOSITORY } = process.env;
+const repoName = GITHUB_REPOSITORY?.split('/')[1];
 async function deployWebhook() {
   console.log('🚀 Deploying Sanity webhook handler to Cloudflare Workers...');
   
