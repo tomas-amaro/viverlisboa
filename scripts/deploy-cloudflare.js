@@ -132,20 +132,23 @@ async function ensureProjectExists(projectName) {
   console.log(`📦 Ensuring project "${projectName}" exists...`);
   
   try {
-    const createCmd = `wrangler pages project create "${projectName}"`;
+    const createCmd = `wrangler pages project create "${projectName}" --production-branch=main --compatibility-date=2024-08-01`;
     execSync(createCmd, { stdio: 'inherit' });
     console.log(`✅ Project "${projectName}" created successfully`);
     return true;
     
   } catch (createError) {
     // If project already exists, that's fine
-    if (createError.message.includes('already exists') || createError.message.includes('already taken') || createError.message.includes('already in use')) {
+    if (createError.message.includes('already exists') || 
+        createError.message.includes('already taken') || 
+        createError.message.includes('already in use') ||
+        createError.message.includes('name is already in use')) {
       console.log(`✅ Project "${projectName}" already exists`);
       return true;
     }
     
     console.error(`❌ Failed to create project "${projectName}": ${createError.message}`);
-    console.log('📝 Will attempt deployment anyway...');
+    console.log('⚠️  Project creation may have failed, but continuing with deployment...');
     return false;
   }
 }
