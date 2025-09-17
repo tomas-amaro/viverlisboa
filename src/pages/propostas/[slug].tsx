@@ -191,7 +191,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
-    const { campaign } = await getBuildConfiguration()
+    const { campaign, navigation } = await getBuildConfiguration()
     const slug = params?.slug as string
 
     const proposal = await client.fetch(`
@@ -229,7 +229,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     return {
       props: {
         proposal,
-        campaign
+        campaign,
+        navigation
       },
 
     }

@@ -12,6 +12,7 @@
         "dev:avenidas": "DEV_CAMPAIGN_DOMAIN=viveravenidas.pt next dev",
         "dev:alvalade": "DEV_CAMPAIGN_DOMAIN=viveralvalade.pt next dev",
         "build": "next build",
+        "build:local": "dotenv -e .env.local -- next build",
         "build:domain": "node scripts/build-domain.js",
         "build:all": "dotenv -e .env.local node scripts/build-all-domains.js",
         "deploy:domain": "node scripts/deploy-domain.js",

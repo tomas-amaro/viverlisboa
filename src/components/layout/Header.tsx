@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styled, { css } from 'styled-components'
 import { theme } from '@/styles/theme'
-import { Container, CampaignName, Typography } from '@/components/ui'
+import { Container, CampaignName } from '@/components/ui'
 import { Campaign } from '@/types/sanity'
 import { urlFor } from '@/lib/sanity'
 
@@ -177,19 +177,6 @@ const MobileMenuButton = styled.button<{ $isOpen: boolean }>`
   }
 `
 
-
-
-const TaglineContainer = styled.div`
-  padding: ${theme.spacing[4]} ${theme.spacing[4]} 0;
-  text-align: center;
-  border-top: 1px solid ${theme.colors.gray[200]};
-  margin-top: ${theme.spacing[4]};
-  
-  @media (max-width: ${theme.breakpoints.sm}) {
-    padding: ${theme.spacing[3]} ${theme.spacing[3]} 0;
-  }
-`
-
 // Default navigation (fallback)
 const defaultNavigationItems: NavigationItem[] = [
   { label: 'Início', href: '/' },
@@ -276,15 +263,6 @@ export const Header: React.FC<HeaderProps> = ({ campaign, navigation = defaultNa
               )}
             </NavLink>
           ))}
-          
-          {/* Tagline for mobile menu */}
-          {campaign.headerContent?.tagline && (
-            <TaglineContainer>
-              <Typography variant="body2" color="secondary">
-                {campaign.headerContent.tagline}
-              </Typography>
-            </TaglineContainer>
-          )}
         </Navigation>
 
         <MobileMenuButton 

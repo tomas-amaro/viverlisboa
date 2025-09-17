@@ -21,93 +21,36 @@ export interface BuildConfig {
   };
 }
 
-// Fallback domain configurations when Sanity is not available
-// In production builds, the system will try to fetch from Sanity first
-// These configurations should match your Sanity campaigns as fallbacks
-const DOMAIN_CONFIGS: Record<string, BuildConfig["campaign"]> = {
-  "viverlisboa.pt": {
-    domain: "viverlisboa.pt",
-    title: "Viver Lisboa",
-    slug: "viver-lisboa",
-    description:
-      "Coligação de esquerda para uma Lisboa mais justa, sustentável e democrática.",
-    location: "Lisboa",
-    mainColor: "#48B9CA",
-    secondaryColor: "#FF394C",
-    socialMedia: {
-      facebook: "https://facebook.com/viverlisboa",
-      instagram: "https://instagram.com/viverlisboa",
-      twitter: "https://twitter.com/viverlisboa",
-    },
-  },
-  "viveravenidas.pt": {
-    domain: "viveravenidas.pt",
-    title: "Viver Avenidas Novas",
-    slug: "viver-avenidas",
-    description:
-      "A nossa proposta para as Avenidas Novas - proximidade, inovação e qualidade de vida.",
-    location: "Avenidas Novas",
-    mainColor: "#48B9CA",
-    secondaryColor: "#7D3C4B",
-    socialMedia: {
-      facebook: "https://facebook.com/viveravenidas",
-      instagram: "https://instagram.com/viveravenidas",
-    },
-  },
-  "viveralvalade.pt": {
-    domain: "viveralvalade.pt",
-    title: "Viver Alvalade",
-    slug: "viver-alvalade",
-    description:
-      "Alvalade merece mais - a nossa visão para uma freguesia próxima e sustentável.",
-    location: "Alvalade",
-    mainColor: "#48B9CA",
-    secondaryColor: "#2A5F66",
-    socialMedia: {
-      facebook: "https://facebook.com/viveralvalade",
-      instagram: "https://instagram.com/viveralvalade",
-    },
-  },
-};
+// No local fallbacks. Sanity is required.
 
 /**
  * Get build configuration based on CAMPAIGN_DOMAIN environment variable
  * Tries to fetch from Sanity first, falls back to hardcoded config
  */
 export async function getBuildConfig(): Promise<BuildConfig> {
-  const campaignDomain = process.env.CAMPAIGN_DOMAIN || "viverlisboa.pt";
-
-  // Try to fetch from Sanity first
-  const sanityConfig = await fetchCampaignFromSanity(campaignDomain);
-  if (sanityConfig) {
-    return { campaign: sanityConfig };
+  const campaignDomain = process.env.CAMPAIGN_DOMAIN;
+  if (!campaignDomain) {
+    throw new Error("CAMPAIGN_DOMAIN env is required to build.");
   }
 
-  // Fallback to hardcoded configuration
-  const campaign = DOMAIN_CONFIGS[campaignDomain];
-  if (!campaign) {
+  const sanityConfig = await fetchCampaignFromSanity(campaignDomain);
+  if (!sanityConfig) {
     throw new Error(
-      `Unknown campaign domain: ${campaignDomain}. Available domains: ${Object.keys(DOMAIN_CONFIGS).join(", ")}`
+      `Campaign not found in Sanity for domain: ${campaignDomain}`
     );
   }
 
-  return { campaign };
+  return { campaign: sanityConfig };
 }
 
 /**
  * Synchronous version for compatibility (uses hardcoded config only)
  */
-export function getBuildConfigSync(): BuildConfig {
-  const campaignDomain = process.env.CAMPAIGN_DOMAIN || "viverlisboa.pt";
-
-  const campaign = DOMAIN_CONFIGS[campaignDomain];
-  if (!campaign) {
-    throw new Error(
-      `Unknown campaign domain: ${campaignDomain}. Available domains: ${Object.keys(DOMAIN_CONFIGS).join(", ")}`
-    );
-  }
-
-  return { campaign };
+// Synchronous build config is not supported without Sanity.
+export function getBuildConfigSync(): never {
+  throw new Error(
+    "getBuildConfigSync is disabled. Use Sanity-backed getBuildConfig at build time."
+  );
 }
 
 /**
@@ -189,25 +132,25 @@ export async function getAllDomains(): Promise<string[]> {
       `*[_type == "campaign" && defined(domain)].domain`
     );
 
-    if (domains && domains.length > 0) {
-      return domains;
+    if (!domains || domains.length === 0) {
+      throw new Error("No campaign domains found in Sanity.");
     }
+
+    return domains;
   } catch (error) {
-    console.warn(
-      "⚠️  Could not fetch domains from Sanity, using fallback configurations:",
-      (error as Error).message
+    throw new Error(
+      `Could not fetch domains from Sanity: ${(error as Error).message}`
     );
   }
-
-  // Fallback to hardcoded domains
-  return Object.keys(DOMAIN_CONFIGS);
 }
 
 /**
  * Synchronous version for compatibility (uses hardcoded domains)
  */
-export function getAllDomainsSync(): string[] {
-  return Object.keys(DOMAIN_CONFIGS);
+export function getAllDomainsSync(): never {
+  throw new Error(
+    "getAllDomainsSync is disabled. Use Sanity-backed getAllDomains."
+  );
 }
 
 /**
@@ -220,20 +163,4 @@ export function isDevelopment(): boolean {
 /**
  * For development, allow switching campaigns via query param or default
  */
-export function getDevelopmentCampaign(
-  hostname?: string
-): BuildConfig["campaign"] {
-  // In development, try to match hostname or default to viverlisboa
-  if (hostname && DOMAIN_CONFIGS[hostname]) {
-    return DOMAIN_CONFIGS[hostname];
-  }
-
-  // Check if there's a dev override
-  const devCampaign = process.env.DEV_CAMPAIGN_DOMAIN;
-  if (devCampaign && DOMAIN_CONFIGS[devCampaign]) {
-    return DOMAIN_CONFIGS[devCampaign];
-  }
-
-  // Default to Lisboa campaign
-  return DOMAIN_CONFIGS["viverlisboa.pt"];
-}
+// Development campaign helper removed; Sanity is required.

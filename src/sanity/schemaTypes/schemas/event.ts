@@ -38,6 +38,10 @@ export default defineType({
       name: "time",
       title: "Hora do Evento",
       type: "string",
+      validation: (Rule) =>
+        Rule.regex(
+          /^(?:[01]\d|2[0-3]):[0-5]\d(?:\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d)?$/
+        ),
       description: "Ex: 18:00 ou 14:30-16:00",
     }),
     defineField({
